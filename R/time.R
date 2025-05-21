@@ -21,8 +21,7 @@ what_time <- function(city = "Vancouver") {
 
   switch(
     city,
-    Vancouver = sprintf("%s! It is %s now!", exclamation, Vancouver_time)
-                        ,
+    Vancouver = sprintf("%s! It is %s now!", exclamation, Vancouver_time),
     Chemnitz = sprintf("%s! It is %s now!", exclamation, Chemnitz_time)
   )
 }
