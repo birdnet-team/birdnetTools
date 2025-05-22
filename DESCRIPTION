@@ -12,6 +12,8 @@ URL: https://birdnet-team.github.io/birdnetTools/, https://github.com/birdnet-te
 BugReports: https://github.com/birdnet-team/birdnetTools/issues
 Imports: 
     praise,
+    purrr,
+    readr,
     rlang
 Suggests: 
     knitr,
