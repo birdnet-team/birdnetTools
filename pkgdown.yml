@@ -3,7 +3,7 @@ pkgdown: 2.1.2
 pkgdown_sha: ~
 articles:
   birdnetTools: birdnetTools.html
-last_built: 2025-05-22T11:45Z
+last_built: 2025-05-22T13:34Z
 urls:
   reference: https://birdnet-team.github.io/birdnetTools/reference
   article: https://birdnet-team.github.io/birdnetTools/articles
