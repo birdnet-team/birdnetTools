@@ -1,15 +1,41 @@
+#' Group BirdNET Output Files
+#'
+#' Reads and combines multiple BirdNET output CSV files from a specified directory into a single data frame.
+#' Files named with "analysis_params" or "CombinedTable" under the specified directory are automatically excluded.
+#'
+#' @param path Character string. The directory path containing BirdNET output `.csv` files. Can include subdirectories.
+#'
+#' @return A data frame containing the combined BirdNET detection data from all valid CSV files, with columns:
+#' \itemize{
+#'   \item \code{Start (s)}: Detection start time in seconds.
+#'   \item \code{End (s)}: Detection end time in seconds.
+#'   \item \code{Scientific name}: Scientific name of the detected species.
+#'   \item \code{Common name}: Common name of the detected species.
+#'   \item \code{Confidence}: Confidence score of the detection.
+#'   \item \code{File}: Name of the file where the detection was found.
+#' }
+#'
+#' @details
+#' This function is useful for aggregating BirdNET output from batch runs or large-scale deployments.
+#' It uses a fixed column specification to ensure consistent parsing of each file. Files with incompatible
+#' formats or errors are skipped and their names are printed with a warning.
+#'
+#' @examples
+#' \dontrun{
+#' combined_data <- group_BirdNET_output("path/to/BirdNET/output")
+#' }
+#'
+#' @importFrom readr read_csv cols col_double col_character
+#' @importFrom purrr map_dfr
+#' @importFrom dplyr tibble
+#' @importFrom cli cli_alert_success cli_alert_warning
+#' @export
+birdnet_combine <- function(path){
+
+# argument check ----------------------------------------------------------
 
 
-
-
-
-
-
-group_BirdNET_output <- function(path){
-
-
-  # Function ----------------------------------------------------------------
-
+# main function -----------------------------------------------------------
 
   # define column types for read_csv
   column_spec <- readr::cols(
@@ -30,33 +56,49 @@ group_BirdNET_output <- function(path){
 
   filtered_files <- all_files[!grepl("analysis_params|CombinedTable", all_files)]
 
+
   # initialize a vector to store any files that cause errors
   error_files <- c()
 
 
   # use map_dfr with tryCatch to handle errors gracefully
   detections_raw <- filtered_files |>
-    purrr::map_dfr(~ {tryCatch(readr::read_csv(.x, col_types = column_spec),
+    purrr::map_dfr(~ tryCatch({
+      readr::read_csv(.x, col_types = column_spec)
 
-                               error = function(e) {
+    }, error = function(e) {
+      # store the filename that caused the error
+      error_files <<- c(error_files, .x)
 
-                                 # Store the filename that caused the error
-                                 error_files <<- c(error_files, .x)
+      # return an empty tibble with the same column structure to continue
+      dplyr::tibble(`Start (s)` = double(), `End (s)` = double(),
+             `Scientific name` = character(), `Common name` = character(),
+             `Confidence` = double(), `File` = character())
 
-                                 # Return an empty tibble with the same column structure to continue
-                                 tibble(`Start (s)` = double(), `End (s)` = double(),
-                                        `Scientific name` = character(), `Common name` = character(),
-                                        `Confidence` = double(), `File` = character())
-                               })})
+    }, warning = function(w) {
+      # store the filename that caused the error
+      error_files <<- c(error_files, .x)
 
-  # Print the names of any files that caused errors
+      # return an empty tibble with the same column structure to continue
+      dplyr::tibble(`Start (s)` = double(), `End (s)` = double(),
+             `Scientific name` = character(), `Common name` = character(),
+             `Confidence` = double(), `File` = character())
+    }))
+
+
+  # show messages about the number of files processed
   if (length(error_files) > 0) {
-    message("The following files caused errors and were skipped:")
+    cli::cli_alert_success("Combined {length(filtered_files) - length(error_files)} BirdNET output file{?s}.")
+
+    cli::cli_alert_warning("The following {length(error_files)} file{?s} caused errors and were skipped:")
     print(error_files)
+
   } else {
-    message("All files loaded successfully.")
+    cli::cli_alert_success("Combined all {length(filtered_files)} BirdNET output file{?s}.")
   }
 
+
+  # return the combined data frame
   return(detections_raw)
 }
 
