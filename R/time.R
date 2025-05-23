@@ -10,7 +10,6 @@
 #' @examples
 #' what_time()
 what_time <- function(city = "Vancouver") {
-
   rlang::arg_match0(city, c("Vancouver", "Chemnitz"))
 
   Vancouver_time <- format(Sys.time(), tz = "America/Vancouver", format = "%H:%M")
@@ -19,10 +18,8 @@ what_time <- function(city = "Vancouver") {
 
   exclamation <- praise::praise("${Exclamation}")
 
-  switch(
-    city,
+  switch(city,
     Vancouver = sprintf("%s! It is %s now!", exclamation, Vancouver_time),
     Chemnitz = sprintf("%s! It is %s now!", exclamation, Chemnitz_time)
   )
 }
-

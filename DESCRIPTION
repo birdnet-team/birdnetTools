@@ -2,7 +2,7 @@ Package: birdnetTools
 Title: Post-process, Wrangle, and Visualize BirdNET Output
 Version: 0.0.0.9000
 Authors@R: 
-    person("Sunny", "Tseng", , "sunnyyctseng@gmail.com", role = c("aut", "cre"))
+    person("Sunny", "Tseng", , "sunnyyctseng@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-8621-2244"))
 Description: What the package does (one paragraph).
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -11,8 +11,14 @@ RoxygenNote: 7.3.2
 URL: https://birdnet-team.github.io/birdnetTools/, https://github.com/birdnet-team/birdnetTools
 BugReports: https://github.com/birdnet-team/birdnetTools/issues
 Imports: 
+    cli,
+    dplyr,
+    lubridate,
     praise,
-    rlang
+    purrr,
+    readr,
+    rlang,
+    stringr
 Suggests: 
     knitr,
     rmarkdown,
