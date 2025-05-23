@@ -1,4 +1,4 @@
-#' Group BirdNET Output Files
+#' Group BirdNET output files
 #'
 #' Reads and combines multiple BirdNET output CSV files from a specified directory into a single data frame.
 #' Files named with "analysis_params" or "CombinedTable" under the specified directory are automatically excluded.

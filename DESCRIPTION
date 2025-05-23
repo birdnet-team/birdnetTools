@@ -13,10 +13,12 @@ BugReports: https://github.com/birdnet-team/birdnetTools/issues
 Imports: 
     cli,
     dplyr,
+    lubridate,
     praise,
     purrr,
     readr,
-    rlang
+    rlang,
+    stringr
 Suggests: 
     knitr,
     rmarkdown,

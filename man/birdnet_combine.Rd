@@ -2,7 +2,7 @@
 % Please edit documentation in R/birdnet_combine.R
 \name{birdnet_combine}
 \alias{birdnet_combine}
-\title{Group BirdNET Output Files}
+\title{Group BirdNET output files}
 \usage{
 birdnet_combine(path)
 }
