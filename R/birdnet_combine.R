@@ -28,7 +28,7 @@
 #' @importFrom readr read_csv cols col_double col_character
 #' @importFrom purrr map_dfr
 #' @importFrom dplyr tibble
-#' @importFrom cli cli_alert_success cli_alert_warning
+#' @importFrom cli cli_alert_success cli_alert_warning cli_li
 #' @export
 birdnet_combine <- function(path){
 
@@ -36,7 +36,6 @@ birdnet_combine <- function(path){
 
 
 # main function -----------------------------------------------------------
-
   # define column types for read_csv
   column_spec <- readr::cols(
     `Start (s)` = readr::col_double(),
@@ -91,7 +90,7 @@ birdnet_combine <- function(path){
     cli::cli_alert_success("Combined {length(filtered_files) - length(error_files)} BirdNET output file{?s}.")
 
     cli::cli_alert_warning("The following {length(error_files)} file{?s} caused errors and were skipped:")
-    print(error_files)
+    cli::li(error_files)
 
   } else {
     cli::cli_alert_success("Combined all {length(filtered_files)} BirdNET output file{?s}.")
