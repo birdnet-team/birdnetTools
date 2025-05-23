@@ -98,7 +98,7 @@ birdnet_combine <- function(path) {
   if (length(error_files) > 0) {
     cli::cli_alert_success("Combined {length(filtered_files) - length(error_files)} BirdNET output file{?s}.")
     cli::cli_alert_warning("The following {length(error_files)} file{?s} caused errors and were skipped:")
-    cli::li(error_files)
+    cli::cli_li(error_files)
   } else {
     cli::cli_alert_success("Combined all {length(filtered_files)} BirdNET output file{?s}.")
   }
