@@ -25,7 +25,8 @@ birdnet_heatmap <- function(data, species, type = "hour"){
 
   # add datetime and filter species
   data_with_time <- data |>
-    birdnetTools::birdnet_add_datetime() |>
+    birdnet_clean_names() |>
+    birdnet_add_datetime() |>
     dplyr::filter(common_name == species)
 
 

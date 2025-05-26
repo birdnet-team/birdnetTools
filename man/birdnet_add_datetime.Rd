@@ -4,7 +4,7 @@
 \alias{birdnet_add_datetime}
 \title{Add datetime-related columns from BirdNET output filenames}
 \usage{
-birdnet_add_datetime(data, col = File, tz = "UTC")
+birdnet_add_datetime(data, col = filepath, tz = "UTC")
 }
 \arguments{
 \item{data}{A data frame containing BirdNET output.}
@@ -31,5 +31,4 @@ to the input data frame.
 combined_data <- birdnet_combine("path/to/BirdNET/output")
 data_with_time <- birdnet_add_datetime(combined_data, col = File)
 }
-
 }

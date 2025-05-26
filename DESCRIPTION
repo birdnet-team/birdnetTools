@@ -13,6 +13,7 @@ BugReports: https://github.com/birdnet-team/birdnetTools/issues
 Imports: 
     cli,
     dplyr,
+    ggplot2,
     lubridate,
     praise,
     purrr,
