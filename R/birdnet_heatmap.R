@@ -7,6 +7,7 @@
 #' @param species A character string specifying the species name to filter by (from `common_name`).
 #' @param type A character string indicating the type of heatmap to generate.
 #'   Options are `"hour"` (default) for an hourly activity heatmap, or `"date"` for daily activity.
+#' @param hour_range A numeric vector of length 2 specifying the range of hours to display
 #'
 #' @return A ggplot2 heatmap showing bird activity across time.
 #' @export
@@ -15,7 +16,8 @@
 #' \dontrun{
 #' birdnet_heatmap(data = birdnet_output, species = "Song Sparrow", type = "hour")
 #' }
-birdnet_heatmap <- function(data, species, type = "hour"){
+birdnet_heatmap <- function(data, species, type = "hour",
+                            hour_range = c(0, 23)){
 
 
 # argument check ----------------------------------------------------------
@@ -34,14 +36,13 @@ birdnet_heatmap <- function(data, species, type = "hour"){
   plot <- switch(type,
 
          "hour" = data_with_time |>
-           dplyr::group_by(date, hour) |>
-           dplyr::summarise(activity = dplyr::n()) |>
+           dplyr::summarise(activity = dplyr::n(), .by = c(date, hour)) |>
 
            ggplot2::ggplot() +
            ggplot2::geom_tile(ggplot2::aes(y = hour, x = date, fill = activity)) +
 
            ggplot2::scale_fill_viridis_c(option = "A", direction = -1) +
-           ggplot2::lims(y = c(0, 23)) +
+           ggplot2::lims(y = hour_range) +
 
            ggplot2::labs(title = species, x = "Date", y = "Hour") +
            ggplot2::theme(legend.position = "none",

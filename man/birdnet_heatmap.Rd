@@ -4,7 +4,7 @@
 \alias{birdnet_heatmap}
 \title{Generate a bird activity heatmap}
 \usage{
-birdnet_heatmap(data, species, type = "hour")
+birdnet_heatmap(data, species, type = "hour", hour_range = c(0, 23))
 }
 \arguments{
 \item{data}{A data frame containing BirdNET output, including a file path column
@@ -14,6 +14,8 @@ and a \code{common_name} column.}
 
 \item{type}{A character string indicating the type of heatmap to generate.
 Options are \code{"hour"} (default) for an hourly activity heatmap, or \code{"date"} for daily activity.}
+
+\item{hour_range}{A numeric vector of length 2 specifying the range of hours to display}
 }
 \value{
 A ggplot2 heatmap showing bird activity across time.

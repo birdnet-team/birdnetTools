@@ -1,5 +1,5 @@
 Package: birdnetTools
-Title: Post-process, Wrangle, and Visualize BirdNET Output
+Title: Post-process, Validate, and Visualize BirdNET Output
 Version: 0.0.0.9000
 Authors@R: 
     person("Sunny", "Tseng", , "sunnyyctseng@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-8621-2244"))
