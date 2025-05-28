@@ -2,29 +2,32 @@
 % Please edit documentation in R/birdnet_heatmap.R
 \name{birdnet_heatmap}
 \alias{birdnet_heatmap}
-\title{Generate a bird activity heatmap}
+\title{Create a heatmap of BirdNET detections by hour and date}
 \usage{
-birdnet_heatmap(data, species, type = "hour", hour_range = c(0, 23))
+birdnet_heatmap(data, species, threshold = NULL, hour_range = c(0, 23))
 }
 \arguments{
-\item{data}{A data frame containing BirdNET output, including a file path column
-and a \code{common_name} column.}
+\item{data}{A data frame containing BirdNET output. Must include columns with time and species
+information. Column names will be standardized internally using \code{\link[=birdnet_clean_names]{birdnet_clean_names()}}.}
 
-\item{species}{A character string specifying the species name to filter by (from \code{common_name}).}
+\item{species}{Character. The common name of the species to visualize (after cleaning).}
 
-\item{type}{A character string indicating the type of heatmap to generate.
-Options are \code{"hour"} (default) for an hourly activity heatmap, or \code{"date"} for daily activity.}
+\item{threshold}{Numeric or \code{NULL}. Optional confidence threshold (0–1) used to filter detections.
+If \code{NULL}, no threshold filtering is applied.}
 
-\item{hour_range}{A numeric vector of length 2 specifying the range of hours to display}
+\item{hour_range}{A numeric vector of length 2 indicating the y-axis limits for hour-of-day
+display. Default is \code{c(0, 23)}.}
 }
 \value{
-A ggplot2 heatmap showing bird activity across time.
+A \code{ggplot} heatmap showing the number of detections by hour and date.
 }
 \description{
-This function creates a heatmap of bird activity based on BirdNET detection data.
+This function generates a heatmap showing the daily activity pattern of a specified species
+detected in BirdNET output data. The function optionally filters detections by a confidence
+threshold and displays activity levels (number of detections) across time.
 }
 \examples{
 \dontrun{
-birdnet_heatmap(data = birdnet_output, species = "Song Sparrow", type = "hour")
+birdnet_heatmap(data = birdnet_output, species = "Swainson's Thrush", threshold = 0.7)
 }
 }
