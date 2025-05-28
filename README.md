@@ -10,7 +10,10 @@
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-The goal of birdnetTools is to …
+The goal of birdnetTools is to provide a streamlined set of tools for
+processing, validating, and visualizing output from the BirdNET sound
+analysis algorithm. This package helps ecologists and researchers
+efficiently interpret BirdNET results.
 
 ## Installation
 
@@ -22,11 +25,33 @@ You can install the development version of birdnetTools from
 pak::pak("birdnet-team/birdnetTools")
 ```
 
-## Example
+## Example use
 
-This is a basic example which shows you how to solve a common problem:
+This is a basic example to show how to visualize BirdNET output data.
+The example assumes you have a data frame with BirdNET results:
 
 ``` r
 library(birdnetTools)
 ## basic example code
 ```
+
+### Funding
+
+This project is supported by Jake Holshuh (Cornell class of ’69) and The
+Arthur Vining Davis Foundations. Our work in the K. Lisa Yang Center for
+Conservation Bioacoustics is made possible by the generosity of K. Lisa
+Yang to advance innovative conservation technologies to inspire and
+inform the conservation of wildlife and habitats.
+
+The development of BirdNET is supported by the German Federal Ministry
+of Education and Research through the project “BirdNET+” (FKZ
+01\|S22072). The German Federal Ministry for the Environment, Nature
+Conservation and Nuclear Safety contributes through the “DeepBirdDetect”
+project (FKZ 67KI31040E). In addition, the Deutsche Bundesstiftung
+Umwelt supports BirdNET through the project “RangerSound” (project
+39263/01).
+
+### Partners
+
+BirdNET is a joint effort of partners from academia and industry.
+Without these partnerships, this project would not have been possible.

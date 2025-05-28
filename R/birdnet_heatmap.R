@@ -21,9 +21,7 @@
 birdnet_heatmap <- function(data,
                             species,
                             threshold = NULL,
-                            hour_range = c(0, 23)){
-
-
+                            hour_range = c(0, 23)) {
   # argument check ----------------------------------------------------------
 
 
@@ -38,7 +36,6 @@ birdnet_heatmap <- function(data,
     data_after_filter <- data_with_time |>
       dplyr::filter(common_name == species) |>
       dplyr::filter(confidence >= threshold)
-
   } else {
     data_after_filter <- data_with_time |>
       dplyr::filter(common_name == species)
@@ -48,19 +45,19 @@ birdnet_heatmap <- function(data,
   # generate the heatmap based on the specified type
   plot <- data_with_time |>
     dplyr::summarise(activity = dplyr::n(), .by = c(date, hour)) |>
-
     ggplot2::ggplot() +
     ggplot2::geom_tile(ggplot2::aes(y = hour, x = date, fill = activity)) +
-
     ggplot2::scale_fill_viridis_c(option = "A", direction = -1) +
     ggplot2::lims(y = hour_range) +
-
     ggplot2::labs(title = species, x = "Date", y = "Hour") +
-    ggplot2::theme(legend.position = "none",
-                   axis.text = ggplot2::element_text(size = 12),
-                   axis.title = ggplot2::element_text(
-                     size = 14,
-                     margin = ggplot2::margin(t = 15, r = 15)))
+    ggplot2::theme(
+      legend.position = "none",
+      axis.text = ggplot2::element_text(size = 12),
+      axis.title = ggplot2::element_text(
+        size = 14,
+        margin = ggplot2::margin(t = 15, r = 15)
+      )
+    )
 
   return(plot)
 }

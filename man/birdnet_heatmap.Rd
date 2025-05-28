@@ -10,7 +10,7 @@ birdnet_heatmap(data, species, threshold = NULL, hour_range = c(0, 23))
 \item{data}{A data frame containing BirdNET output. Must include columns with time and species
 information. Column names will be standardized internally using \code{\link[=birdnet_clean_names]{birdnet_clean_names()}}.}
 
-\item{species}{Character. The common name of the species to visualize (after cleaning).}
+\item{species}{Character. The common name of the species to visualize.}
 
 \item{threshold}{Numeric or \code{NULL}. Optional confidence threshold (0–1) used to filter detections.
 If \code{NULL}, no threshold filtering is applied.}

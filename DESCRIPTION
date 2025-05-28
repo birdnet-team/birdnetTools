@@ -11,6 +11,7 @@ RoxygenNote: 7.3.2
 URL: https://birdnet-team.github.io/birdnetTools/, https://github.com/birdnet-team/birdnetTools
 BugReports: https://github.com/birdnet-team/birdnetTools/issues
 Imports: 
+    checkmate,
     cli,
     dplyr,
     ggplot2,

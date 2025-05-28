@@ -5,4 +5,12 @@
 ## usethis namespace: end
 
 
-utils::globalVariables(c("File", "datetime", "mday", "yday", "hour", "minute"))
+utils::globalVariables(c("filepath",
+                         "datetime",
+                         "mday",
+                         "yday",
+                         "hour",
+                         "minute",
+                         "common_name",
+                         "confidence",
+                         "activity"))
