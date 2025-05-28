@@ -21,11 +21,18 @@
 birdnet_heatmap <- function(data,
                             species,
                             threshold = NULL,
-                            hour_range = c(0, 23)) {
+                            hour_range = c(0, 24),
+                            min_date = NULL,
+                            max_date = NULL) {
   # argument check ----------------------------------------------------------
 
 
+  # Set default date range if not specified
+  if (is.null(min_date)) min_date <- min(data, na.rm = TRUE)
+  if (is.null(max_date)) max_date <- max(data, na.rm = TRUE)
+
   # main function -----------------------------------------------------------
+
 
   # add datetime and filter species
   data_with_time <- data |>
@@ -34,21 +41,25 @@ birdnet_heatmap <- function(data,
 
   if (!is.null(threshold)) {
     data_after_filter <- data_with_time |>
+      dplyr::filter(confidence >= threshold) |>
       dplyr::filter(common_name == species) |>
-      dplyr::filter(confidence >= threshold)
+      dplyr::filter(date >= as.Date(min_date) & date <= as.Date(max_date)) |>
+      dplyr::filter(hour >= hour_range[1] & hour <= hour_range[2])
+
   } else {
     data_after_filter <- data_with_time |>
-      dplyr::filter(common_name == species)
+      dplyr::filter(common_name == species) |>
+      dplyr::filter(date >= as.Date(min_date) & date <= as.Date(max_date)) |>
+      dplyr::filter(hour >= hour_range[1] & hour <= hour_range[2])
   }
 
 
   # generate the heatmap based on the specified type
-  plot <- data_with_time |>
+  plot <- data_after_filter |>
     dplyr::summarise(activity = dplyr::n(), .by = c(date, hour)) |>
     ggplot2::ggplot() +
     ggplot2::geom_tile(ggplot2::aes(y = hour, x = date, fill = activity)) +
     ggplot2::scale_fill_viridis_c(option = "A", direction = -1) +
-    ggplot2::lims(y = hour_range) +
     ggplot2::labs(title = species, x = "Date", y = "Hour") +
     ggplot2::theme(
       legend.position = "none",
@@ -61,3 +72,4 @@ birdnet_heatmap <- function(data,
 
   return(plot)
 }
+
