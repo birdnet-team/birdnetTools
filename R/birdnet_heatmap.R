@@ -6,7 +6,7 @@
 #'
 #' @param data A data frame containing BirdNET output. Must include columns with time and species
 #'   information. Column names will be standardized internally using [birdnet_clean_names()].
-#' @param species Character. The common name of the species to visualize (after cleaning).
+#' @param species Character. The common name of the species to visualize.
 #' @param threshold Numeric or `NULL`. Optional confidence threshold (0–1) used to filter detections.
 #'   If `NULL`, no threshold filtering is applied.
 #' @param hour_range A numeric vector of length 2 indicating the y-axis limits for hour-of-day
