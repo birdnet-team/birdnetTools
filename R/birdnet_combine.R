@@ -35,15 +35,6 @@ birdnet_combine <- function(path) {
 
 
   # main function -----------------------------------------------------------
-  # define column types for read_csv
-  column_spec <- readr::cols(
-    `Start (s)` = readr::col_double(),
-    `End (s)` = readr::col_double(),
-    `Scientific name` = readr::col_character(),
-    `Common name` = readr::col_character(),
-    `Confidence` = readr::col_double(),
-    `File` = readr::col_character()
-  )
 
 
   # list all files in the directory
@@ -56,7 +47,8 @@ birdnet_combine <- function(path) {
 
 
   # filter out unwanted files
-  filtered_files <- all_files[!grepl("analysis_params|CombinedTable", all_files)]
+  filtered_files <- all_files[!grepl("analysis_params|CombinedTable",
+                                     all_files)]
 
 
   # initialize a vector to store any files that cause errors
@@ -67,7 +59,16 @@ birdnet_combine <- function(path) {
   detections_raw <- filtered_files |>
     purrr::map_dfr(~ tryCatch(
       {
-        readr::read_csv(.x, col_types = column_spec)
+        .x |> readr::read_csv(show_col_types = FALSE) |>
+          birdnet_clean_names() |>
+          dplyr::mutate(
+            start = as.numeric(start),
+            end = as.numeric(end),
+            scientific_name = as.character(scientific_name),
+            common_name = as.character(common_name),
+            confidence = as.numeric(confidence),
+            filepath = as.character(filepath)
+          )
 
       }, error = function(e) {
         # store the filename that caused the error
@@ -75,9 +76,12 @@ birdnet_combine <- function(path) {
 
         # return an empty tibble with the same column structure to continue
         dplyr::tibble(
-          `Start (s)` = double(), `End (s)` = double(),
-          `Scientific name` = character(), `Common name` = character(),
-          `Confidence` = double(), `File` = character()
+          start = numeric(0),          # numeric for doubles
+          end = numeric(0),
+          scientific_name = character(0),
+          common_name = character(0),
+          confidence = numeric(0),
+          filepath = character(0)
         )
 
       }, warning = function(w) {
@@ -86,9 +90,12 @@ birdnet_combine <- function(path) {
 
         # return an empty tibble with the same column structure to continue
         dplyr::tibble(
-          `Start (s)` = double(), `End (s)` = double(),
-          `Scientific name` = character(), `Common name` = character(),
-          `Confidence` = double(), `File` = character()
+          start = numeric(0),          # numeric for doubles
+          end = numeric(0),
+          scientific_name = character(0),
+          common_name = character(0),
+          confidence = numeric(0),
+          filepath = character(0)
         )
       }
     ))
@@ -96,11 +103,11 @@ birdnet_combine <- function(path) {
 
   # show messages about the number of files processed
   if (length(error_files) > 0) {
-    cli::cli_alert_success("Combined {length(filtered_files) - length(error_files)} BirdNET output file{?s}.")
+    cli::cli_alert_success("Successfully combined {length(filtered_files) - length(error_files)} BirdNET output file{?s}")
     cli::cli_alert_warning("The following {length(error_files)} file{?s} caused errors and were skipped:")
     cli::cli_li(error_files)
   } else {
-    cli::cli_alert_success("Combined all {length(filtered_files)} BirdNET output file{?s}.")
+    cli::cli_alert_success("Successfully combined {length(filtered_files)} BirdNET output file{?s}")
   }
 
 

@@ -31,4 +31,3 @@ df <- data.frame(
 birdnet_clean_names(df)
 }
 }
-\keyword{internal}

@@ -4,7 +4,14 @@
 \alias{birdnet_heatmap}
 \title{Create a heatmap of BirdNET detections by hour and date}
 \usage{
-birdnet_heatmap(data, species, threshold = NULL, hour_range = c(0, 23))
+birdnet_heatmap(
+  data,
+  species,
+  threshold = NULL,
+  hour_range = c(0, 24),
+  min_date = NULL,
+  max_date = NULL
+)
 }
 \arguments{
 \item{data}{A data frame containing BirdNET output. Must include columns with time and species
@@ -17,6 +24,8 @@ If \code{NULL}, no threshold filtering is applied.}
 
 \item{hour_range}{A numeric vector of length 2 indicating the y-axis limits for hour-of-day
 display. Default is \code{c(0, 23)}.}
+
+\item{min_date}{Character or \code{NULL}. The maximum date to include in the heatmap. If \code{NULL}, the latest date will be used.}
 }
 \value{
 A \code{ggplot} heatmap showing the number of detections by hour and date.
