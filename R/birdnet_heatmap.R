@@ -21,17 +21,13 @@
 #' }
 #' @export
 birdnet_heatmap <- function(data,
-                            species,
+                            species = NULL,
                             threshold = NULL,
                             hour_range = c(0, 24),
                             min_date = NULL,
                             max_date = NULL) {
   # argument check ----------------------------------------------------------
 
-
-  # Set default date range if not specified
-  if (is.null(min_date)) min_date <- min(data, na.rm = TRUE)
-  if (is.null(max_date)) max_date <- max(data, na.rm = TRUE)
 
   # main function -----------------------------------------------------------
 
@@ -41,18 +37,23 @@ birdnet_heatmap <- function(data,
     birdnet_clean_names() |>
     birdnet_add_datetime()
 
-  if (!is.null(threshold)) {
-    data_after_filter <- data_with_time |>
-      dplyr::filter(confidence >= threshold) |>
-      dplyr::filter(common_name == species) |>
-      dplyr::filter(date >= as.Date(min_date) & date <= as.Date(max_date)) |>
-      dplyr::filter(hour >= hour_range[1] & hour <= hour_range[2])
 
-  } else {
-    data_after_filter <- data_with_time |>
-      dplyr::filter(common_name == species) |>
-      dplyr::filter(date >= as.Date(min_date) & date <= as.Date(max_date)) |>
-      dplyr::filter(hour >= hour_range[1] & hour <= hour_range[2])
+  # filter data based on date and hour range
+  if (is.null(min_date)) min_date <- min(data_with_time$date, na.rm = TRUE)
+  if (is.null(max_date)) max_date <- max(data_with_time$date, na.rm = TRUE)
+
+  data_after_filter <- data_with_time |>
+    dplyr::filter(date >= as.Date(min_date) & date <= as.Date(max_date)) |>
+    dplyr::filter(hour >= hour_range[1] & hour <= hour_range[2])
+
+  # filter by species and threshold
+  if (!is.null(threshold)) {
+    data_after_filter <- data_after_filter |>
+      dplyr::filter(confidence >= threshold)
+
+  } else if (!is.null(species)){
+    data_after_filter <- data_after_filter |>
+      dplyr::filter(common_name == species)
   }
 
 
@@ -62,7 +63,7 @@ birdnet_heatmap <- function(data,
     ggplot2::ggplot() +
     ggplot2::geom_tile(ggplot2::aes(y = hour, x = date, fill = activity)) +
     ggplot2::scale_fill_viridis_c(option = "A", direction = -1) +
-    ggplot2::labs(title = species, x = "Date", y = "Hour") +
+    ggplot2::labs(x = "Date", y = "Hour") +
     ggplot2::theme(
       legend.position = "none",
       axis.text = ggplot2::element_text(size = 12),

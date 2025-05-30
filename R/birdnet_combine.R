@@ -50,10 +50,8 @@ birdnet_combine <- function(path) {
   filtered_files <- all_files[!grepl("analysis_params|CombinedTable",
                                      all_files)]
 
-
   # initialize a vector to store any files that cause errors
   error_files <- c()
-
 
   # use map_dfr with tryCatch to handle errors gracefully
   detections_raw <- filtered_files |>
