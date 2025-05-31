@@ -26,6 +26,8 @@ birdnet_add_datetime <- function(data,
                                  tz = "UTC") {
   # argument check ----------------------------------------------------------
 
+  # if there is already all the columns, show the warning messages
+  # if there is no column can be found to contain the path information, show error
 
   # main function -----------------------------------------------------------
 
