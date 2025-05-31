@@ -32,7 +32,7 @@ birdnet_heatmap <- function(data,
   # main function -----------------------------------------------------------
 
 
-  # add datetime and filter species
+  # clean names and add datetime
   data_with_time <- data |>
     birdnet_clean_names() |>
     birdnet_add_datetime()

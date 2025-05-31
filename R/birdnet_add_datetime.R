@@ -21,13 +21,15 @@
 #' data_with_time <- birdnet_add_datetime(combined_data, col = File)
 #' }
 #' @export
-birdnet_add_datetime <- function(data, col = filepath, tz = "UTC") {
+birdnet_add_datetime <- function(data,
+                                 col = filepath,
+                                 tz = "UTC") {
   # argument check ----------------------------------------------------------
 
 
   # main function -----------------------------------------------------------
 
-  data_add_datetime <- data |>
+  data_with_datetime <- data |>
 
     # parase the column name to the datetime format
     dplyr::mutate(datetime = {{ col }} |>
@@ -47,5 +49,5 @@ birdnet_add_datetime <- function(data, col = filepath, tz = "UTC") {
       minute = lubridate::minute(datetime)
     )
 
-  return(data_add_datetime)
+  return(data_with_datetime)
 }
