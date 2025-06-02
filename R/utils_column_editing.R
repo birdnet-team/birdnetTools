@@ -58,6 +58,12 @@ birdnet_add_datetime <- function(data,
 
 
 
+#' Drop datetime-related columns from BirdNET output
+#'
+#' @param data A data frame containing BirdNET output, with the datetime related columns present.
+#'
+#' @returns A data frame with datime related columns removed.
+#' @keywords internal
 birdnet_drop_datetime <- function(data) {
   # Define expected datetime-related columns
   datetime_cols <- c("datetime", "date", "year", "month",
