@@ -6,7 +6,7 @@
 \usage{
 birdnet_heatmap(
   data,
-  species,
+  species = NULL,
   threshold = NULL,
   hour_range = c(0, 24),
   min_date = NULL,
@@ -25,7 +25,9 @@ If \code{NULL}, no threshold filtering is applied.}
 \item{hour_range}{A numeric vector of length 2 indicating the y-axis limits for hour-of-day
 display. Default is \code{c(0, 23)}.}
 
-\item{min_date}{Character or \code{NULL}. The maximum date to include in the heatmap. If \code{NULL}, the latest date will be used.}
+\item{min_date}{Character or \code{NULL}. The minimum date to include in the heatmap. If \code{NULL}, the earliest date will be used.}
+
+\item{max_date}{Character or \code{NULL}. The maximum date to include in the heatmap. If \code{NULL}, the latest date will be used.}
 }
 \value{
 A \code{ggplot} heatmap showing the number of detections by hour and date.

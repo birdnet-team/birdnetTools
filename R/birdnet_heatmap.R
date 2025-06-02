@@ -12,7 +12,7 @@
 #' @param hour_range A numeric vector of length 2 indicating the y-axis limits for hour-of-day
 #'   display. Default is `c(0, 23)`.
 #' @param min_date Character or `NULL`. The minimum date to include in the heatmap. If `NULL`, the earliest date will be used.
-#' @param min_date Character or `NULL`. The maximum date to include in the heatmap. If `NULL`, the latest date will be used.
+#' @param max_date Character or `NULL`. The maximum date to include in the heatmap. If `NULL`, the latest date will be used.
 #'
 #' @return A `ggplot` heatmap showing the number of detections by hour and date.
 #' @examples
