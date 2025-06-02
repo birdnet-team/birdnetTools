@@ -7,10 +7,13 @@
 
 utils::globalVariables(c("filepath",
                          "datetime",
+                         "year",
                          "mday",
                          "yday",
                          "hour",
                          "minute",
+                         "threshold",
                          "common_name",
                          "confidence",
+                         "category",
                          "activity"))

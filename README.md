@@ -32,7 +32,25 @@ The example assumes you have a data frame with BirdNET results:
 
 ``` r
 library(birdnetTools)
-## basic example code
+
+# to read data from a local path
+data <- birdnet_combine("path/to/BirdNET/output")
+
+# to filter data for given species, and time range
+data_filtered <- birdnet_filter(data, 
+                                species = "American Robin",
+                                year = 2023,
+                                date_range = c("2023-01-01", "2023-12-31"))
+
+# to subsample dataset for validation purpose
+data_subsampled <- birdnet_subsample(data_filtered, 
+                                     n = 1000, 
+                                     method = "stratified")
+
+# data visualization
+birdnet_heatmap(data_filtered)
+  
+  
 ```
 
 ### Funding
