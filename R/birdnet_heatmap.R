@@ -9,8 +9,7 @@
 #' @param species Character. The common name of the species to visualize.
 #' @param threshold Numeric or `NULL`. Optional confidence threshold (0–1) used to filter detections.
 #'   If `NULL`, no threshold filtering is applied.
-#' @param hour_range A numeric vector of length 2 indicating the y-axis limits for hour-of-day
-#'   display. Default is `c(0, 23)`.
+#' @param hour Integer vector between 0 and 23 specifying which hours of the day to keep (e.g., `c(4:7)`).
 #' @param min_date Character or `NULL`. The minimum date to include in the heatmap. If `NULL`, the earliest date will be used.
 #' @param max_date Character or `NULL`. The maximum date to include in the heatmap. If `NULL`, the latest date will be used.
 #'
@@ -23,9 +22,9 @@
 birdnet_heatmap <- function(data,
                             species = NULL,
                             threshold = NULL,
-                            hour_range = c(0, 24),
                             min_date = NULL,
-                            max_date = NULL) {
+                            max_date = NULL,
+                            hour = NULL) {
   # argument check ----------------------------------------------------------
 
 
@@ -43,8 +42,10 @@ birdnet_heatmap <- function(data,
   if (is.null(max_date)) max_date <- max(data_with_time$date, na.rm = TRUE)
 
   data_after_filter <- data_with_time |>
-    dplyr::filter(date >= as.Date(min_date) & date <= as.Date(max_date)) |>
-    dplyr::filter(hour >= hour_range[1] & hour <= hour_range[2])
+    birdnet_filter(
+      min_date = min_date,
+      max_date = max_date,
+      hour = hour)
 
   # filter by species and threshold
   if (!is.null(threshold)) {

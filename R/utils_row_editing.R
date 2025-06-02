@@ -1,33 +1,5 @@
 
 
-
-
-
-
-
-birdnet_drop_datetime <- function(data) {
-  # Define expected datetime-related columns
-  datetime_cols <- c("datetime", "date", "year", "month",
-                     "mday", "yday", "hour", "minute")
-
-  # Keep only columns that exist in the data
-  cols_to_drop <- intersect(datetime_cols, colnames(data))
-
-  # Drop them (if any)
-  data <- data |>
-    dplyr::select(-dplyr::all_of(cols_to_drop))
-
-  return(data)
-}
-
-
-
-
-
-
-# filter functions --------------------------------------------------------
-
-
 birdnet_filter_species <- function(data, species){
 
   data <- data |>

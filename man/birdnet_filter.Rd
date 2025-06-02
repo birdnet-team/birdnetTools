@@ -41,7 +41,10 @@ attached to the returned dataframe, allowing users to inspect what filters were 
 }
 \examples{
 \dontrun{
-filtered <- birdnet_filter(data, species = "Swainson's Thrush", threshold = 0.75)
+filtered <- birdnet_filter(data,
+  species = "Swainson's Thrush",
+  threshold = 0.75
+)
 attr(filtered, "filter_log")
 }
 

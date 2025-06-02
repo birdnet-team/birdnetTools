@@ -8,9 +8,9 @@ birdnet_heatmap(
   data,
   species = NULL,
   threshold = NULL,
-  hour_range = c(0, 24),
   min_date = NULL,
-  max_date = NULL
+  max_date = NULL,
+  hour = NULL
 )
 }
 \arguments{
@@ -22,12 +22,11 @@ information. Column names will be standardized internally using \code{\link[=bir
 \item{threshold}{Numeric or \code{NULL}. Optional confidence threshold (0–1) used to filter detections.
 If \code{NULL}, no threshold filtering is applied.}
 
-\item{hour_range}{A numeric vector of length 2 indicating the y-axis limits for hour-of-day
-display. Default is \code{c(0, 23)}.}
-
 \item{min_date}{Character or \code{NULL}. The minimum date to include in the heatmap. If \code{NULL}, the earliest date will be used.}
 
 \item{max_date}{Character or \code{NULL}. The maximum date to include in the heatmap. If \code{NULL}, the latest date will be used.}
+
+\item{hour}{Integer vector between 0 and 23 specifying which hours of the day to keep (e.g., \code{c(4:7)}).}
 }
 \value{
 A \code{ggplot} heatmap showing the number of detections by hour and date.
