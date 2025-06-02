@@ -8,6 +8,8 @@
 [![R-CMD-check](https://github.com/birdnet-team/birdnetTools/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/birdnet-team/birdnetTools/actions/workflows/R-CMD-check.yaml)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![Codecov test
+coverage](https://codecov.io/gh/birdnet-team/birdnetTools/graph/badge.svg)](https://app.codecov.io/gh/birdnet-team/birdnetTools)
 <!-- badges: end -->
 
 The goal of birdnetTools is to provide a streamlined set of tools for
@@ -73,3 +75,5 @@ Umwelt supports BirdNET through the project “RangerSound” (project
 
 BirdNET is a joint effort of partners from academia and industry.
 Without these partnerships, this project would not have been possible.
+
+![](https://tuc.cloud/index.php/s/KSdWfX5CnSRpRgQ/download/box_logos.png)
