@@ -2,6 +2,9 @@
 
 export(birdnet_add_datetime)
 export(birdnet_combine)
+export(birdnet_filter)
+export(birdnet_heatmap)
+export(birdnet_subsample)
 export(what_time)
 importFrom(cli,cli_alert_success)
 importFrom(cli,cli_alert_warning)
