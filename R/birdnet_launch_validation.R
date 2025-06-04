@@ -157,7 +157,6 @@ birdnet_validation_server <- function(input, output, session) {
         paste("Error reading CSV:", e$message),
         type = "error")
     })
-
   })
 
 
@@ -184,39 +183,41 @@ birdnet_validation_server <- function(input, output, session) {
              ' btn-sm toggle-val" data-row="', i, '">', label, '</button>')
     })
 
+
     DT::datatable(dat,
-                  #editable = TRUE,
-                  escape = FALSE,
+                  editable = list(target = "column", disable = list(columns = c(1, 2, 3, 4, 5))),
+                  escape = FALSE, # to render HTML properly
                   selection = "none",
                   options = list(
                     pageLength = 10,
                     columnDefs = list(
-                      list(targets = 6, orderable = FALSE),
-                      list(targets = 7, orderable = FALSE)
+                      list(targets = 7, orderable = FALSE),
+                      list(targets = 8, orderable = FALSE)
                     )
-                  ),
-                  callback = JS("
-      table.on('click', '.toggle-val', function() {
-        var row = $(this).data('row');
-        Shiny.setInputValue('toggle_val', row, {priority: 'event'});
-      });
-    ")
+                  )
+    #               ,
+    #               callback = JS("
+    #   table.on('click', '.toggle-val', function() {
+    #     var row = $(this).data('row');
+    #     Shiny.setInputValue('toggle_val', row, {priority: 'event'});
+    #   });
+    # ")
     )
   })
 
 
 
-  # Toggle validate state: U → Y → N → U
-  observeEvent(input$toggle_val, {
-
-    # find the next value based on the current value
-    row <- as.numeric(input$toggle_val)
-    current <- rv$data_display$validation[row]
-    next_val <- switch(current, "U" = "Y", "Y" = "N", "N" = "U")
-
-    # update the value in the reactive dataframe
-    rv$data_display$validation[row] <- next_val
-  })
+  # # Toggle validate state: U → Y → N → U
+  # observeEvent(input$toggle_val, {
+  #
+  #   # find the next value based on the current value
+  #   row <- as.numeric(input$toggle_val)
+  #   current <- rv$data_display$validation[row]
+  #   next_val <- switch(current, "U" = "Y", "Y" = "N", "N" = "U")
+  #
+  #   # update the value in the reactive dataframe
+  #   #rv$data_display$validation[row] <- next_val
+  # })
 
 
 
@@ -237,7 +238,7 @@ birdnet_validation_server <- function(input, output, session) {
     info <- input$main_table_cell_clicked
     if (is.null(info$value)) return()
 
-    if (info$col == 6) { # Spectrogram button column
+    if (info$col == 7) { # Spectrogram button column
       selected_row <- rv$data_display[info$row, ]
       filepath <- file.path(dir_path(), basename(selected_row$filepath))
 
@@ -254,7 +255,7 @@ birdnet_validation_server <- function(input, output, session) {
       }
     }
 
-    if (info$col == 7) { # Audio play button column
+    if (info$col == 8) { # Audio play button column
       selected_row <- rv$data_display[info$row, ]
       filepath <- file.path(dir_path(), basename(selected_row$filepath))
 
