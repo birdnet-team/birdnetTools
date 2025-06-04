@@ -211,12 +211,9 @@ birdnet_validation_server <- function(input, output, session) {
 
     info <- input$data_display_cell_edit
 
-    # find the next value based on the current value
-    row <- info$row
-    value <- info$value
-
     # update the value in the reactive dataframe
-    rv$data_display$validation[row] <- value
+    rv$data_display[info$row, info$col] <- info$value
+
   })
 
 
