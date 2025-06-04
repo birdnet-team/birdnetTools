@@ -169,23 +169,22 @@ birdnet_validation_server <- function(input, output, session) {
 
 
     # render the data table with a play button
-    dat <- rv$data_display |>
+    rv$data_display |>
       dplyr::select("filepath", "scientific_name", "common_name", "start", "end", "validation") |>
 
       dplyr::mutate(Spectrogram = '<button class="spectrogram">Spectrogram</button>',
-                    Audio = '<button class="play-audio">Audio</button>')
+                    Audio = '<button class="play-audio">Audio</button>') |>
 
-    dat$Decision <- sapply(seq_len(nrow(dat)), function(i) {
-      val <- dat$validation[i]
-      color <- switch(val, "Y" = "success", "N" = "danger", "U" = "primary")
-      label <- switch(val, "Y" = "✔️", "N" = "❌", "U" = "❔")
-      paste0('<button class="btn btn-', color,
-             ' btn-sm toggle-val" data-row="', i, '">', label, '</button>')
-    })
+    # dat$Decision <- sapply(seq_len(nrow(dat)), function(i) {
+    #   val <- dat$validation[i]
+    #   color <- switch(val, "Y" = "success", "N" = "danger", "U" = "primary")
+    #   label <- switch(val, "Y" = "✔️", "N" = "❌", "U" = "❔")
+    #   paste0('<button class="btn btn-', color,
+    #          ' btn-sm toggle-val" data-row="', i, '">', label, '</button>')
+    # })
 
 
-    DT::datatable(dat,
-                  editable = list(target = "column", disable = list(columns = c(1, 2, 3, 4, 5))),
+    DT::datatable(editable = list(target = "column", disable = list(columns = c(1, 2, 3, 4, 5))),
                   escape = FALSE, # to render HTML properly
                   selection = "none",
                   options = list(
@@ -203,26 +202,22 @@ birdnet_validation_server <- function(input, output, session) {
     #   });
     # ")
     )
+  }, server = FALSE)
+
+
+
+  # when the value is edited
+  observeEvent(input$main_table_cell_edit, {
+
+    info <- input$data_display_cell_edit
+
+    # find the next value based on the current value
+    row <- info$row
+    value <- info$value
+
+    # update the value in the reactive dataframe
+    rv$data_display$validation[row] <- value
   })
-
-
-
-  # # Toggle validate state: U → Y → N → U
-  # observeEvent(input$toggle_val, {
-  #
-  #   # find the next value based on the current value
-  #   row <- as.numeric(input$toggle_val)
-  #   current <- rv$data_display$validation[row]
-  #   next_val <- switch(current, "U" = "Y", "Y" = "N", "N" = "U")
-  #
-  #   # update the value in the reactive dataframe
-  #   #rv$data_display$validation[row] <- next_val
-  # })
-
-
-
-
-
 
 
   # Button observers -----------------------------------------------------
