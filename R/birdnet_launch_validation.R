@@ -1,8 +1,6 @@
-
 # ui ----------------------------------------------------------------------
 
 birdnet_validation_ui <- function(request) {
-
   bslib::page_sidebar(
 
     # add title
@@ -13,47 +11,58 @@ birdnet_validation_ui <- function(request) {
 
     # add side bar
     sidebar = bslib::sidebar(
-      bslib::card("File import",
+      bslib::card(
+        "File import",
 
-                  # input: import_file
-                  shiny::fileInput(inputId = "import_file",
-                                   label = "Selection table",
-                                   multiple = FALSE,
-                                   accept = c("text/csv",
-                                              "text/comma-separated-values,text/plain",
-                                              ".csv"),
-                                   width = "100%"),
+        # input: import_file
+        shiny::fileInput(
+          inputId = "import_file",
+          label = "Selection table",
+          multiple = FALSE,
+          accept = c(
+            "text/csv",
+            "text/comma-separated-values,text/plain",
+            ".csv"
+          ),
+          width = "100%"
+        ),
 
-                  # button: dir
-                  shiny::p("Audio folder"),
-                  shinyFiles::shinyDirButton(id = "dir",
-                                             label = "Select",
-                                             title = "Select the species recording folder"),
+        # button: dir
+        shiny::p("Audio folder"),
+        shinyFiles::shinyDirButton(
+          id = "dir",
+          label = "Select",
+          title = "Select the species recording folder"
+        ),
 
-                  # output: dir
-                  shiny::verbatimTextOutput(outputId = "dir",
-                                            placeholder = TRUE)
+        # output: dir
+        shiny::verbatimTextOutput(
+          outputId = "dir",
+          placeholder = TRUE
+        )
+      ), bslib::card(
+        "Actions",
 
+        # button: save_file
+        shiny::downloadButton("save_file", "Save"),
 
-      ), bslib::card("Actions",
+        # button: praise_me
+        shiny::actionButton("praise_me", "Praise me")
+      ), bslib::card(
+        "Spectrogram settings",
 
-                     # button: save_file
-                     shiny::downloadButton("save_file","Save"),
-
-                     # button: praise_me
-                     shiny::actionButton("praise_me", "Praise me")
-
-
-      ), bslib::card("Spectrogram settings",
-
-                     # input: flim, wl
-                     shinyWidgets::numericRangeInput(inputId = "flim",
-                                                     "Frequency range:",
-                                                     min = 1, max = 10,
-                                                     value = c(0, 6)),
-                     shiny::numericInput(inputId = "wl",
-                                         "Window length:",
-                                         value = 512)
+        # input: flim, wl
+        shinyWidgets::numericRangeInput(
+          inputId = "flim",
+          "Frequency range:",
+          min = 1, max = 10,
+          value = c(0, 6)
+        ),
+        shiny::numericInput(
+          inputId = "wl",
+          "Window length:",
+          value = 512
+        )
       )
     ),
 
@@ -62,12 +71,12 @@ birdnet_validation_ui <- function(request) {
     # output: main_table
     bslib::card(
       DT::DTOutput("main_table")
-      ),
+    ),
 
     # output: spectrogram
     bslib::card(
       shiny::plotOutput("spectrogram")
-      )
+    )
   )
 }
 
@@ -78,7 +87,6 @@ birdnet_validation_ui <- function(request) {
 # server ------------------------------------------------------------------
 
 birdnet_validation_server <- function(input, output, session) {
-
   # Helper functions --------------------------------------------------------
 
   # the function to play audio
@@ -93,36 +101,39 @@ birdnet_validation_server <- function(input, output, session) {
   # the function to view spectrogram
   view_spectrogram <- function(filepath, flim, wl, start, end) {
     song <- tuneR::readWave(filepath, from = start - 3, to = end + 3, units = "seconds")
-    seewave::spectro(song, f = song@samp.rate, flim = flim, ovlp = 50,
-                     collevels = seq(-40, 0, 1), wl = wl, scale = FALSE,
-                     main = stringr::str_extract(filepath, "[^/]+(?=\\.wav$)"))
+    seewave::spectro(song,
+      f = song@samp.rate, flim = flim, ovlp = 50,
+      collevels = seq(-40, 0, 1), wl = wl, scale = FALSE,
+      main = stringr::str_extract(filepath, "[^/]+(?=\\.wav$)")
+    )
   }
 
 
   # reactive value for audio file path ----------------------------------
 
   roots <- if (.Platform$OS.type == "windows") {
-
     # list all available drives on Windows
     drives <- system("wmic logicaldisk get name", intern = TRUE)
     drives <- gsub("\\s", "", drives[-1])
 
     # add drives with their names as keys
-    c(Desktop = file.path(Sys.getenv("USERPROFILE"), "Desktop"),
+    c(
+      Desktop = file.path(Sys.getenv("USERPROFILE"), "Desktop"),
       Documents = file.path(Sys.getenv("USERPROFILE"), "Documents"),
       Working_dir = ".",
-      setNames(drives, drives))
-
+      setNames(drives, drives)
+    )
   } else {
-
     # for unix-like systems, include common mount points
     external_drives <- list.files("/Volumes", full.names = TRUE)
 
     # use volume names
-    c(Desktop = "~/Desktop",
+    c(
+      Desktop = "~/Desktop",
       Documents = "~/Documents",
       Working_dir = ".",
-      setNames(external_drives, basename(external_drives)))
+      setNames(external_drives, basename(external_drives))
+    )
   }
 
 
@@ -130,7 +141,8 @@ birdnet_validation_server <- function(input, output, session) {
   shinyFiles::shinyDirChoose(
     input,
     id = "dir",
-    roots = roots)
+    roots = roots
+  )
 
   dir_path <- shiny::reactive({
     shinyFiles::parseDirPath(roots, input$dir)
@@ -147,64 +159,69 @@ birdnet_validation_server <- function(input, output, session) {
 
   # if importing file, create data_editable and data_display reactive values
   shiny::observeEvent(input$import_file, {
-
     # read in the csv file and clean names based on the path input
-    tryCatch({
-      rv$data_editable <- input$import_file$datapath |>
-        readr::read_csv(show_col_types = FALSE) |>
-        birdnet_clean_names()
+    tryCatch(
+      {
+        rv$data_editable <- input$import_file$datapath |>
+          readr::read_csv(show_col_types = FALSE) |>
+          birdnet_clean_names()
 
-      # check if the data frame has the validation column already
-      if (!"validation" %in% names(rv$data_editable)) {
-        rv$data_editable <- rv$data_editable |>
-          dplyr::mutate(validation = "U")
+        # check if the data frame has the validation column already
+        if (!"validation" %in% names(rv$data_editable)) {
+          rv$data_editable <- rv$data_editable |>
+            dplyr::mutate(validation = "U")
+        }
+      },
+      error = function(e) {
+        shiny::showNotification(
+          paste("Error reading CSV:", e$message),
+          type = "error"
+        )
       }
-
-    }, error = function(e) {
-      shiny::showNotification(
-        paste("Error reading CSV:", e$message),
-        type = "error")
-    })
+    )
 
 
     # render the data table with a play button
     rv$data_display <- rv$data_editable |>
       dplyr::mutate(filepath = filepath |> basename()) |>
-      dplyr::select("filepath", "scientific_name", "common_name",
-                    "start", "end", "validation") |>
-
-      dplyr::mutate(Spectrogram = '<button class="spectrogram">Spectrogram</button>',
-                    Audio = '<button class="play-audio">Audio</button>')
-
+      dplyr::select(
+        "filepath", "scientific_name", "common_name",
+        "start", "end", "validation"
+      ) |>
+      dplyr::mutate(
+        Spectrogram = '<button class="spectrogram">Spectrogram</button>',
+        Audio = '<button class="play-audio">Audio</button>'
+      )
   })
 
 
   # Render DT table ----------------------------------------------------
 
-  output$main_table <- DT::renderDT({
+  output$main_table <- DT::renderDT(
+    {
+      # ensure the file has been uploaded before trying to render
+      req(rv$data_display)
 
-    # ensure the file has been uploaded before trying to render
-    req(rv$data_display)
-
-      DT::datatable(rv$data_display ,
-                    editable = TRUE,
-                      #list(target = "column", disable = list(columns = c(1, 2, 3, 4, 5))),
-                    escape = FALSE, # to render HTML properly
-                    selection = "none",
-                    options = list(
-                      pageLength = 10,
-                      columnDefs = list(
-                        list(targets = 7, orderable = FALSE),
-                        list(targets = 8, orderable = FALSE)
-                      )
-                    )
-    )
-  }, server = FALSE)
+      DT::datatable(rv$data_display,
+        editable = TRUE,
+        # list(target = "column", disable = list(columns = c(1, 2, 3, 4, 5))),
+        escape = FALSE, # to render HTML properly
+        selection = "none",
+        options = list(
+          pageLength = 10,
+          columnDefs = list(
+            list(targets = 7, orderable = FALSE),
+            list(targets = 8, orderable = FALSE)
+          )
+        )
+      )
+    },
+    server = FALSE
+  )
 
 
   # when the table is clicked to change values
   observeEvent(input$main_table_cell_edit, {
-
     # get the edit information
     info <- input$main_table_cell_edit
 
@@ -233,7 +250,9 @@ birdnet_validation_server <- function(input, output, session) {
 
   shiny::observeEvent(input$main_table_cell_clicked, {
     info <- input$main_table_cell_clicked
-    if (is.null(info$value)) return()
+    if (is.null(info$value)) {
+      return()
+    }
 
     if (info$col == 7) { # Spectrogram button column
       selected_row <- rv$data_display[info$row, ]
@@ -241,11 +260,13 @@ birdnet_validation_server <- function(input, output, session) {
 
       if (file.exists(filepath)) {
         output$spectrogram <- shiny::renderPlot({
-          view_spectrogram(filepath = filepath,
-                           flim = input$flim,
-                           wl = input$wl,
-                           start = selected_row$start,
-                           end = selected_row$end)
+          view_spectrogram(
+            filepath = filepath,
+            flim = input$flim,
+            wl = input$wl,
+            start = selected_row$start,
+            end = selected_row$end
+          )
         })
       } else {
         shiny::showNotification("Audio file not found.", type = "error")
@@ -257,15 +278,16 @@ birdnet_validation_server <- function(input, output, session) {
       filepath <- file.path(dir_path(), basename(selected_row$filepath))
 
       if (file.exists(filepath)) {
-        play_audio(filepath = filepath,
-                   start = selected_row$start,
-                   end = selected_row$end)
+        play_audio(
+          filepath = filepath,
+          start = selected_row$start,
+          end = selected_row$end
+        )
       } else {
         shiny::showNotification("Audio file not found.", type = "error")
       }
     }
   })
-
 }
 
 
@@ -277,9 +299,8 @@ birdnet_validation_server <- function(input, output, session) {
 #'
 #' @export
 birdnet_launch_validation <- function() {
-
-  shiny::shinyApp(ui = birdnet_validation_ui,
-                  server = birdnet_validation_server)
-
+  shiny::shinyApp(
+    ui = birdnet_validation_ui,
+    server = birdnet_validation_server
+  )
 }
-
