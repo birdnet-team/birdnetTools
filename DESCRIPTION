@@ -15,14 +15,19 @@ Imports:
     checkmate,
     cli,
     dplyr,
+    DT,
     ggplot2,
     lubridate,
     praise,
     purrr,
     readr,
     rlang,
+    seewave,
     shiny,
-    stringr
+    shinyFiles,
+    shinyWidgets,
+    stringr,
+    tuneR
 Suggests: 
     knitr,
     rmarkdown,
