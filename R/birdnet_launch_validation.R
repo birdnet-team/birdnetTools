@@ -273,7 +273,6 @@ birdnet_validation_server <- function(input, output, session) {
 
 # main app ----------------------------------------------------------------
 
-
 #' Launch BirdNET validation app
 #'
 #' @export
