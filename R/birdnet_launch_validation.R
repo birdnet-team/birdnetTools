@@ -6,7 +6,7 @@ birdnet_validation_ui <- function(request) {
   bslib::page_sidebar(
 
     # add title
-    title = "Audio Validation platform (birdnetTools R package)",
+    title = "birdnetTools / Audio Validation platform",
 
     # side bar setting
     sidebar_width = 350,
@@ -17,13 +17,15 @@ birdnet_validation_ui <- function(request) {
 
                   # input: import_file
                   shiny::fileInput(inputId = "import_file",
-                                   label = "Metadata csv file",
+                                   label = "Selection table",
                                    multiple = FALSE,
-                                   accept = c("text/csv", "text/comma-separated-values,text/plain", ".csv"),
+                                   accept = c("text/csv",
+                                              "text/comma-separated-values,text/plain",
+                                              ".csv"),
                                    width = "100%"),
 
                   # button: dir
-                  shiny::p("Recording folder"),
+                  shiny::p("Audio folder"),
                   shinyFiles::shinyDirButton(id = "dir",
                                              label = "Select",
                                              title = "Select the species recording folder"),
@@ -33,23 +35,25 @@ birdnet_validation_ui <- function(request) {
                                             placeholder = TRUE)
 
 
-      ), bslib::card("Settings",
-
-                  # input: flim, wl
-                  shinyWidgets::numericRangeInput(inputId = "flim",
-                                                  "Frequency range:",
-                                                  min = 1, max = 10,
-                                                  value = c(0, 6)),
-                  shiny::numericInput(inputId = "wl",
-                                      "Window length:",
-                                      value = 512)
       ), bslib::card("Actions",
 
-                  # button: save_file
-                  shiny::downloadButton("save_file","Save"),
+                     # button: save_file
+                     shiny::downloadButton("save_file","Save"),
 
-                  # button: praise_me
-                  shiny::actionButton("praise_me", "Praise me")
+                     # button: praise_me
+                     shiny::actionButton("praise_me", "Praise me")
+
+
+      ), bslib::card("Spectrogram settings",
+
+                     # input: flim, wl
+                     shinyWidgets::numericRangeInput(inputId = "flim",
+                                                     "Frequency range:",
+                                                     min = 1, max = 10,
+                                                     value = c(0, 6)),
+                     shiny::numericInput(inputId = "wl",
+                                         "Window length:",
+                                         value = 512)
       )
     ),
 
@@ -62,9 +66,7 @@ birdnet_validation_ui <- function(request) {
 
     # output: spectrogram
     bslib::card(
-      shiny::verbatimTextOutput("test")
-      #DT::DTOutput("main_table_1")
-      #shiny::plotOutput("spectrogram")
+      shiny::plotOutput("spectrogram")
       )
   )
 }
@@ -153,7 +155,7 @@ birdnet_validation_server <- function(input, output, session) {
         birdnet_clean_names()
 
       # check if the data frame has the validation column already
-      if (!"validation" %in% names(rv$editable)) {
+      if (!"validation" %in% names(rv$data_editable)) {
         rv$data_editable <- rv$data_editable |>
           dplyr::mutate(validation = "U")
       }
@@ -167,6 +169,7 @@ birdnet_validation_server <- function(input, output, session) {
 
     # render the data table with a play button
     rv$data_display <- rv$data_editable |>
+      dplyr::mutate(filepath = filepath |> basename()) |>
       dplyr::select("filepath", "scientific_name", "common_name",
                     "start", "end", "validation") |>
 
@@ -207,11 +210,6 @@ birdnet_validation_server <- function(input, output, session) {
 
     # update the value in the reactive dataframe
     rv$data_editable$validation[info$row] <- info$value
-
-    output$test <- shiny::renderPrint(
-      "click triggered"
-    )
-
   })
 
 
