@@ -55,7 +55,7 @@ birdnet_heatmap(data_filtered)
   
 ```
 
-### Funding
+## Funding
 
 This project is supported by Jake Holshuh (Cornell class of ’69) and The
 Arthur Vining Davis Foundations. Our work in the K. Lisa Yang Center for
@@ -71,7 +71,7 @@ project (FKZ 67KI31040E). In addition, the Deutsche Bundesstiftung
 Umwelt supports BirdNET through the project “RangerSound” (project
 39263/01).
 
-### Partners
+## Partners
 
 BirdNET is a joint effort of partners from academia and industry.
 Without these partnerships, this project would not have been possible.

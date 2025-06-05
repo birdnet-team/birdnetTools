@@ -29,9 +29,7 @@ birdnet_subsample <- function(data,
                               method = c("stratified", "random", "top"),
                               save_to_file = FALSE,
                               file = NULL) {
-
-
-# argument check ----------------------------------------------------------
+  # argument check ----------------------------------------------------------
 
   method <- match.arg(method)
 
@@ -40,42 +38,46 @@ birdnet_subsample <- function(data,
   checkmate::assert_flag(save_to_file)
 
 
-# main function -----------------------------------------------------------
+  # main function -----------------------------------------------------------
 
   data <- data |>
     birdnet_clean_names()
 
-  # straitified sampling the data, useful for balancing species with different confidence scores
+  # balancing samples with different confidence scores
   if (method == "stratified") {
     data <- data |>
       dplyr::mutate(category = cut(confidence,
-                                   breaks = seq(0.1, 1, by = 0.05),
-                                   right = FALSE)) |>
-      dplyr::slice_sample(n = round(n / 18),
-                          by = c(category, common_name)) |>
+        breaks = seq(0.1, 1, by = 0.05),
+        right = FALSE
+      )) |>
+      dplyr::slice_sample(
+        n = round(n / 18),
+        by = c(category, common_name)
+      ) |>
       dplyr::select(-category)
 
-  # random sampling the data, useful for picking data for validation
+    # random sampling the data
   } else if (method == "random") {
     data <- data |>
-      dplyr::slice_sample(n = n,
-                          replace = FALSE,
-                          by = common_name)
+      dplyr::slice_sample(
+        n = n,
+        replace = FALSE,
+        by = common_name
+      )
 
-  # top confidence sampling the data, useful when checking the richness
+    # useful when checking the richness
   } else if (method == "top") {
     data <- data |>
       dplyr::slice_max(confidence,
-                       n = n,
-                       by = common_name)
+        n = n,
+        by = common_name
+      )
   }
 
-
-  if (save_to_file) {
+  if (!is.null(file) || save_to_file) {
     file_to_write <- if (is.null(file)) "subsampled_data.csv" else file
     readr::write_csv(data, file = file_to_write)
   }
-
 
   return(data)
 }
