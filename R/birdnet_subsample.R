@@ -31,12 +31,26 @@ birdnet_subsample <- function(data,
                               file = NULL) {
   # argument check ----------------------------------------------------------
 
-  method <- match.arg(method)
-
+  # data is a dataframe
   checkmate::assert_data_frame(data)
+
+  # n is a single positive integer
+  checkmate::assert_count(n, positive = TRUE)
+
+  # method is one of the accepted values
+  method <- match.arg(method)
   checkmate::assert_choice(method, choices = c("stratified", "random", "top"))
+
+  # save_to_file is a logical value
   checkmate::assert_flag(save_to_file)
 
+  # If file is not NULL, check that it’s a character string ending in ".csv"
+  if (!is.null(file)) {
+    checkmate::assert_character(file, len = 1, any.missing = FALSE)
+    if (!grepl("\\.csv$", file, ignore.case = TRUE)) {
+      rlang::abort("`file` must end with '.csv'.")
+    }
+  }
 
   # main function -----------------------------------------------------------
 
