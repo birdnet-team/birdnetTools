@@ -20,8 +20,9 @@ using \code{\link[=birdnet_clean_names]{birdnet_clean_names()}}.}
 
 \item{species}{Character vector. One or more common names of the species to filter by (e.g., \code{c("Swainson's Thrush", "American Robin")}).}
 
-\item{threshold}{Numeric. Confidence threshold (between 0 and 1); rows with confidence below
-this value will be excluded.}
+\item{threshold}{Either a single numeric value between 0 and 1 (for universal threshold) or a data frame
+with \code{scientific_name} and \code{threshold} columns for species-specific thresholds. Rows with confidence below
+the threshold will be excluded.}
 
 \item{year}{Integer or vector of integers. Year(s) to retain in the data (e.g., \code{c(2024:2025)}).}
 

@@ -39,15 +39,8 @@ birdnet_filter <- function(data,
 
   # argument check ----------------------------------------------------------
   # 1. Check data is a tibble with required columns
-  required_cols <- c("filepath", "start", "end", "common_name", "scientific_name", "confidence")
+  checkmate::assert_data_frame(data)
 
-  checkmate::assert_tibble(data)
-  missing_cols <- setdiff(required_cols, names(data |> birdnet_clean_names()))
-  if (length(missing_cols) > 0) {
-    rlang::abort(
-      message = paste0("Input `data` is missing required columns: ", paste(missing_cols, collapse = ", "))
-    )
-  }
 
   # 2. species: NULL or character vector
   if (!is.null(species)) {
