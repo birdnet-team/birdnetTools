@@ -40,8 +40,8 @@ test_that("birdnet_subsample: works with method = 'random'", {
 
   expect_s3_class(result, "data.frame")
   expect_lte(all(result |>
-               dplyr::summarize(count = n(), .by = scientific_name) |>
-               pull(count)),
+               dplyr::summarize(count = dplyr::n(), .by = scientific_name) |>
+               dplyr::pull(count)),
              20)  # max 5 per species
 })
 
@@ -52,8 +52,8 @@ test_that("birdnet_subsample: works with method = 'top'", {
 
   expect_s3_class(result, "data.frame")
   expect_lte(all(result |>
-                   dplyr::summarize(count = n(), .by = scientific_name) |>
-                   pull(count)), 10)
+                   dplyr::summarize(count = dplyr::n(), .by = scientific_name) |>
+                   dplyr::pull(count)), 10)
 })
 
 
