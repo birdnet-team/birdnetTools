@@ -2,10 +2,31 @@
 % Please edit documentation in R/birdnet_launch_validation.R
 \name{birdnet_launch_validation}
 \alias{birdnet_launch_validation}
-\title{Launch BirdNET validation app}
+\title{Launch the BirdNET audio validation app}
 \usage{
 birdnet_launch_validation()
 }
+\value{
+A \code{shiny.appobj} that runs the BirdNET audio validation platform in a web browser.
+}
 \description{
-Launch BirdNET validation app
+Starts an interactive Shiny application for manually validating BirdNET detections
+using audio clips and spectrograms.
+}
+\details{
+This function launches a user-friendly Shiny app that allows you to:
+\itemize{
+\item Import a CSV file of BirdNET detections (selection table format),
+\item Select the directory containing your \code{.wav} audio files,
+\item View and validate each detection using spectrograms and audio playback,
+\item Edit validation results interactively and save the updated table.
+}
+
+This tool is designed to support manual review of BirdNET results.
+}
+\examples{
+\dontrun{
+birdnet_launch_validation()
+}
+
 }

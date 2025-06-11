@@ -1,5 +1,25 @@
-# ui ----------------------------------------------------------------------
-
+#' User interface for BirdNET audio validation platform
+#'
+#' Constructs the UI layout for the audio validation platform within the
+#' `birdnetTools` package. This UI includes file input, audio folder selection,
+#' spectrogram settings, and main output areas for data display and spectrogram
+#' plotting.
+#'
+#' @param request Internal parameter for `{shiny}` applications. Typically not set by the user.
+#'
+#' @return A `shiny` UI object built with `bslib::page_sidebar()`.
+#'
+#' @details This internal UI function is used by the Shiny validation app
+#' launched through higher-level user-facing functions. It sets up sidebar
+#' inputs for file import and settings, and main panel outputs for data and
+#' spectrogram display.
+#'
+#' @importFrom bslib page_sidebar sidebar card
+#' @importFrom shiny fileInput p verbatimTextOutput downloadButton actionButton
+#' @importFrom shinyWidgets numericRangeInput
+#' @importFrom shinyFiles shinyDirButton
+#' @importFrom DT DTOutput
+#' @keywords internal
 birdnet_validation_ui <- function(request) {
   bslib::page_sidebar(
 
@@ -84,8 +104,32 @@ birdnet_validation_ui <- function(request) {
 
 
 
-# server ------------------------------------------------------------------
 
+#' Server logic for BirdNET audio validation platform
+#'
+#' Defines the server-side logic for the audio validation app within the
+#' `birdnetTools` package. This server handles file imports, audio directory
+#' selection, spectrogram generation, interactive table editing, and audio playback.
+#'
+#' @param input,output,session Standard `shiny` server function parameters.
+#'
+#' @return This function is called for its side effects in the context of a `shinyApp`.
+#'
+#' @details This internal server function powers the interactive audio validation
+#' interface. Users can import a CSV of BirdNET detections, link to local audio
+#' directories, view spectrograms, and manually validate detections through a
+#' Shiny DataTable interface. Audio playback and validation column editing are supported.
+#'
+#' @importFrom shiny observeEvent reactive reactiveValues renderText renderPlot downloadHandler showNotification
+#' @importFrom shinyFiles shinyDirChoose parseDirPath
+#' @importFrom DT renderDT datatable
+#' @importFrom tuneR readWave play setWavPlayer
+#' @importFrom seewave spectro
+#' @importFrom stringr str_extract
+#' @importFrom praise praise
+#' @importFrom readr read_csv write_csv
+#' @importFrom dplyr mutate select
+#' @keywords internal
 birdnet_validation_server <- function(input, output, session) {
   # Helper functions --------------------------------------------------------
 
@@ -292,12 +336,30 @@ birdnet_validation_server <- function(input, output, session) {
 
 
 
-
-# main app ----------------------------------------------------------------
-
-#' Launch BirdNET validation app
+#' Launch the BirdNET audio validation app
+#'
+#' Starts an interactive Shiny application for manually validating BirdNET detections
+#' using audio clips and spectrograms.
+#'
+#' @return A `shiny.appobj` that runs the BirdNET audio validation platform in a web browser.
+#'
+#' @details This function launches a user-friendly Shiny app that allows you to:
+#' \itemize{
+#'   \item Import a CSV file of BirdNET detections (selection table format),
+#'   \item Select the directory containing your `.wav` audio files,
+#'   \item View and validate each detection using spectrograms and audio playback,
+#'   \item Edit validation results interactively and save the updated table.
+#' }
+#'
+#' This tool is designed to support manual review of BirdNET results.
+#'
+#' @examples
+#' \dontrun{
+#' birdnet_launch_validation()
+#' }
 #'
 #' @export
+#' @import shiny
 birdnet_launch_validation <- function() {
   shiny::shinyApp(
     ui = birdnet_validation_ui,
