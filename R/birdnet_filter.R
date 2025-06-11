@@ -8,8 +8,9 @@
 #' @param data A data frame containing BirdNET output. Column names will be standardized internally
 #'   using [birdnet_clean_names()].
 #' @param species Character vector. One or more common names of the species to filter by (e.g., `c("Swainson's Thrush", "American Robin")`).
-#' @param threshold Numeric. Confidence threshold (between 0 and 1); rows with confidence below
-#'   this value will be excluded.
+#' @param threshold Either a single numeric value between 0 and 1 (for universal threshold) or a data frame
+#'   with `scientific_name` and `threshold` columns for species-specific thresholds. Rows with confidence below
+#'   the threshold will be excluded.
 #' @param year Integer or vector of integers. Year(s) to retain in the data (e.g., `c(2024:2025)`).
 #' @param min_date,max_date Character strings or `Date` objects specifying the date range (inclusive).
 #'   If only one is provided, filtering is open-ended on the other side (e.g., "2025-06-09").
@@ -27,7 +28,6 @@
 #' }
 #'
 #' @export
-
 birdnet_filter <- function(data,
                            species = NULL,
                            threshold = NULL,
@@ -35,6 +35,65 @@ birdnet_filter <- function(data,
                            min_date = NULL,
                            max_date = NULL,
                            hour = NULL) {
+
+
+  # argument check ----------------------------------------------------------
+  # 1. Check data is a tibble with required columns
+  required_cols <- c("filepath", "start", "end", "common_name", "scientific_name", "confidence")
+
+  checkmate::assert_tibble(data)
+  missing_cols <- setdiff(required_cols, names(data |> birdnet_clean_names()))
+  if (length(missing_cols) > 0) {
+    rlang::abort(
+      message = paste0("Input `data` is missing required columns: ", paste(missing_cols, collapse = ", "))
+    )
+  }
+
+  # 2. species: NULL or character vector
+  if (!is.null(species)) {
+    checkmate::assert_character(species, any.missing = FALSE, min.len = 1)
+  }
+
+  # 3. threshold: NULL or numeric scalar/vector or tibble with "species" and "threshold" columns
+  if (!is.null(threshold)) {
+    if (inherits(threshold, "tbl") || inherits(threshold, "data.frame")) {
+      checkmate::assert_names(names(threshold), must.include = c("scientific_name", "threshold"))
+      checkmate::assert_character(threshold$scientific_name, any.missing = FALSE)
+      checkmate::assert_numeric(threshold$threshold, lower = 0, upper = 1, any.missing = FALSE)
+    } else {
+      # numeric scalar or vector with values between 0 and 1
+      checkmate::assert_numeric(threshold, lower = 0, upper = 1, any.missing = FALSE)
+    }
+  }
+
+  # 4. year: NULL or numeric vector (assuming it should be numeric years)
+  if (!is.null(year)) {
+    checkmate::assert_numeric(year, any.missing = FALSE)
+  }
+
+  # 5. min_date and max_date: NULL or character strings in "YYYY-MM-DD" format
+  date_pattern <- "^\\d{4}-\\d{2}-\\d{2}$"
+  if (!is.null(min_date)) {
+    checkmate::assert_character(min_date, len = 1, any.missing = FALSE)
+    if (!grepl(date_pattern, min_date)) {
+      rlang::abort("`min_date` must be a character string in 'YYYY-MM-DD' format.")
+    }
+  }
+  if (!is.null(max_date)) {
+    checkmate::assert_character(max_date, len = 1, any.missing = FALSE)
+    if (!grepl(date_pattern, max_date)) {
+      rlang::abort("`max_date` must be a character string in 'YYYY-MM-DD' format.")
+    }
+  }
+
+  # 6. hour: NULL or numeric vector with values between 0 and 23 inclusive
+  if (!is.null(hour)) {
+    checkmate::assert_numeric(hour, lower = 0, upper = 23, any.missing = FALSE)
+  }
+
+
+
+  # main function -----------------------------------------------------------
   # clean column names first
   data <- birdnet_clean_names(data)
 

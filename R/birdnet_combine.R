@@ -38,7 +38,6 @@ birdnet_combine <- function(path) {
   checkmate::assert_directory_exists(path)
 
 
-
   # main function -----------------------------------------------------------
   # list all files in the directory
   all_files <- list.files(
@@ -59,52 +58,53 @@ birdnet_combine <- function(path) {
     rlang::abort("No valid .csv or .txt files found in the specified directory.")
   }
 
+
   # initialize a vector to store any files that cause errors
   error_files <- c()
 
   # use map_dfr with tryCatch to handle errors gracefully
   detections_raw <- filtered_files |>
-    purrr::map_dfr(~ tryCatch(
-      {
-        .x |> readr::read_csv(show_col_types = FALSE) |>
-          birdnet_clean_names() |>
-          dplyr::mutate(
-            start = as.numeric(start),
-            end = as.numeric(end),
-            scientific_name = as.character(scientific_name),
-            common_name = as.character(common_name),
-            confidence = as.numeric(confidence),
-            filepath = as.character(filepath)
-          )
+    purrr::map_dfr(~ tryCatch({
 
-      }, error = function(e) {
-        # store the filename that caused the error
-        error_files <<- c(error_files, .x)
-
-        # return an empty tibble with the same column structure to continue
-        dplyr::tibble(
-          start = numeric(0),          # numeric for doubles
-          end = numeric(0),
-          scientific_name = character(0),
-          common_name = character(0),
-          confidence = numeric(0),
-          filepath = character(0)
+      .x |> readr::read_csv(show_col_types = FALSE) |>
+        birdnet_clean_names() |>
+        dplyr::mutate(
+          start = as.numeric(start),
+          end = as.numeric(end),
+          scientific_name = as.character(scientific_name),
+          common_name = as.character(common_name),
+          confidence = as.numeric(confidence),
+          filepath = as.character(filepath)
         )
 
-      }, warning = function(w) {
-        # store the filename that caused the error
-        error_files <<- c(error_files, .x)
+    }, error = function(e) {
+      # store the filename that caused the error
+      error_files <<- c(error_files, .x)
 
-        # return an empty tibble with the same column structure to continue
-        dplyr::tibble(
-          start = numeric(0),          # numeric for doubles
-          end = numeric(0),
-          scientific_name = character(0),
-          common_name = character(0),
-          confidence = numeric(0),
-          filepath = character(0)
-        )
-      }
+      # return an empty tibble with the same column structure to continue
+      dplyr::tibble(
+        start = numeric(0),          # numeric for doubles
+        end = numeric(0),
+        scientific_name = character(0),
+        common_name = character(0),
+        confidence = numeric(0),
+        filepath = character(0)
+      )
+
+    }, warning = function(w) {
+      # store the filename that caused the error
+      error_files <<- c(error_files, .x)
+
+      # return an empty tibble with the same column structure to continue
+      dplyr::tibble(
+        start = numeric(0),          # numeric for doubles
+        end = numeric(0),
+        scientific_name = character(0),
+        common_name = character(0),
+        confidence = numeric(0),
+        filepath = character(0)
+      )
+    }
     ))
 
 

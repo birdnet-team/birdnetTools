@@ -38,9 +38,6 @@ birdnet_heatmap <- function(data,
 
 
   # filter data based on date and hour range
-  if (is.null(min_date)) min_date <- min(data_with_time$date, na.rm = TRUE)
-  if (is.null(max_date)) max_date <- max(data_with_time$date, na.rm = TRUE)
-
   data_after_filter <- data_with_time |>
     birdnet_filter(
       min_date = min_date,
