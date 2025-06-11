@@ -1,9 +1,4 @@
-test_that("shinyapp can launch after calling", {
-  expect_equal()
-})
-
-
-test_that("Initial test for the server", {
+test_that("Shiny server accepts file from the input filepath import_file", {
 
   testServer(birdnet_validation_server, {
     session$setInputs(import_file = list(
@@ -16,8 +11,9 @@ test_that("Initial test for the server", {
     # Trigger the observer and allow it time to run
     session$flushReact()
 
-    # Now you can test output or reactive values
-    expect_true(!is.null(rv$data_display))
+    # tests for the rv$data_editable
+    expect_true(!is.null(rv$data_editable))
+
   })
 
 })
