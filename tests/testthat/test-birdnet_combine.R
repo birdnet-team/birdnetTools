@@ -1,3 +1,3 @@
-test_that("multiplication works", {
-  expect_equal(2 * 2, 4)
+test_that("the function accepts an input for path", {
+  expect_true(!is.null(birdnet_combine(path = test_path("data"))))
 })

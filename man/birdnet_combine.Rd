@@ -7,21 +7,22 @@
 birdnet_combine(path)
 }
 \arguments{
-\item{path}{Character string. The directory path containing BirdNET output \code{.csv} files. Can include subdirectories.}
+\item{path}{Character string. The directory path containing BirdNET output \code{.csv} or \code{.txt} files. Can include subdirectories.}
 }
 \value{
-A data frame containing the combined BirdNET detection data from all valid CSV files, with columns:
+A data frame containing the combined BirdNET detection data from all valid files, with columns:
 \itemize{
-\item \code{Start (s)}: Detection start time in seconds.
-\item \code{End (s)}: Detection end time in seconds.
-\item \code{Scientific name}: Scientific name of the detected species.
-\item \code{Common name}: Common name of the detected species.
-\item \code{Confidence}: Confidence score of the detection.
-\item \code{File}: Name of the file where the detection was found.
+\item \code{start}: Detection start time in seconds.
+\item \code{end}: Detection end time in seconds.
+\item \code{scientific_name}: Scientific name of the detected species.
+\item \code{common_name}: Common name of the detected species.
+\item \code{confidence}: Confidence score of the detection.
+\item \code{filepath}: Name of the file where the detection was found.
 }
 }
 \description{
-Reads and combines multiple BirdNET output CSV files from a specified directory into a single data frame.
+Reads and combines multiple BirdNET output .csv or .txt files from a specified directory
+into a single data frame.
 Files named with "analysis_params" or "CombinedTable" under the specified directory are automatically excluded.
 }
 \details{
@@ -31,7 +32,7 @@ formats or errors are skipped and their names are printed with a warning.
 }
 \examples{
 \dontrun{
-combined_data <- group_BirdNET_output("path/to/BirdNET/output")
+data <- birdnet_combine("path/to/BirdNET/output")
 }
 
 }

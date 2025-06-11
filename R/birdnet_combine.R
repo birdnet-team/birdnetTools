@@ -1,18 +1,19 @@
 #' Group BirdNET output files
 #'
-#' Reads and combines multiple BirdNET output CSV files from a specified directory into a single data frame.
+#' Reads and combines multiple BirdNET output .csv or .txt files from a specified directory
+#' into a single data frame.
 #' Files named with "analysis_params" or "CombinedTable" under the specified directory are automatically excluded.
 #'
-#' @param path Character string. The directory path containing BirdNET output `.csv` files. Can include subdirectories.
+#' @param path Character string. The directory path containing BirdNET output `.csv` or `.txt` files. Can include subdirectories.
 #'
-#' @return A data frame containing the combined BirdNET detection data from all valid CSV files, with columns:
+#' @return A data frame containing the combined BirdNET detection data from all valid files, with columns:
 #' \itemize{
-#'   \item \code{Start (s)}: Detection start time in seconds.
-#'   \item \code{End (s)}: Detection end time in seconds.
-#'   \item \code{Scientific name}: Scientific name of the detected species.
-#'   \item \code{Common name}: Common name of the detected species.
-#'   \item \code{Confidence}: Confidence score of the detection.
-#'   \item \code{File}: Name of the file where the detection was found.
+#'   \item \code{start}: Detection start time in seconds.
+#'   \item \code{end}: Detection end time in seconds.
+#'   \item \code{scientific_name}: Scientific name of the detected species.
+#'   \item \code{common_name}: Common name of the detected species.
+#'   \item \code{confidence}: Confidence score of the detection.
+#'   \item \code{filepath}: Name of the file where the detection was found.
 #' }
 #'
 #' @details
@@ -22,7 +23,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' combined_data <- group_BirdNET_output("path/to/BirdNET/output")
+#' data <- birdnet_combine("path/to/BirdNET/output")
 #' }
 #'
 #' @importFrom readr read_csv cols col_double col_character
@@ -31,24 +32,32 @@
 #' @importFrom cli cli_alert_success cli_alert_warning cli_li
 #' @export
 birdnet_combine <- function(path) {
+
   # argument check ----------------------------------------------------------
+  checkmate::assert_character(path, len = 1, any.missing = FALSE)
+  checkmate::assert_directory_exists(path)
+
 
 
   # main function -----------------------------------------------------------
-
-
   # list all files in the directory
   all_files <- list.files(
     path,
-    pattern = "\\.csv$",
+    pattern = "\\.(csv|txt)$",
     recursive = TRUE,
     full.names = TRUE
   )
 
+  if (length(all_files) == 0) {
+    rlang::abort("No valid .csv or .txt files found in the specified directory.")
+  }
 
   # filter out unwanted files
-  filtered_files <- all_files[!grepl("analysis_params|CombinedTable",
-                                     all_files)]
+  filtered_files <- all_files[!grepl("analysis_params|CombinedTable", all_files)]
+
+  if (length(filtered_files) == 0) {
+    rlang::abort("No valid .csv or .txt files found in the specified directory.")
+  }
 
   # initialize a vector to store any files that cause errors
   error_files <- c()
