@@ -3,11 +3,12 @@
 
 
 birdnet_calc_threshold <- function (validated_data,
-                                    method = c("precision", "probability"),
-                                    probability = 0.9,
+                                    full_data = NULL,
 
-                                    precision = 0.9,
-                                    full_data = NULL) {
+                                    method = c("precision", "probability"),
+
+                                    probability = 0.9,
+                                    precision = 0.9) {
 
 
   # argument check ----------------------------------------------------------
