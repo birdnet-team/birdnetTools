@@ -73,8 +73,9 @@ using <code><a href="birdnet_clean_names.html">birdnet_clean_names()</a></code>.
 
 
 <dt id="arg-threshold">threshold<a class="anchor" aria-label="anchor" href="#arg-threshold"></a></dt>
-<dd><p>Numeric. Confidence threshold (between 0 and 1); rows with confidence below
-this value will be excluded.</p></dd>
+<dd><p>Either a single numeric value between 0 and 1 (for universal threshold) or a data frame
+with <code>scientific_name</code> and <code>threshold</code> columns for species-specific thresholds. Rows with confidence below
+the threshold will be excluded.</p></dd>
 
 
 <dt id="arg-year">year<a class="anchor" aria-label="anchor" href="#arg-year"></a></dt>
