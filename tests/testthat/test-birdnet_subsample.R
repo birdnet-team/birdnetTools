@@ -1,7 +1,7 @@
 
 test_that("birdnet_subsample: input validation works", {
 
-  valid_data <- read_csv(testthat::test_path("data", "test_example_1.csv"))
+  valid_data <- readr::read_csv(testthat::test_path("data", "test_example_1.csv"))
 
   # Should error if data is not a dataframe
   testthat::expect_error(birdnet_subsample("not a df", n = 10), "character")
@@ -24,7 +24,7 @@ test_that("birdnet_subsample: input validation works", {
 
 test_that("birdnet_subsample: works with method = 'stratified'", {
 
-  valid_data <- read_csv(testthat::test_path("data", "test_example_1.csv"))
+  valid_data <- readr::read_csv(testthat::test_path("data", "test_example_1.csv"))
   result <- birdnet_subsample(valid_data, n = 20, method = "stratified")
 
   expect_s3_class(result, "data.frame")
@@ -35,7 +35,7 @@ test_that("birdnet_subsample: works with method = 'stratified'", {
 
 test_that("birdnet_subsample: works with method = 'random'", {
 
-  valid_data <- read_csv(testthat::test_path("data", "test_example_1.csv"))
+  valid_data <- readr::read_csv(testthat::test_path("data", "test_example_1.csv"))
   result <- birdnet_subsample(valid_data, n = 20, method = "random")
 
   expect_s3_class(result, "data.frame")
@@ -47,7 +47,7 @@ test_that("birdnet_subsample: works with method = 'random'", {
 
 test_that("birdnet_subsample: works with method = 'top'", {
 
-  valid_data <- read_csv(testthat::test_path("data", "test_example_1.csv"))
+  valid_data <- readr::read_csv(testthat::test_path("data", "test_example_1.csv"))
   result <- birdnet_subsample(valid_data, n = 10, method = "top")
 
   expect_s3_class(result, "data.frame")
@@ -59,7 +59,7 @@ test_that("birdnet_subsample: works with method = 'top'", {
 
 
 test_that("birdnet_subsample: file output is created if save_to_file = TRUE", {
-  df <- tibble::tibble(
+  df <- dplyr::tibble(
     filepath = "audio.wav",
     start = 0,
     end = 3,
