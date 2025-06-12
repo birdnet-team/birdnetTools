@@ -58,10 +58,13 @@ birdnet_calc_threshold <- function(validated_data,
   # validated data has to have at least a column called "validation",
   # and "1" and "0" as values to indicate true positive or false positive of the detection
 
-  # if selecting method = precision, then precision has should be supplied
-  # if selecting method = probability, then probability should be supplied
+  # if probability is used, then the method automatically set to "probability"
+  # if precision is given, then the method is set to "precision"
+  # both probability and precision has to range between 0 and 1, inclusive
 
   # method has to be either one of the two options
+
+  # add progress bar
 
 
   if (is.null(full_data)) {
@@ -90,8 +93,8 @@ birdnet_calc_threshold <- function(validated_data,
       return(NA_real_)
     }
 
-    filtered %>%
-      dplyr::slice_min(threshold, with_ties = FALSE) %>%
+    filtered |>
+      dplyr::slice_min(threshold, with_ties = FALSE) |>
       dplyr::pull(threshold)
   }
 
@@ -105,13 +108,15 @@ birdnet_calc_threshold <- function(validated_data,
     dplyr::pull(common_name)
 
 
-  pb <- cli::cli_progress_bar("Calculating thresholds", total = length(species_list))
+  pb <- cli::cli_progress_bar("Calculating thresholds",
+                              total = length(species_list))
 
   results <- purrr::map_dfr(species_list, function(species_ind) {
+
     cli::cli_alert_info("Processing species: {.field {species_ind}}")
 
     species_data <- validated_data |>
-      filter(common_name == species_ind)
+      birdnet_filter_species(species = species_ind)
 
     species_model <- glm(
       formula = validation ~ confidence,
@@ -121,31 +126,38 @@ birdnet_calc_threshold <- function(validated_data,
 
     if (method == "precision") {
       species_data_full <- full_data |>
-        filter(common_name == species_ind)
+        birdnet_filter_species(species = species_ind)
 
       species_probability <- species_data_full |>
-        mutate(probability = predict(species_model, newdata = species_data_full, type = "response"))
+        dplyr::mutate(probability = predict(species_model,
+                                            newdata = species_data_full,
+                                            type = "response"))
 
-      threshold_table <- tibble(threshold = seq(0, 1, 0.001)) |>
-        mutate(precision = map_dbl(threshold, ~ threshold2precision(species_probability, .x)))
+      threshold_table <- dplyr::tibble(threshold = seq(0, 1, 0.001)) |>
+        dplyr::mutate(precision = purrr::map_dbl(threshold, ~ threshold2precision(species_probability, .x)))
 
-      t_target <- precision2threshold(threshold_table, precision_target = precision)
+      t_target <- precision2threshold(threshold_table = threshold_table,
+                                      precision_target = precision)
+
 
     } else if (method == "probability") {
+
       t_target <- (log(probability / (1 - probability)) - coef(species_model)[1]) / coef(species_model)[2]
+
     }
 
+
     if (t_target < min(validated_data$confidence, na.rm = TRUE) || t_target > 1) {
-      t_target <- max(
-        min(validated_data$confidence, na.rm = TRUE),
-        min(t_target, 1)
+
+      t_target <- max(min(validated_data$confidence, na.rm = TRUE),
+                      min(t_target, 1)
       )
       cli::cli_alert_warning(
         "Calculated threshold for {.val {species_ind}} is outside [0, 1] range and has been clamped."
       )
     }
 
-    tibble(
+    dplyr::tibble(
       common_name = species_ind,
       threshold = t_target
     )
