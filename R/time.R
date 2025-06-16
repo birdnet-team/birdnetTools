@@ -6,8 +6,6 @@
 #'
 #' @returns A character string
 #'
-#' @examples
-#' what_time()
 #' @keywords internal
 what_time <- function(city = "Vancouver") {
 

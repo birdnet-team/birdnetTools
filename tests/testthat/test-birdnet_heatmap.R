@@ -1,6 +1,6 @@
 test_that("birdnet_heatmap argument checks work", {
 
-  valid_data <- read_csv(test_path("data", "test_example_1.csv"))
+  valid_data <- readr::read_csv(test_path("data", "test_example_1.csv"))
 
   # 1. data must be tibble with required columns
   expect_error(birdnet_heatmap(data = mtcars))
@@ -18,13 +18,13 @@ test_that("birdnet_heatmap argument checks work", {
   expect_error(birdnet_heatmap(data = valid_data, threshold = c(0.1, 0.5)))
   expect_silent(birdnet_heatmap(data = valid_data, threshold = 0.7))
 
-  df_threshold <- tibble(scientific_name = c("Turdus migratorius"), threshold = c(0.8))
+  df_threshold <- dplyr::tibble(scientific_name = c("Turdus migratorius"), threshold = c(0.8))
   expect_silent(birdnet_heatmap(data = valid_data, threshold = df_threshold))
 
-  df_bad_threshold <- tibble(name = "Turdus migratorius", value = 0.8)
+  df_bad_threshold <- dplyr::tibble(name = "Turdus migratorius", value = 0.8)
   expect_error(birdnet_heatmap(data = valid_data, threshold = df_bad_threshold), "must.include")
 
-  df_threshold_na <- tibble(scientific_name = c(NA), threshold = c(0.8))
+  df_threshold_na <- dplyr::tibble(scientific_name = c(NA), threshold = c(0.8))
   expect_error(birdnet_heatmap(data = valid_data, threshold = df_threshold_na), "missing")
 
   # 4. min_date and max_date: NULL or single character string
