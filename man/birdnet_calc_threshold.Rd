@@ -7,9 +7,8 @@
 birdnet_calc_threshold(
   validated_data,
   full_data = NULL,
-  method = c("precision", "probability"),
-  probability = 0.9,
-  precision = 0.9
+  probability = NULL,
+  precision = NULL
 )
 }
 \arguments{
@@ -20,14 +19,9 @@ and 0 (false positives).}
 \item{full_data}{Optional. A data frame of all BirdNET detections. Must contain at least \code{common_name}
 and \code{confidence} columns. If \code{NULL}, \code{validated_data} will be used.}
 
-\item{method}{Method for threshold calculation. Either \code{"precision"} (default), which finds
-the minimum threshold achieving the target precision, or \code{"probability"}, which finds the threshold
-associated with the predicted probability from the logistic regression.}
+\item{probability}{Target predicted probability (between 0 and 1) used to calculate the threshold from the logistic regression.}
 
-\item{probability}{Target predicted probability (between 0 and 1) used when \code{method = "probability"}.
-Default is 0.9.}
-
-\item{precision}{Target precision (between 0 and 1) used when \code{method = "precision"}. Default is 0.9.}
+\item{precision}{Target precision (between 0 and 1) used to select the threshold achieving that precision.}
 }
 \value{
 A tibble with two columns:
@@ -39,17 +33,13 @@ A tibble with two columns:
 \description{
 Calculates species-specific confidence thresholds for BirdNET detections based on either a target
 \code{precision} or a predicted \code{probability} from a logistic regression model. Returns a tibble
-with one threshold per species. The method for the \code{"precision"} approach is based on \href{https://link.springer.com/article/10.1007/s10336-025-02260-w}{Tseng et al., 2025},
-while the \code{"probability"} approach is based on \href{https://link.springer.com/article/10.1007/s10336-024-02144-5}{Wood and Kahl, 2024}.
+with one threshold per species. The \code{precision} approach is based on \href{https://link.springer.com/article/10.1007/s10336-025-02260-w}{Tseng et al., 2025},
+while the \code{probability} approach is based on \href{https://link.springer.com/article/10.1007/s10336-024-02144-5}{Wood and Kahl, 2024}.
 }
 \details{
-When using \code{method = "precision"}, a logistic regression model is fitted for each species
-using \code{validated_data}. Thresholds are evaluated across a range of values, and the lowest
-threshold that meets or exceeds the target precision is selected. If no such threshold exists,
-\code{NA} is returned for that species.
-
-When using \code{method = "probability"}, the inverse logit function is used to solve for the
-confidence score that gives the desired probability of detection.
+If \code{precision} is provided, thresholds are selected based on the lowest confidence score that achieves or exceeds
+the desired precision when applied to predicted probabilities. If \code{probability} is provided instead, thresholds are calculated
+directly from the inverse logit of the logistic regression model. You must provide exactly one of \code{precision} or \code{probability}.
 
 All calculated thresholds are clamped to the range between the minimum observed confidence
 in \code{validated_data} and 1.
@@ -59,9 +49,7 @@ in \code{validated_data} and 1.
 birdnet_calc_threshold(
   validated_data = validated_df,
   full_data = full_df,
-  method = "precision",
   precision = 0.9
 )
 }
-
 }

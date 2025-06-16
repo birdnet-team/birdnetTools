@@ -18,3 +18,4 @@ Returns a sentence with the current time
 \examples{
 what_time()
 }
+\keyword{internal}

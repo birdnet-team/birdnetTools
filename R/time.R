@@ -5,11 +5,12 @@
 #' @param city City either "Vancouver" or "Chemnitz"
 #'
 #' @returns A character string
-#' @export
 #'
 #' @examples
 #' what_time()
+#' @keywords internal
 what_time <- function(city = "Vancouver") {
+
   rlang::arg_match0(city, c("Vancouver", "Chemnitz"))
 
   Vancouver_time <- format(Sys.time(), tz = "America/Vancouver", format = "%H:%M")

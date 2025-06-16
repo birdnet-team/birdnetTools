@@ -19,12 +19,14 @@
 #' birdnet_heatmap(data = birdnet_output, species = "Swainson's Thrush", threshold = 0.7)
 #' }
 #' @export
-birdnet_heatmap <- function(data,
-                            species = NULL,
-                            threshold = NULL,
-                            min_date = NULL,
-                            max_date = NULL,
-                            hour = NULL) {
+birdnet_heatmap <- function(
+    data,
+    species = NULL,
+    threshold = NULL,
+    min_date = NULL,
+    max_date = NULL,
+    hour = NULL
+) {
 
   # argument check ----------------------------------------------------------
 

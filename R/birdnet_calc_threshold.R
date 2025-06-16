@@ -35,12 +35,13 @@
 #'   precision = 0.9
 #' )
 #' }
-#'
 #' @export
-birdnet_calc_threshold <- function(validated_data,
-                                   full_data = NULL,
-                                   probability = NULL,
-                                   precision = NULL) {
+birdnet_calc_threshold <- function(
+    validated_data,
+    full_data = NULL,
+    probability = NULL,
+    precision = NULL
+) {
 
   # argument check ----------------------------------------------------------
 
