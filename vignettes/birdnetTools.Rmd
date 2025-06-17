@@ -19,4 +19,22 @@ library(birdnetTools)
 ```
 
 
-blablabla.
+## Background
+
+Make a diagram for the workflow for how users can use this package :) 
+
+
+## Importing BirdNET detection data (i.e., selection table)
+
+### Local combined selection tables
+
+### Local seperated selection tables
+
+### Selection table as an R object
+
+### Example dataset
+
+
+## Filtering, visualization, and extracting datetime information
+
+## Validation and getting species-specific threshold
