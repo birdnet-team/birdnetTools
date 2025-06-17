@@ -8,10 +8,16 @@
 <url><loc>https://birdnet-team.github.io/birdnetTools/index.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnetTools-package.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_add_datetime.html</loc></url>
+<url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_calc_threshold.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_clean_names.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_combine.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_drop_datetime.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_filter.html</loc></url>
+<url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_filter_date_range.html</loc></url>
+<url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_filter_hour.html</loc></url>
+<url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_filter_species.html</loc></url>
+<url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_filter_threshold.html</loc></url>
+<url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_filter_year.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_heatmap.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_launch_validation.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_subsample.html</loc></url>
