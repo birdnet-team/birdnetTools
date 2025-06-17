@@ -3,7 +3,7 @@
 \docType{data}
 \name{example_jprf_2023}
 \alias{example_jprf_2023}
-\title{Example BirdNET Selection Table from John Prince Research Forest}
+\title{Example BirdNET selection table from John Prince Research Forest}
 \format{
 \subsection{\code{example_jprf_2023}}{
 

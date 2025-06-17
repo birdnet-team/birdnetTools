@@ -21,20 +21,113 @@ library(birdnetTools)
 
 ## Background
 
-Make a diagram for the workflow for how users can use this package :) 
+> Make a diagram for the workflow for how users can use this package :) 
 
 
 ## Importing BirdNET detection data (i.e., selection table)
 
-### Local combined selection tables
+BirdNET detections can be imported in different formats depending on your data processing workflow. birdnetTools supports three main formats:
 
-### Local seperated selection tables
+### 1. Local seperated selection tables
 
-### Selection table as an R object
+### 2. Local combined selection tables
+
+### 3. Selection table as an R object
+
+
 
 ### Example dataset
+
+This package includes a sample dataset for demonstration. This dataset can be loaded using the `example_jprf_2023` object. It contains BirdNET detections from John Prince Research Forest, British Columbia, Canada, collected during May–June 2023. The audio files were processed using BirdNET GUI, model 2.4, with a confidence threshold of 0.1. The dataset includes 392,300 rows and 14 columns, including filepath, start and end times, species names, confidence scores, and recording location coordinates.
+```{r}
+# load the data
+data <- example_jprf_2023
+
+# check details of the dataset
+?example_jprf_2023
+```
 
 
 ## Filtering, visualization, and extracting datetime information
 
+
+Filter with customized criteria: 
+```{r}
+data_filtered <- birdnet_filter(
+  data,
+  species = "Swainson's Thrush",
+  threshold = 0.2,
+  year = 2023,
+  min_date = "2023-05-01",
+  max_date = "2023-06-30",
+  hour = c(0:23)
+)
+```
+
+Being able to see the filtering log: 
+```{r}
+attr(data_filtered, "filter_log")
+```
+
+
+Visualization is the easiest way to quickly examine the data, identify any obvious outliers, assess detection distributions, and observe patterns. The `birdnet_heatmap()` function provides this type of visualization and can be used with either raw or filtered data.
+```{r fig.width=10, fig.align='center', out.width='100%'}
+birdnet_heatmap(data_filtered)
+```
+
+> Note: If you visualize raw data (before filtering), detections will be grouped across all species and locations — interpret with caution.
+
+
+You can also choose to use individual filtering functions. These include filters by species, threshold, year, date range, and hour. The `birdnet_filter()` function serves as a convenient wrapper that combines all of these helper functions.
+```{r}
+data_kinglet <- birdnet_filter_species(data, c("Golden-crowned Kinglet", "Ruby-crowned Kinglet"))
+```
+
+```{r}
+data_0.85 <- birdnet_filter_threshold(data, 0.85)
+```
+
+```{r}
+data_2023 <- birdnet_filter_year(data, 2023)
+```
+
+```{r}
+data_may <- birdnet_filter_date_range(data, min_date = "2023-05-01", max_date = "2023-05-31")
+```
+
+```{r}
+data_morning <- birdnet_filter_hour(data, c(4:7))
+```
+
+
+Often, it is necessary to have datetime information associated with the detections to know exactly when the detections were made (i.e., when the bird was singing). The `birdnet_add_datetime()` adds this datetime information to your data. This function requires the original dataset to include datetime details within the file path column. It scans the file path for datetime patterns and extracts the date (year, month, day) and time (hour, minute).
+```{r}
+# add datetime information to the filtered data
+data_with_datetime <- birdnet_add_datetime(data_filtered)
+
+# show which new columns were added
+new_columns <- setdiff(colnames(data_with_datetime), colnames(data_filtered))
+new_columns
+```
+
+
+
+
 ## Validation and getting species-specific threshold
+
+BirdNET output contains a "confidence" associated with each of the detection, indicating how confident BirdNET is that the detection is correct. A confidence threshold is often applied to retain only detections that BirdNET is confident about. The confidence score, however, doesn't represent probability, and it is not directly comparable across species. For example, a species that BirdNET is good at detecting might yield true detection even with low confidence; while a species that BirdNET is worse in detecting might yield false detection even with high confidence. Thus, using species-specific thresholds is recommended to ensure that the detections are valid and reliable.
+
+Several research had demonstrated the steps of deriving species-specific thresholds (see [Tseng et al. 2025](https://link.springer.com/article/10.1007/s10336-025-02260-w)), and the guideline of interpreting confidence score (see[Wood and Kahl 2024](https://link.springer.com/article/10.1007/s10336-024-02144-5)). 
+
+This section following the steps outlined from [Tseng et al. 2025](https://link.springer.com/article/10.1007/s10336-025-02260-w) and provided a series of functions to derive species specific threshold. To get the species-specific threshold, a validation process is needed, that is, some of the BirdNET detections have to be validated by human experts to classify them as true positive or false positive. 
+
+
+### 1. Get a validation set by subsampling
+
+### 2. Validation using shinyApp
+
+
+
+### 3. Get threshold 
+
+

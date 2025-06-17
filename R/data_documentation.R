@@ -1,4 +1,4 @@
-#' Example BirdNET Selection Table from John Prince Research Forest
+#' Example BirdNET selection table from John Prince Research Forest
 #'
 #' A sample BirdNET selection table generated from audio recordings collected
 #' from 5 sites, in John Prince Research Forest, British Columbia, Canada, during
