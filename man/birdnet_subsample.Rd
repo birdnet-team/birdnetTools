@@ -41,5 +41,4 @@ using one of three methods: stratified, random, or top confidence. Optionally sa
 \dontrun{
 birdnet_subsample(data = my_data, species = "American Robin", n = 300, method = "stratified")
 }
-
 }

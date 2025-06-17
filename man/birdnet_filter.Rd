@@ -48,5 +48,4 @@ filtered <- birdnet_filter(data,
 )
 attr(filtered, "filter_log")
 }
-
 }

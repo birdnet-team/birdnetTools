@@ -1,6 +1,6 @@
 test_that("data must be a tibble with required columns", {
   # Create a minimal valid tibble
-  valid_data <- tibble(
+  valid_data <- dplyr::tibble(
     filepath = "file1.csv",
     start = 1,
     end = 2,
@@ -23,7 +23,7 @@ test_that("data must be a tibble with required columns", {
 
 
 test_that("species must be NULL or a character vector without missing values", {
-  valid_data <- tibble(
+  valid_data <- dplyr::tibble(
     filepath = "file1.csv",
     start = 1,
     end = 2,
@@ -41,7 +41,7 @@ test_that("species must be NULL or a character vector without missing values", {
 
 
 test_that("threshold must be NULL, numeric vector between 0 and 1, or tibble with species and threshold columns", {
-  valid_data <- tibble(
+  valid_data <- dplyr::tibble(
     filepath = "file1.csv",
     start = 1,
     end = 2,
@@ -58,21 +58,21 @@ test_that("threshold must be NULL, numeric vector between 0 and 1, or tibble wit
   expect_error(birdnet_filter(valid_data, threshold = NA_real_))
 
   # valid tibble with species and threshold columns
-  valid_threshold_tbl <- tibble(
+  valid_threshold_tbl <- dplyr::tibble(
     scientific_name = c("Species A", "Species B"),
     threshold = c(0.6, 0.8)
   )
   expect_silent(birdnet_filter(valid_data, threshold = valid_threshold_tbl))
 
   # missing required columns
-  invalid_tbl <- tibble(
+  invalid_tbl <- dplyr::tibble(
     species = c("A", "B"),
     value = c(0.5, 0.7)
   )
   expect_error(birdnet_filter(valid_data, threshold = invalid_tbl), "must.include")
 
   # threshold column with invalid values
-  invalid_values_tbl <- tibble(
+  invalid_values_tbl <- dplyr::tibble(
     scientific_name = c("A"),
     threshold = c(1.5)
   )
@@ -82,7 +82,7 @@ test_that("threshold must be NULL, numeric vector between 0 and 1, or tibble wit
 
 
 test_that("year must be NULL or numeric vector without missing", {
-  valid_data <- tibble(
+  valid_data <- dplyr::tibble(
     filepath = "file1.csv",
     start = 1,
     end = 2,
@@ -101,7 +101,7 @@ test_that("year must be NULL or numeric vector without missing", {
 
 
 test_that("min_date and max_date must be NULL or character strings in 'YYYY-MM-DD' format", {
-  valid_data <- tibble(
+  valid_data <- dplyr::tibble(
     filepath = "file1.csv",
     start = 1,
     end = 2,
@@ -121,7 +121,7 @@ test_that("min_date and max_date must be NULL or character strings in 'YYYY-MM-D
 
 
 test_that("hour must be NULL or numeric vector between 0 and 23", {
-  valid_data <- tibble(
+  valid_data <- dplyr::tibble(
     filepath = "file1.csv",
     start = 1,
     end = 2,

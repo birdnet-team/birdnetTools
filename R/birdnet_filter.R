@@ -26,15 +26,16 @@
 #' )
 #' attr(filtered, "filter_log")
 #' }
-#'
 #' @export
-birdnet_filter <- function(data,
-                           species = NULL,
-                           threshold = NULL,
-                           year = NULL,
-                           min_date = NULL,
-                           max_date = NULL,
-                           hour = NULL) {
+birdnet_filter <- function(
+    data,
+    species = NULL,
+    threshold = NULL,
+    year = NULL,
+    min_date = NULL,
+    max_date = NULL,
+    hour = NULL
+) {
 
 
   # argument check ----------------------------------------------------------

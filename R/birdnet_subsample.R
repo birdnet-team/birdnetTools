@@ -22,13 +22,13 @@
 #' \dontrun{
 #' birdnet_subsample(data = my_data, species = "American Robin", n = 300, method = "stratified")
 #' }
-#'
 #' @export
-birdnet_subsample <- function(data,
-                              n,
-                              method = c("stratified", "random", "top"),
-                              save_to_file = FALSE,
-                              file = NULL) {
+birdnet_subsample <- function(
+    data,
+    n,
+    method = c("stratified", "random", "top"),
+    save_to_file = FALSE,
+    file = NULL) {
   # argument check ----------------------------------------------------------
 
   # data is a dataframe

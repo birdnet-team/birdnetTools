@@ -21,9 +21,10 @@
 #' data_with_time <- birdnet_add_datetime(combined_data, col = File)
 #' }
 #' @export
-birdnet_add_datetime <- function(data,
-                                 col = filepath,
-                                 tz = "UTC") {
+birdnet_add_datetime <- function(
+    data,
+    col = filepath,
+    tz = "UTC") {
   # argument check ----------------------------------------------------------
 
   # if there is already all the columns, show the warning messages that the
