@@ -1,5 +1,5 @@
 ---
-title: "birdnetTools"
+title: "Get started with birdnetTools"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{birdnetTools}
@@ -71,7 +71,7 @@ attr(data_filtered, "filter_log")
 
 
 Visualization is the easiest way to quickly examine the data, identify any obvious outliers, assess detection distributions, and observe patterns. The `birdnet_heatmap()` function provides this type of visualization and can be used with either raw or filtered data.
-```{r fig.width=10, fig.align='center', out.width='100%'}
+```{r fig.width=8, fig.align='center', out.width='100%'}
 birdnet_heatmap(data_filtered)
 ```
 
@@ -124,7 +124,70 @@ This section following the steps outlined from [Tseng et al. 2025](https://link.
 
 ### 1. Get a validation set by subsampling
 
+Continuing with our filtered data, `data_filtered` contains detections of "Swainson's Thrush" with a confidence threshold of 0.2. To validate these detections, we want to subsample a portion of them for manual verification. Specifically, the user can select a number of detections to validate, confirming whether they indeed contain Swainson's Thrush.
+
+The `birdnet_subsample() `function offers three types of subsampling methods:
+
+- Stratified sampling: selects detections evenly across the range of confidence scores, ensuring the validation set represents the distribution of confidence levels.
+
+- Random sampling: selects detections at random, providing a general unbiased subset.
+
+- Top sampling: selects detections with the highest confidence scores, focusing on the most confident detections.
+
+Stratified and random sampling are useful when aiming for a validation set that is representative of the entire dataset, while top sampling is beneficial if the focus is on validating the most confident detections.
+
+
+```{r}
+birdnet_subsample(
+  data_filtered,
+  n = 300,
+  method = "stratified"
+)
+```
+
+
+Optionally, the user can also save the file, as csv, to the local working directory. 
+
+```{r eval=FALSE}
+birdnet_subsample(
+  data_filtered,
+  n = 300,
+  method = "stratified",
+  save_to_file = TRUE, # whether to save the subsample to a file
+  file = "swainson's_thrush_validation.csv" # name of the file to save the subsample
+)
+```
+
+
 ### 2. Validation using shinyApp
+
+The next step in the validation process is to listen to the audio files or observe the signals in the spectrogram to confirm detections. This task can be tedious and very time-consuming, as it requires manually clicking through each audio file, finding the exact timestamp, and listening to detections one by one.
+
+The `birdnet_validation_app()` function provides a Shiny app that simplifies this process by offering an interactive interface. By supplying the subsampled detection data along with the folder containing your audio files, the app displays the audio clips and their corresponding detections, allowing users to easily listen to each detection and confirm whether it is correct.
+
+```{r eval=FALSE}
+birdnet_launch_validation()
+```
+
+1. After running the above code, an interface should pop up if all goes well. This interface required two entries:
+
+- The .csv file that contains the detections. This should be a .csv file containing selected BirdNET predictions for validation
+
+- The file path of the folder that contains the recording segments.
+
+| select meta data                     | select recording folder              |
+|--------------------------------------|--------------------------------------|
+| ![](images/input_csv.png) | ![](images/input_file.png) |
+
+
+
+2. The .csv file would be shown on the top panel (with few selected columns). Once you click on the “Spectrogram” button, the bottom panel would show the corresponded spectrogram. And if you click the “Audio” button, it would play that specific segment for you.
+
+3. You can adjust the “Settings” on the left panel to view the spectrogram. Click on the “Praise me” button if you are feeling tired of validating sounds. 
+
+![](./images/shinyapp_main.png)
+
+
 
 
 
