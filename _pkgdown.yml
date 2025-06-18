@@ -2,4 +2,12 @@ url: https://birdnet-team.github.io/birdnetTools/
 template:
   bootstrap: 5
 
-
+# reference:
+#   - title: "Data Import"
+#     contents:
+#       - function_a
+#       - function_b
+#   - title: "Data Processing"
+#     contents:
+#       - function_c
+#       - function_d
