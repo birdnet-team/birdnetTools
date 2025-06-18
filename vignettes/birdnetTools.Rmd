@@ -241,6 +241,7 @@ It only takes one line of code to calculate species-specific thresholds using th
 
 ```{r}
 birdnet_calc_threshold(data_validated,
+                       method = "precision",
                        precision = 0.9)
 ```
 
