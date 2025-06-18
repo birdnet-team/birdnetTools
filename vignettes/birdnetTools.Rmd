@@ -127,7 +127,7 @@ Visualization is the easiest way to quickly examine the data, identify any obvio
 birdnet_heatmap(data_filtered)
 ```
 
-> Note: If you visualize raw data (before filtering), detections will be grouped across all species and locations — interpret with caution.
+> Note: If you visualize raw data (before filtering species and site), detections will be grouped across all species and locations — interpret with caution.
 
 
 ### Add columns for date and time
@@ -233,6 +233,11 @@ data_validated <- data_subsampled %>%
       TRUE ~ sample(c(1, 0), n(), replace = TRUE, prob = c(0.3, 0.7))
     )
   )
+
+data_validated <- data_subsampled %>%
+  mutate(
+    validation = rbinom(n(), size = 1, prob = pmin(pmax(confidence, 0), 1))
+  )
 ```
 
 
@@ -240,9 +245,12 @@ It only takes one line of code to calculate species-specific thresholds using th
 
 
 ```{r}
+# get the threshold
 birdnet_calc_threshold(data_validated,
-                       method = "precision",
                        precision = 0.9)
+
+# view function documentation
+?birdnet_calc_threshold()
 ```
 
 

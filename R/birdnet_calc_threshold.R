@@ -124,13 +124,13 @@ birdnet_calc_threshold <- function(
       species_data_full <- full_data |>
         birdnet_filter_species(species = species_ind)
 
-      predicted <- species_data_full |>
-        dplyr::mutate(probability = predict(model,
-                                            newdata = species_data_full,
-                                            type = "response"))
+      species_data_full$probability <- predict(model,
+                                               newdata = species_data_full,
+                                               type = "response")
+
 
       threshold_table <- dplyr::tibble(threshold = seq(0, 1, 0.001)) |>
-        dplyr::mutate(precision = purrr::map_dbl(threshold, ~ threshold2precision(predicted, .x)))
+        dplyr::mutate(precision = purrr::map_dbl(threshold, ~ threshold2precision(species_data_full, .x)))
 
       t_target <- precision2threshold(threshold_table, precision)
 
