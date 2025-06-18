@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>birdnetTools • birdnetTools</title>
+<title>Get started with birdnetTools • birdnetTools</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="birdnetTools">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Get started with birdnetTools">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -50,7 +50,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>birdnetTools</h1>
+      <h1>Get started with birdnetTools</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/birdnet-team/birdnetTools/blob/master/vignettes/birdnetTools.Rmd" class="external-link"><code>vignettes/birdnetTools.Rmd</code></a></small>
@@ -61,8 +61,339 @@
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://birdnet-team.github.io/birdnetTools/">birdnetTools</a></span><span class="op">)</span></span></code></pre></div>
-<p>blablabla.</p>
-  </main>
+<div class="section level2">
+<h2 id="background">Background<a class="anchor" aria-label="anchor" href="#background"></a>
+</h2>
+<p>The <code>birdnetTools</code> is an R package designed to streamline
+the post-processing and validation of output from BirdNET, an
+open-source neural network developed by the <a href="https://www.birds.cornell.edu/home/" class="external-link">Cornell Lab of
+Ornithology</a> and <a href="https://www.tu-chemnitz.de/index.html.en" class="external-link">Chemnitz University of
+Technology</a> for detecting and identifying bird sounds.</p>
+<p>The goal of <code>birdnetTools</code> is to help researchers manage,
+explore, and validate BirdNET results, which can be derived by <a href="https://github.com/BirdNET-Team/BirdNET-Analyzer" class="external-link">BirdNET
+Analyzer</a>, or the <a href="https://birdnet-team.github.io/birdnetR/index.html" class="external-link">birdnetR</a>
+package. It includes functions for filtering detections by species,
+confidence, and date/time; visualizing temporal patterns; and validating
+detections with an interactive Shiny app to support threshold-setting
+workflows.</p>
+<blockquote>
+<p>Make a diagram for the workflow for how users can use this package
+:)</p>
+</blockquote>
+</div>
+<div class="section level2">
+<h2 id="data-import">Data Import<a class="anchor" aria-label="anchor" href="#data-import"></a>
+</h2>
+<p>BirdNET detections can be imported in various formats depending on
+how your data was processed and saved. The <code>birdnetTools</code>
+package supports three main workflows: importing multiple detection
+files from separate audio recordings, importing a single file containing
+combined results, and using detection results that are already loaded
+into R.</p>
+<div class="section level3">
+<h3 id="importing-multiple-detection-results">Importing multiple detection results<a class="anchor" aria-label="anchor" href="#importing-multiple-detection-results"></a>
+</h3>
+</div>
+<div class="section level3">
+<h3 id="importing-combined-detection-results">Importing combined detection results<a class="anchor" aria-label="anchor" href="#importing-combined-detection-results"></a>
+</h3>
+</div>
+<div class="section level3">
+<h3 id="using-detection-results-already-in-r">Using detection results already in R<a class="anchor" aria-label="anchor" href="#using-detection-results-already-in-r"></a>
+</h3>
+</div>
+</div>
+<div class="section level2">
+<h2 id="exploring-and-preparing-data">Exploring and Preparing Data<a class="anchor" aria-label="anchor" href="#exploring-and-preparing-data"></a>
+</h2>
+<div class="section level3">
+<h3 id="example-dataset">Example dataset<a class="anchor" aria-label="anchor" href="#example-dataset"></a>
+</h3>
+<p>To demonstrate how the functions in <code>birdnetTools</code> work,
+we will use the built-in dataset <code>example_jprf_2023</code>. This
+dataset contains BirdNET detections recorded at the John Prince Research
+Forest in British Columbia, Canada, over a continuous 24-hour period
+during May–June 2023, from 5 ARU locations. The recordings were
+processed using the BirdNET GUI (model v2.4) with a confidence threshold
+of 0.1. The dataset contains 392,300 rows and 14 columns, including
+information such as the file path, start and end times of detections,
+species names, and confidence scores.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># load the dataset</span></span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">example_jprf_2023</span></span>
+<span></span>
+<span><span class="co"># view the dataset documentation</span></span>
+<span><span class="op">?</span><span class="va">example_jprf_2023</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="filtering-data-with-customized-criteria">Filtering data with customized criteria<a class="anchor" aria-label="anchor" href="#filtering-data-with-customized-criteria"></a>
+</h3>
+<p>In most cases, researchers don’t work directly with the full set of
+raw BirdNET detections. Instead, they may be interested in filtering for
+specific specie(s), applying a confidence threshold, narrowing the
+dataset by date, or selecting recordings from certain hours of the day.
+The <code><a href="../reference/birdnet_filter.html">birdnet_filter()</a></code> function makes it easy to apply these
+filters in a single step:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># apply filter</span></span>
+<span><span class="va">data_filtered</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/birdnet_filter.html">birdnet_filter</a></span><span class="op">(</span><span class="va">data</span>,</span>
+<span>                                species <span class="op">=</span> <span class="st">"Swainson's Thrush"</span>,</span>
+<span>                                threshold <span class="op">=</span> <span class="fl">0.2</span>,</span>
+<span>                                year <span class="op">=</span> <span class="fl">2023</span>,</span>
+<span>                                min_date <span class="op">=</span> <span class="st">"2023-05-01"</span>,</span>
+<span>                                max_date <span class="op">=</span> <span class="st">"2023-06-30"</span>,</span>
+<span>                                hour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">23</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># view function documentation</span></span>
+<span><span class="op">?</span><span class="fu"><a href="../reference/birdnet_filter.html">birdnet_filter</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>The <code><a href="../reference/birdnet_filter.html">birdnet_filter()</a></code> function allows you to filter
+BirdNET detections based on a variety of criteria, including species,
+confidence threshold, year, date range, and hour of the day. The
+<code>species</code> argument should be specified using common names,
+either as a single character string or a vector of names. The
+<code>threshold</code> argument accepts either a numeric value (for a
+universal threshold) or a data frame containing <code>common_name</code>
+and <code>threshold</code> columns (for species-specific thresholds);
+detections with confidence scores below the specified threshold will be
+excluded. The <code>year</code> and <code>hour</code> arguments can also
+be given as single values or vectors.</p>
+<p>After applying filters using <code><a href="../reference/birdnet_filter.html">birdnet_filter()</a></code>, the
+function automatically records the filtering criteria in the data’s
+attributes. This makes it easy to keep track of how the dataset was
+processed:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">data_filtered</span>, <span class="st">"filter_log"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $species</span></span>
+<span><span class="co">#&gt; [1] "Swainson's Thrush"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $threshold</span></span>
+<span><span class="co">#&gt; [1] 0.2</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $year</span></span>
+<span><span class="co">#&gt; [1] 2023</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $min_date</span></span>
+<span><span class="co">#&gt; [1] "2023-05-01"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $max_date</span></span>
+<span><span class="co">#&gt; [1] "2023-06-30"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $hour</span></span>
+<span><span class="co">#&gt;  [1]  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23</span></span></code></pre></div>
+<p>You can also choose to use individual filtering functions. These
+include filters by species, threshold, year, date range, and hour. The
+<code><a href="../reference/birdnet_filter.html">birdnet_filter()</a></code> function serves as a convenient wrapper
+that combines all of these helper functions.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># detection for kinglets</span></span>
+<span><span class="va">data_kinglet</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/birdnet_filter_species.html">birdnet_filter_species</a></span><span class="op">(</span></span>
+<span>  <span class="va">data</span>, </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Golden-crowned Kinglet"</span>, <span class="st">"Ruby-crowned Kinglet"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># detection with confidence above 0.85</span></span>
+<span><span class="va">data_0.85</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/birdnet_filter_threshold.html">birdnet_filter_threshold</a></span><span class="op">(</span><span class="va">data</span>, <span class="fl">0.85</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># detection in 2023</span></span>
+<span><span class="va">data_2023</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/birdnet_filter_year.html">birdnet_filter_year</a></span><span class="op">(</span><span class="va">data</span>, <span class="fl">2023</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># detection on May 2023</span></span>
+<span><span class="va">data_may</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/birdnet_filter_date_range.html">birdnet_filter_date_range</a></span><span class="op">(</span><span class="va">data</span>, </span>
+<span>                                      min_date <span class="op">=</span> <span class="st">"2023-05-01"</span>, </span>
+<span>                                      max_date <span class="op">=</span> <span class="st">"2023-05-31"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># detection in the morning (4am to 7am)</span></span>
+<span><span class="va">data_morning</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/birdnet_filter_hour.html">birdnet_filter_hour</a></span><span class="op">(</span><span class="va">data</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="visualizing-rawfiltered-data">Visualizing raw/filtered data<a class="anchor" aria-label="anchor" href="#visualizing-rawfiltered-data"></a>
+</h3>
+<p>Visualization is the easiest way to quickly examine the data,
+identify any obvious outliers, assess detection distributions, and
+observe patterns. The <code><a href="../reference/birdnet_heatmap.html">birdnet_heatmap()</a></code> function provides
+this type of visualization and can be used with either raw or filtered
+data. Below is an example of the activity pattern of Swainson’s Thrushe
+across the breeding season (across 5 ARU sites).</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/birdnet_heatmap.html">birdnet_heatmap</a></span><span class="op">(</span><span class="va">data_filtered</span><span class="op">)</span></span></code></pre></div>
+<p><img src="birdnetTools_files/figure-html/unnamed-chunk-10-1.png" width="100%" style="display: block; margin: auto;"></p>
+<blockquote>
+<p>Note: If you visualize raw data (before filtering species and site),
+detections will be grouped across all species and locations — interpret
+with caution.</p>
+</blockquote>
+</div>
+<div class="section level3">
+<h3 id="add-columns-for-date-and-time">Add columns for date and time<a class="anchor" aria-label="anchor" href="#add-columns-for-date-and-time"></a>
+</h3>
+<p>Often, it is necessary to have datetime information associated with
+the detections to know exactly when the detections were made (i.e., when
+the bird was singing). The <code><a href="../reference/birdnet_add_datetime.html">birdnet_add_datetime()</a></code> adds this
+datetime information to your data. This function requires the original
+dataset to include datetime details within the file path column. It
+scans the file path for datetime patterns and extracts the date (year,
+month, day) and time (hour, minute).</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># add datetime information to the filtered data</span></span>
+<span><span class="va">data_with_datetime</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/birdnet_add_datetime.html">birdnet_add_datetime</a></span><span class="op">(</span><span class="va">data_filtered</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># show which new columns were added</span></span>
+<span><span class="va">new_columns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">data_with_datetime</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">data_filtered</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">new_columns</span></span>
+<span><span class="co">#&gt; [1] "datetime" "date"     "year"     "month"    "mday"     "yday"     "hour"    </span></span>
+<span><span class="co">#&gt; [8] "minute"</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="validating-detections-getting-thresholds">Validating Detections &amp; Getting Thresholds<a class="anchor" aria-label="anchor" href="#validating-detections-getting-thresholds"></a>
+</h2>
+<p>Each BirdNET detection includes a “confidence” score, but this score
+does not reflect true probability and varies in meaning across species.
+For example, BirdNET may detect one species reliably even at low
+confidence, while another may still yield false positives at high
+confidence. To improve reliability, it’s recommended to use
+species-specific thresholds. This section follows the methods outlined
+in <a href="https://link.springer.com/article/10.1007/s10336-025-02260-w" class="external-link">Tseng
+et al. 2025</a>, which require a validation process where a subset of
+detections is reviewed by human experts to classify them as true or
+false positives. For further context on interpreting confidence scores,
+see <a href="https://link.springer.com/article/10.1007/s10336-024-02144-5" class="external-link">Wood
+and Kahl 2024</a>.</p>
+<div class="section level3">
+<h3 id="get-a-validation-set-by-subsampling">1. Get a validation set by subsampling<a class="anchor" aria-label="anchor" href="#get-a-validation-set-by-subsampling"></a>
+</h3>
+<p>To get the species-specific threshold, we will need to validate
+detections in <code>data_filtered</code>, which contains Swainson’s
+Thrush detections filtered at a 0.2 confidence threshold. First, we will
+need to subsample a portion for manual review. The
+<code><a href="../reference/birdnet_subsample.html">birdnet_subsample()</a></code> function supports three sampling
+methods: <code>stratified</code> (evenly across confidence levels),
+<code>random</code> (selection based on confidence score distribution),
+and <code>top</code> (highest confidence detections). The
+<code>stratified</code> and <code>random</code> approaches help create a
+representative validation set, while <code>top</code> sampling targets
+the most confident predictions.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># subsample 300 detections from the filtered data</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>  <span class="co"># for reproducibility</span></span>
+<span><span class="va">data_subsampled</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/birdnet_subsample.html">birdnet_subsample</a></span><span class="op">(</span><span class="va">data_filtered</span>,</span>
+<span>                                     n <span class="op">=</span> <span class="fl">300</span>,</span>
+<span>                                     method <span class="op">=</span> <span class="st">"stratified"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># view function documentation</span></span>
+<span><span class="op">?</span><span class="fu"><a href="../reference/birdnet_subsample.html">birdnet_subsample</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>Optionally, you can save the subsampled detections as a
+<code>.csv</code> file in your working directory by setting
+<code>save_to_file = TRUE</code> and specifying a file name:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/birdnet_subsample.html">birdnet_subsample</a></span><span class="op">(</span></span>
+<span>  <span class="va">data_filtered</span>,</span>
+<span>  n <span class="op">=</span> <span class="fl">300</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"stratified"</span>,</span>
+<span>  save_to_file <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># whether to save the subsample to a file</span></span>
+<span>  file <span class="op">=</span> <span class="st">"swainsons_thrush_validation.csv"</span> <span class="co"># name of the file</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="validation-using-shinyapp">2. Validation using shinyApp<a class="anchor" aria-label="anchor" href="#validation-using-shinyapp"></a>
+</h3>
+<p>Manually validating detections, by locating audio files, finding
+timestamps, and listening to clips, can be slow and tedious. The
+<code><a href="../reference/birdnet_launch_validation.html">birdnet_launch_validation()</a></code> function streamlines this
+process by launching a Shiny app that displays subsampled detections
+alongside their spectrograms and corresponding audio clips. With an
+interactive interface, users can quickly review each detection by
+listening to audio or viewing spectrograms and edit the validation
+datasheet, making the validation process much more efficient.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/birdnet_launch_validation.html">birdnet_launch_validation</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>After running the code above, a Shiny interface will launch. This app
+requires two inputs:</p>
+<ul>
+<li><p>Detection file (.csv) – A file containing the BirdNET predictions
+selected for validation.</p></li>
+<li><p>Audio folder path – The directory where your corresponding audio
+clips are stored.</p></li>
+</ul>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th>Select meta data</th>
+<th>Select recording folder</th>
+</tr></thead>
+<tbody><tr class="odd">
+<td><img src="images/input_csv.png"></td>
+<td><img src="images/input_file.png"></td>
+</tr></tbody>
+</table>
+<p>Once loaded:</p>
+<ul>
+<li><p>The top panel will display the table of detections. Clicking
+“Spectrogram” will show the corresponding visual signal below; clicking
+“Audio” will play the relevant clip.</p></li>
+<li><p>To validate, double-click the <code>U</code> (Unknown) cell in
+the <code>validation</code> column. Enter <code>1</code> for a true
+positive or <code>0</code> for a false positive. Your input will update
+the original <code>.csv</code> file.</p></li>
+<li><p>When finished, click “Save” to export your results. A new file
+will be created with <code>_validation</code> appended to the original
+name. If you only complete part of the validation, this file can later
+be reloaded to resume the process.</p></li>
+<li><p>The “Settings” tab lets you tweak spectrogram display options.
+And if you’re getting tired, try the “Praise me” button for a quick
+boost of motivation. 🌟</p></li>
+</ul>
+<p><img src="images/shinyapp_main.png"></p>
+</div>
+<div class="section level3">
+<h3 id="get-threshold">3. Get threshold<a class="anchor" aria-label="anchor" href="#get-threshold"></a>
+</h3>
+<p>Once a set of BirdNET detections has been validated (i.e., manually
+labeled as true or false positives), you can calculate a
+species-specific confidence threshold that meets a desired level of
+precision. The <code><a href="../reference/birdnet_calc_threshold.html">birdnet_calc_threshold()</a></code> function helps
+identify the minimum confidence score required to achieve a target
+precision for a given species.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># simulate validation as a Bernoulli trial</span></span>
+<span><span class="va">data_subsampled</span><span class="op">$</span><span class="va">validation</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span></span>
+<span>  n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">data_subsampled</span><span class="op">)</span>, </span>
+<span>  size <span class="op">=</span> <span class="fl">1</span>, </span>
+<span>  prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmin</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax</a></span><span class="op">(</span><span class="va">data_subsampled</span><span class="op">$</span><span class="va">confidence</span>, <span class="fl">0</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>It only takes one line of code to calculate species-specific
+thresholds using the <code><a href="../reference/birdnet_calc_threshold.html">birdnet_calc_threshold()</a></code> function.
+This function requires a data frame containing the columns
+<code>common_name</code>, <code>confidence</code>, and
+<code>validation</code> (where validation is <code>1</code> for true
+positives and <code>0</code> for false positives). It returns the
+minimum confidence score needed to achieve the specified precision or
+probability level. For more details on the difference between the
+precision and probability arguments, please see the function
+documentation (<code>?birdnet_calc_threshold()</code>).</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/birdnet_calc_threshold.html">birdnet_calc_threshold</a></span><span class="op">(</span><span class="va">data_subsampled</span>,</span>
+<span>                       precision <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Processing species: <span style="color: #00BB00;">Swainson's Thrush</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Thresholds calculated to achieve <span style="color: #0000BB;">0.9</span> precision.</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 2</span></span></span>
+<span><span class="co">#&gt;   common_name       threshold</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Swainson's Thrush     0.917</span></span></code></pre></div>
+<blockquote>
+<p>Note: To demonstrate this function, we use a simulated validation
+dataset included in the package. This dataset mimics what a real
+validation file might look like, but it is not derived from actual
+expert-reviewed audio.</p>
+</blockquote>
+</div>
+</div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 

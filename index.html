@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Post-process, Validate, and Visualize BirdNET Output • birdnetTools</title>
+<title>R package for working with BirdNET output • birdnetTools</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Post-process, Validate, and Visualize BirdNET Output">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="R package for working with BirdNET output">
 <meta name="description" content="What the package does (one paragraph).">
 <meta property="og:description" content="What the package does (one paragraph).">
 </head>
@@ -51,7 +51,8 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>The goal of birdnetTools is to provide a streamlined set of tools for processing, validating, and visualizing output from the BirdNET sound analysis algorithm. This package helps ecologists and researchers efficiently interpret BirdNET results.</p>
+<p>The <code>birdnetTools</code> is an R package designed to streamline the post-processing and validation of output from BirdNET, an open-source neural network developed by the <a href="https://www.birds.cornell.edu/home/" class="external-link">Cornell Lab of Ornithology</a> and <a href="https://www.tu-chemnitz.de/index.html.en" class="external-link">Chemnitz University of Technology</a> for detecting and identifying bird sounds.</p>
+<p>The goal of <code>birdnetTools</code> is to help researchers manage, explore, and validate BirdNET results, which can be derived by <a href="https://github.com/BirdNET-Team/BirdNET-Analyzer" class="external-link">BirdNET Analyzer</a>, or the <a href="https://birdnet-team.github.io/birdnetR/index.html" class="external-link">birdnetR</a> package. It includes functions for filtering detections by species, confidence, and date/time; visualizing temporal patterns; and validating detections with an interactive Shiny app to support threshold-setting workflows.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -63,38 +64,54 @@
 <div class="section level2">
 <h2 id="example-use">Example use<a class="anchor" aria-label="anchor" href="#example-use"></a>
 </h2>
-<p>This is a basic example to show how to visualize BirdNET output data. The example assumes you have a data frame with BirdNET results:</p>
+<p>Below is a quick example using the built-in dataset <code>example_jprf_2023</code>, which contains detections recorded from five ARUs in northern British Columbia. We’ll filter detections for Swainson’s Thrush, visualize detection patterns, and calculate a species-specific threshold from simulated validation data.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://birdnet-team.github.io/birdnetTools/">birdnetTools</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># to read data from a local path</span></span>
-<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/birdnet_combine.html">birdnet_combine</a></span><span class="op">(</span><span class="st">"path/to/BirdNET/output"</span><span class="op">)</span></span>
+<span><span class="co"># Load built-in dataset</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">example_jprf_2023</span>, package <span class="op">=</span> <span class="st">"birdnetTools"</span><span class="op">)</span></span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">example_jprf_2023</span></span>
 <span></span>
-<span><span class="co"># to filter data for given species, and time range</span></span>
-<span><span class="va">data_filtered</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/birdnet_filter.html">birdnet_filter</a></span><span class="op">(</span><span class="va">data</span>, </span>
-<span>                                species <span class="op">=</span> <span class="st">"American Robin"</span>,</span>
-<span>                                year <span class="op">=</span> <span class="fl">2023</span>,</span>
-<span>                                date_range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2023-01-01"</span>, <span class="st">"2023-12-31"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># Filter for Swainson's Thrush detections during spring</span></span>
+<span><span class="va">data_filtered</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/birdnet_filter.html">birdnet_filter</a></span><span class="op">(</span><span class="va">data</span>,</span>
+<span>  species <span class="op">=</span> <span class="st">"Swainson's Thrush"</span>,</span>
+<span>  threshold <span class="op">=</span> <span class="fl">0.2</span>,</span>
+<span>  year <span class="op">=</span> <span class="fl">2023</span>,</span>
+<span>  min_date <span class="op">=</span> <span class="st">"2023-05-01"</span>,</span>
+<span>  max_date <span class="op">=</span> <span class="st">"2023-06-30"</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># to subsample dataset for validation purpose</span></span>
-<span><span class="va">data_subsampled</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/birdnet_subsample.html">birdnet_subsample</a></span><span class="op">(</span><span class="va">data_filtered</span>, </span>
-<span>                                     n <span class="op">=</span> <span class="fl">1000</span>, </span>
-<span>                                     method <span class="op">=</span> <span class="st">"stratified"</span><span class="op">)</span></span>
+<span><span class="co"># Visualize daily detection patterns across sites</span></span>
+<span><span class="fu"><a href="reference/birdnet_heatmap.html">birdnet_heatmap</a></span><span class="op">(</span><span class="va">data_filtered</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-example-1.png" width="100%" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span></span>
-<span><span class="co"># data visualization</span></span>
-<span><span class="fu"><a href="reference/birdnet_heatmap.html">birdnet_heatmap</a></span><span class="op">(</span><span class="va">data_filtered</span><span class="op">)</span></span>
-<span>  </span>
-<span>  </span></code></pre></div>
+<span><span class="co"># Simulate validation (for demonstration only)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
+<span><span class="va">data_sub</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/birdnet_subsample.html">birdnet_subsample</a></span><span class="op">(</span><span class="va">data_filtered</span>, n <span class="op">=</span> <span class="fl">300</span>, method <span class="op">=</span> <span class="st">"stratified"</span><span class="op">)</span></span>
+<span><span class="va">data_sub</span><span class="op">$</span><span class="va">validation</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">data_sub</span><span class="op">)</span>, <span class="fl">1</span>, prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmin</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax</a></span><span class="op">(</span><span class="va">data_sub</span><span class="op">$</span><span class="va">confidence</span>, <span class="fl">0</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Calculate species-specific threshold for 90% precision</span></span>
+<span><span class="fu"><a href="reference/birdnet_calc_threshold.html">birdnet_calc_threshold</a></span><span class="op">(</span><span class="va">data_sub</span>, precision <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span></span>
+<span><span class="co">#&gt; ℹ Processing species: Swainson's Thrush</span></span>
+<span><span class="co">#&gt; ✔ Thresholds calculated to achieve 0.9 precision.</span></span>
+<span><span class="co">#&gt; # A tibble: 1 × 2</span></span>
+<span><span class="co">#&gt;   common_name       threshold</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;                 &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 Swainson's Thrush     0.917</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="funding">Funding<a class="anchor" aria-label="anchor" href="#funding"></a>
+<h2 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
 </h2>
-<p>This project is supported by Jake Holshuh (Cornell class of ’69) and The Arthur Vining Davis Foundations. Our work in the K. Lisa Yang Center for Conservation Bioacoustics is made possible by the generosity of K. Lisa Yang to advance innovative conservation technologies to inspire and inform the conservation of wildlife and habitats.</p>
+<p>The development of <code>birdnetTools</code> is part of a visiting scholar program supported by the <a href="https://www.nserc-crsng.gc.ca/Students-Etudiants/PG-CS/CGSForeignStudy-BESCEtudeEtranger_eng.asp" class="external-link">Michael Smith Foreign Study Supplements</a>, funded by the Natural Sciences and Engineering Research Council of Canada (NSERC). I’m incredibly fortunate to have received this support, which allowed me to collaborate in person with the BirdNET team in Chemnitz, Germany.</p>
+<p>This has been a valuable opportunity—not only for scientific collaboration and networking, but also for memorable moments shared with colleagues and the vibrant atmosphere of life in Europe.</p>
+</div>
+<div class="section level2">
+<h2 id="birdnet-funding-and-partners">BirdNET funding and partners<a class="anchor" aria-label="anchor" href="#birdnet-funding-and-partners"></a>
+</h2>
+<p>BirdNET is supported by Jake Holshuh (Cornell class of ’69) and The Arthur Vining Davis Foundations. Our work in the K. Lisa Yang Center for Conservation Bioacoustics is made possible by the generosity of K. Lisa Yang to advance innovative conservation technologies to inspire and inform the conservation of wildlife and habitats.</p>
 <p>The development of BirdNET is supported by the German Federal Ministry of Education and Research through the project “BirdNET+” (FKZ 01|S22072). The German Federal Ministry for the Environment, Nature Conservation and Nuclear Safety contributes through the “DeepBirdDetect” project (FKZ 67KI31040E). In addition, the Deutsche Bundesstiftung Umwelt supports BirdNET through the project “RangerSound” (project 39263/01).</p>
-</div>
-<div class="section level2">
-<h2 id="partners">Partners<a class="anchor" aria-label="anchor" href="#partners"></a>
-</h2>
 <p>BirdNET is a joint effort of partners from academia and industry. Without these partnerships, this project would not have been possible.</p>
 <p><img src="https://tuc.cloud/index.php/s/KSdWfX5CnSRpRgQ/download/box_logos.png"></p>
 </div>
