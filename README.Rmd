@@ -35,11 +35,12 @@ You can install the development version of birdnetTools from [GitHub](https://gi
 pak::pak("birdnet-team/birdnetTools")
 ```
 
+
 ## Example use
 
-Below is a quick example using the built-in dataset example_jprf_2023, which contains detections recorded from five ARUs in northern British Columbia. We'll filter detections for Swainson’s Thrush, visualize detection patterns, and calculate a species-specific threshold from simulated validation data.
+Below is a quick example using the built-in dataset `example_jprf_2023`, which contains detections recorded from five ARUs in northern British Columbia. We'll filter detections for Swainson’s Thrush, visualize detection patterns, and calculate a species-specific threshold from simulated validation data.
 
-```{r example}
+```{r example, fig.width=8, fig.align='center', out.width='100%'}
 library(birdnetTools)
 
 # Load built-in dataset
@@ -70,7 +71,7 @@ birdnet_calc_threshold(data_sub, precision = 0.9)
 ```
 
 
-## About this project
+## Acknowledgements
 
 The development of `birdnetTools` is part of a visiting scholar program supported by the [Michael Smith Foreign Study Supplements](https://www.nserc-crsng.gc.ca/Students-Etudiants/PG-CS/CGSForeignStudy-BESCEtudeEtranger_eng.asp), funded by the Natural Sciences and Engineering Research Council of Canada (NSERC). I’m incredibly fortunate to have received this support, which allowed me to collaborate in person with the BirdNET team in Chemnitz, Germany.
 

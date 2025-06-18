@@ -39,7 +39,7 @@ pak::pak("birdnet-team/birdnetTools")
 
 ## Example use
 
-Below is a quick example using the built-in dataset example_jprf_2023,
+Below is a quick example using the built-in dataset `example_jprf_2023`,
 which contains detections recorded from five ARUs in northern British
 Columbia. We’ll filter detections for Swainson’s Thrush, visualize
 detection patterns, and calculate a species-specific threshold from
@@ -65,7 +65,7 @@ data_filtered <- birdnet_filter(data,
 birdnet_heatmap(data_filtered)
 ```
 
-<img src="man/figures/README-example-1.png" width="100%" />
+<img src="man/figures/README-example-1.png" width="100%" style="display: block; margin: auto;" />
 
 ``` r
 
@@ -85,7 +85,7 @@ birdnet_calc_threshold(data_sub, precision = 0.9)
 #> 1 Swainson's Thrush     0.917
 ```
 
-## About this project
+## Acknowledgements
 
 The development of `birdnetTools` is part of a visiting scholar program
 supported by the [Michael Smith Foreign Study
