@@ -16,7 +16,6 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(birdnetTools)
-library(dplyr)
 ```
 
 
@@ -46,7 +45,7 @@ BirdNET detections can be imported in various formats depending on how your data
 
 
 ### Example dataset
-To demonstrate how the functions in `birdnetTools` work, we will use the built-in dataset `example_jprf_2023`. This dataset contains BirdNET detections recorded at the John Prince Research Forest in British Columbia, Canada, over a continuous 24-hour period during May–June 2023. The recordings were processed using the BirdNET GUI (model v2.4) with a confidence threshold of 0.1. The dataset contains 392,300 rows and 14 columns, including information such as the file path, start and end times of detections, species names, and confidence scores.
+To demonstrate how the functions in `birdnetTools` work, we will use the built-in dataset `example_jprf_2023`. This dataset contains BirdNET detections recorded at the John Prince Research Forest in British Columbia, Canada, over a continuous 24-hour period during May–June 2023, from 5 ARU locations. The recordings were processed using the BirdNET GUI (model v2.4) with a confidence threshold of 0.1. The dataset contains 392,300 rows and 14 columns, including information such as the file path, start and end times of detections, species names, and confidence scores.
 
 
 ```{r}
@@ -121,7 +120,7 @@ data_morning <- birdnet_filter_hour(data, c(4:7))
 
 ### Visualizing raw/filtered data
 
-Visualization is the easiest way to quickly examine the data, identify any obvious outliers, assess detection distributions, and observe patterns. The `birdnet_heatmap()` function provides this type of visualization and can be used with either raw or filtered data.
+Visualization is the easiest way to quickly examine the data, identify any obvious outliers, assess detection distributions, and observe patterns. The `birdnet_heatmap()` function provides this type of visualization and can be used with either raw or filtered data. Below is an example of the activity pattern of Swainson's Thrushe across the breeding season (across 5 ARU sites). 
 
 ```{r fig.width=8, fig.align='center', out.width='100%'}
 birdnet_heatmap(data_filtered)
@@ -223,21 +222,13 @@ Once a set of BirdNET detections has been validated (i.e., manually labeled as t
 
 
 ```{r}
-# simulate validation column based on confidence
-set.seed(123)  # for reproducibility
-data_validated <- data_subsampled %>%
-  mutate(
-    validation = case_when(
-      confidence >= 0.7 ~ 1,
-      confidence >= 0.4 & confidence < 0.7 ~ sample(c(1, 0), n(), replace = TRUE, prob = c(0.8, 0.2)),
-      TRUE ~ sample(c(1, 0), n(), replace = TRUE, prob = c(0.3, 0.7))
-    )
-  )
+# simulate validation as a Bernoulli trial
+data_subsampled$validation <- rbinom(
+  n = nrow(data_subsampled), 
+  size = 1, 
+  prob = pmin(pmax(data_subsampled$confidence, 0), 1)
+)
 
-data_validated <- data_subsampled %>%
-  mutate(
-    validation = rbinom(n(), size = 1, prob = pmin(pmax(confidence, 0), 1))
-  )
 ```
 
 
@@ -245,12 +236,8 @@ It only takes one line of code to calculate species-specific thresholds using th
 
 
 ```{r}
-# get the threshold
-birdnet_calc_threshold(data_validated,
+birdnet_calc_threshold(data_subsampled,
                        precision = 0.9)
-
-# view function documentation
-?birdnet_calc_threshold()
 ```
 
 
