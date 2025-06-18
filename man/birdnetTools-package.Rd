@@ -4,7 +4,7 @@
 \name{birdnetTools-package}
 \alias{birdnetTools}
 \alias{birdnetTools-package}
-\title{birdnetTools: Post-process, Validate, and Visualize BirdNET Output}
+\title{birdnetTools: R package for working with BirdNET output}
 \description{
 What the package does (one paragraph).
 }

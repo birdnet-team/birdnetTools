@@ -2,3 +2,29 @@ url: https://birdnet-team.github.io/birdnetTools/
 template:
   bootstrap: 5
 
+reference:
+  - title: "Data Import"
+    contents:
+      - birdnet_combine
+  - title: "Exploring and Preparing Data"
+    contents:
+      - birdnet_filter
+      - birdnet_heatmap
+      - birdnet_add_datetime
+  - title: "Validating and Getting Threshold"
+    contents:
+      - birdnet_subsample
+      - birdnet_launch_validation
+      - birdnet_calc_threshold
+
+  - title: "Helper Functions"
+    contents:
+      - birdnet_filter_species
+      - birdnet_filter_threshold
+      - birdnet_filter_year
+      - birdnet_filter_date_range
+      - birdnet_filter_hour
+
+  - title: "Dataset"
+    contents:
+      - example_jprf_2023
