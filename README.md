@@ -39,30 +39,50 @@ pak::pak("birdnet-team/birdnetTools")
 
 ## Example use
 
-This is a basic example to show how to visualize BirdNET output data.
-The example assumes you have a data frame with BirdNET results:
+Below is a quick example using the built-in dataset example_jprf_2023,
+which contains detections recorded from five ARUs in northern British
+Columbia. We’ll filter detections for Swainson’s Thrush, visualize
+detection patterns, and calculate a species-specific threshold from
+simulated validation data.
 
 ``` r
 library(birdnetTools)
 
-# to read data from a local path
-data <- birdnet_combine("path/to/BirdNET/output")
+# Load built-in dataset
+data(example_jprf_2023, package = "birdnetTools")
+data <- example_jprf_2023
 
-# to filter data for given species, and time range
-data_filtered <- birdnet_filter(data, 
-                                species = "American Robin",
-                                year = 2023,
-                                date_range = c("2023-01-01", "2023-12-31"))
+# Filter for Swainson's Thrush detections during spring
+data_filtered <- birdnet_filter(data,
+  species = "Swainson's Thrush",
+  threshold = 0.2,
+  year = 2023,
+  min_date = "2023-05-01",
+  max_date = "2023-06-30"
+)
 
-# to subsample dataset for validation purpose
-data_subsampled <- birdnet_subsample(data_filtered, 
-                                     n = 1000, 
-                                     method = "stratified")
-
-# data visualization
+# Visualize daily detection patterns across sites
 birdnet_heatmap(data_filtered)
-  
-  
+```
+
+<img src="man/figures/README-example-1.png" width="100%" />
+
+``` r
+
+
+# Simulate validation (for demonstration only)
+set.seed(123)
+data_sub <- birdnet_subsample(data_filtered, n = 300, method = "stratified")
+data_sub$validation <- rbinom(nrow(data_sub), 1, prob = pmin(pmax(data_sub$confidence, 0), 1))
+
+# Calculate species-specific threshold for 90% precision
+birdnet_calc_threshold(data_sub, precision = 0.9)
+#> ℹ Processing species: Swainson's Thrush
+#> ✔ Thresholds calculated to achieve 0.9 precision.
+#> # A tibble: 1 × 2
+#>   common_name       threshold
+#>   <chr>                 <dbl>
+#> 1 Swainson's Thrush     0.917
 ```
 
 ## About this project

@@ -28,7 +28,7 @@ The goal of `birdnetTools` is to help researchers manage, explore, and validate 
 > Make a diagram for the workflow for how users can use this package :) 
 
 
-## Loading Detection Data
+## Data Import
 
 BirdNET detections can be imported in various formats depending on how your data was processed and saved. The `birdnetTools` package supports three main workflows: importing multiple detection files from separate audio recordings, importing a single file containing combined results, and using detection results that are already loaded into R.
 
@@ -153,7 +153,7 @@ Each BirdNET detection includes a "confidence" score, but this score does not re
 
 ### 1. Get a validation set by subsampling
 
-To get the species-specific threshold, we will need to validate detections in `data_filtered`, which contains Swainson’s Thrush detections filtered at a 0.2 confidence threshold. First, we will need to subsample a portion for manual review. The `birdnet_subsample()` function supports three sampling methods: `stratified` (evenly across confidence levels), `random` (unbiased selection), and `top` (highest confidence detections). `Stratified` and `random` approaches help create a representative validation set, while `top` sampling targets the most confident predictions.
+To get the species-specific threshold, we will need to validate detections in `data_filtered`, which contains Swainson’s Thrush detections filtered at a 0.2 confidence threshold. First, we will need to subsample a portion for manual review. The `birdnet_subsample()` function supports three sampling methods: `stratified` (evenly across confidence levels), `random` (selection based on confidence score distribution), and `top` (highest confidence detections). The `stratified` and `random` approaches help create a representative validation set, while `top` sampling targets the most confident predictions.
 
 
 ```{r}
@@ -161,8 +161,7 @@ To get the species-specific threshold, we will need to validate detections in `d
 set.seed(123)  # for reproducibility
 data_subsampled <- birdnet_subsample(data_filtered,
                                      n = 300,
-                                     method = "stratified"
-)
+                                     method = "stratified")
 
 # view function documentation
 ?birdnet_subsample()
@@ -177,14 +176,14 @@ birdnet_subsample(
   n = 300,
   method = "stratified",
   save_to_file = TRUE, # whether to save the subsample to a file
-  file = "swainsons_thrush_validation.csv" # name of the file to save the subsample
+  file = "swainsons_thrush_validation.csv" # name of the file
 )
 ```
 
 
 ### 2. Validation using shinyApp
 
-Manually validating detections, by locating audio files, finding timestamps, and listening to clips, can be slow and tedious. The `birdnet_validation_app()` function streamlines this process by launching a Shiny app that displays subsampled detections alongside their spectrograms and corresponding audio clips. With an interactive interface, users can quickly review each detection by listening to audio or viewing spectrograms and edit the validation datasheet, making the validation process much more efficient.
+Manually validating detections, by locating audio files, finding timestamps, and listening to clips, can be slow and tedious. The `birdnet_launch_validation()` function streamlines this process by launching a Shiny app that displays subsampled detections alongside their spectrograms and corresponding audio clips. With an interactive interface, users can quickly review each detection by listening to audio or viewing spectrograms and edit the validation datasheet, making the validation process much more efficient.
 
 ```{r eval=FALSE}
 birdnet_launch_validation()
