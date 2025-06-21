@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# birdnetTools
+# birdnetTools <a href="https://birdnet-team.github.io/birdnetTools/"><img src="man/figures/logo.png" align="right" height="120" alt="birdnetTools website" /></a>
 
 <!-- badges: start -->
 
