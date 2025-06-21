@@ -1,37 +1,29 @@
-#' Group BirdNET output files
+#' Combine BirdNET output files from a directory
 #'
-#' Reads and combines multiple BirdNET output .csv or .txt files from a specified directory
-#' into a single data frame.
-#' Files named with "analysis_params" or "CombinedTable" under the specified directory are automatically excluded.
+#' Reads and combines multiple BirdNET output `.csv` or `.txt` files from a specified directory
+#' into a single data frame. Subdirectories are searched recursively. Files named with
+#' `"analysis_params"` or `"CombinedTable"` are automatically excluded.
 #'
-#' @param path Character string. The directory path containing BirdNET output `.csv` or `.txt` files. Can include subdirectories.
+#' @param path Character string. Path to the directory containing BirdNET output files.
 #'
-#' @return A data frame containing the combined BirdNET detection data from all valid files, with columns:
-#' \itemize{
-#'   \item \code{start}: Detection start time in seconds.
-#'   \item \code{end}: Detection end time in seconds.
-#'   \item \code{scientific_name}: Scientific name of the detected species.
-#'   \item \code{common_name}: Common name of the detected species.
-#'   \item \code{confidence}: Confidence score of the detection.
-#'   \item \code{filepath}: Name of the file where the detection was found.
-#' }
+#' @return A data frame combining all valid BirdNET output files found in the directory.
+#' The column names and structure depend on the input files and are not standardized by this function.
 #'
 #' @details
-#' This function is useful for aggregating BirdNET output from batch runs or large-scale deployments.
-#' It uses a fixed column specification to ensure consistent parsing of each file. Files with incompatible
-#' formats or errors are skipped and their names are printed with a warning.
+#' Files are read using `readr::read_csv()`. Files that are empty or cannot be read are skipped.
+#' A summary of the number of files combined and any files skipped due to error is printed at the end.
+#'
+#' This function is useful for aggregating large batches of BirdNET results without requiring consistent formatting.
 #'
 #' @examples
 #' \dontrun{
 #' data <- birdnet_combine("path/to/BirdNET/output")
 #' }
 #'
-#' @importFrom readr read_csv cols col_double col_character
-#' @importFrom purrr map_dfr
-#' @importFrom dplyr tibble
+#' @importFrom readr read_csv
+#' @importFrom dplyr bind_rows tibble
 #' @importFrom cli cli_alert_success cli_alert_warning cli_li
 #' @export
-
 birdnet_combine <- function(path) {
   # argument check ----------------------------------------------------------
   checkmate::assert_character(path, len = 1, any.missing = FALSE)

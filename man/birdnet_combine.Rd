@@ -2,33 +2,27 @@
 % Please edit documentation in R/birdnet_combine.R
 \name{birdnet_combine}
 \alias{birdnet_combine}
-\title{Group BirdNET output files}
+\title{Combine BirdNET output files from a directory}
 \usage{
 birdnet_combine(path)
 }
 \arguments{
-\item{path}{Character string. The directory path containing BirdNET output \code{.csv} or \code{.txt} files. Can include subdirectories.}
+\item{path}{Character string. Path to the directory containing BirdNET output files.}
 }
 \value{
-A data frame containing the combined BirdNET detection data from all valid files, with columns:
-\itemize{
-\item \code{start}: Detection start time in seconds.
-\item \code{end}: Detection end time in seconds.
-\item \code{scientific_name}: Scientific name of the detected species.
-\item \code{common_name}: Common name of the detected species.
-\item \code{confidence}: Confidence score of the detection.
-\item \code{filepath}: Name of the file where the detection was found.
-}
+A data frame combining all valid BirdNET output files found in the directory.
+The column names and structure depend on the input files and are not standardized by this function.
 }
 \description{
-Reads and combines multiple BirdNET output .csv or .txt files from a specified directory
-into a single data frame.
-Files named with "analysis_params" or "CombinedTable" under the specified directory are automatically excluded.
+Reads and combines multiple BirdNET output \code{.csv} or \code{.txt} files from a specified directory
+into a single data frame. Subdirectories are searched recursively. Files named with
+\code{"analysis_params"} or \code{"CombinedTable"} are automatically excluded.
 }
 \details{
-This function is useful for aggregating BirdNET output from batch runs or large-scale deployments.
-It uses a fixed column specification to ensure consistent parsing of each file. Files with incompatible
-formats or errors are skipped and their names are printed with a warning.
+Files are read using \code{readr::read_csv()}. Files that are empty or cannot be read are skipped.
+A summary of the number of files combined and any files skipped due to error is printed at the end.
+
+This function is useful for aggregating large batches of BirdNET results without requiring consistent formatting.
 }
 \examples{
 \dontrun{
