@@ -136,3 +136,50 @@ birdnet_clean_names <- function(data) {
 }
 
 
+
+
+#' Detect Standard BirdNET Column Names in a Data Frame
+#'
+#' Helper function to identify the most likely columns representing
+#' key BirdNET output variables such as start time, end time,
+#' scientific name, common name, confidence, and filepath.
+#'
+#' This function attempts to match user-supplied data frame column
+#' names to expected BirdNET output columns by pattern matching.
+#' It returns a named list with the detected column names or `NA`
+#' if no match is found.
+#'
+#' @param data A data frame containing BirdNET output data.
+#'
+#' @return A named list with elements:
+#' \describe{
+#'   \item{start}{Column name for start time (or NA).}
+#'   \item{end}{Column name for end time (or NA).}
+#'   \item{scientific_name}{Column name for scientific name (or NA).}
+#'   \item{common_name}{Column name for common name (or NA).}
+#'   \item{confidence}{Column name for confidence score (or NA).}
+#'   \item{filepath}{Column name for file path or file name (or NA).}
+#' }
+#'
+#' @keywords internal
+birdnet_detect_columns <- function(data) {
+  checkmate::assert_data_frame(data)
+
+  col_matches <- function(patterns) {
+    pattern <- stringr::str_c(patterns, collapse = "|")  # create a single regex pattern
+    match <- names(data)[stringr::str_detect(names(data),
+                                             stringr::regex(pattern, ignore_case = TRUE))]
+    if (length(match) == 0) return(NA_character_)
+    return(match[1])  # return first match
+  }
+
+  list(
+    start = col_matches("start"),
+    end = col_matches("end"),
+    scientific_name = col_matches("scientific"),
+    common_name = col_matches("common"),
+    confidence = col_matches("confidence"),
+    filepath = col_matches(c("file", "path"))
+  )
+}
+

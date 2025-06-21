@@ -6,6 +6,8 @@
 \alias{birdnetTools-package}
 \title{birdnetTools: R package for working with BirdNET output}
 \description{
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
 What the package does (one paragraph).
 }
 \seealso{

@@ -5,27 +5,16 @@ test_that("accepts an input for path", {
 
 
 
-test_that("returns a tibble with the correct columns", {
-  result <- birdnet_combine(path = test_path("data"))
-
-  expect_s3_class(result, "tbl_df")
-  expect_true(all(c("start", "end", "scientific_name", "common_name", "confidence", "filepath") %in% colnames(result)))
-})
-
-
-
-
 test_that("errors if path is not character or directory", {
   expect_error(birdnet_combine(123))
   expect_error(birdnet_combine("nonexistent_dir"))
 })
 
 
-
 test_that("errors if no csv or txt files found", {
   temp_dir <- tempdir()
   # Make sure temp_dir is empty or no csv/txt files present
-  files <- list.files(temp_dir, pattern = "\\.(csv|txt)$", full.names = TRUE)
+  files <- list.files(temp_dir, pattern = "\\.(csv|txt|rda)$", full.names = TRUE)
   file.remove(files) # remove any csv or txt files
 
   expect_error(
