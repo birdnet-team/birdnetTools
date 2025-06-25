@@ -4,8 +4,8 @@
 #' detected in BirdNET output data. The heatmap shows detection counts by hour and date,
 #' optionally filtered by species, confidence threshold, date range, and hours of the day.
 #'
-#' @param data A data frame containing BirdNET output. Relevant columns (e.g., common name,
-#'   confidence, filepath) are automatically detected by [birdnet_detect_columns].
+#' @param data A data frame containing BirdNET output. Relevant columns (e.g., `common name`,
+#'   `confidence`, `datetime`) are automatically detected by [birdnet_detect_columns].
 #' @param species Character scalar or vector specifying the common name(s) of species to visualize.
 #'   If `NULL`, no species filtering is applied.
 #' @param threshold Numeric scalar between 0 and 1, or a data frame with columns `scientific_name`

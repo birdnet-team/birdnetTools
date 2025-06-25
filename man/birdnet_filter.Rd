@@ -15,8 +15,8 @@ birdnet_filter(
 )
 }
 \arguments{
-\item{data}{A data frame containing BirdNET output. Relevant columns (e.g., common name,
-confidence, datetime) are automatically detected.}
+\item{data}{A data frame containing BirdNET output. Relevant columns (e.g., \verb{common name},
+\code{confidence}, \code{datetime}) are automatically detected by \link{birdnet_detect_columns}.}
 
 \item{species}{Character vector. One or more common names of species to retain
 (e.g., \code{c("Swainson's Thrush", "American Robin")}).}

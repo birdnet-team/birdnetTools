@@ -38,7 +38,7 @@ birdnet_add_datetime <- function(
   cols <- birdnet_detect_columns(data)
 
 
-  data_with_datetime <- data %>%
+  data_with_datetime <- data |>
 
     # parase the column name to the datetime format
     dplyr::mutate(

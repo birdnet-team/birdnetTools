@@ -10,8 +10,8 @@
 #' All applied filter parameters are stored as an attribute called `"filter_log"` attached to
 #' the returned data frame, which can be accessed via \code{attr(x, "filter_log")}.
 #'
-#' @param data A data frame containing BirdNET output. Relevant columns (e.g., common name,
-#'   confidence, datetime) are automatically detected.
+#' @param data A data frame containing BirdNET output. Relevant columns (e.g., `common name`,
+#'   `confidence`, `datetime`) are automatically detected by [birdnet_detect_columns].
 #' @param species Character vector. One or more common names of species to retain
 #'   (e.g., \code{c("Swainson's Thrush", "American Robin")}).
 #' @param threshold Either a single numeric value between 0 and 1 (for a universal threshold),
