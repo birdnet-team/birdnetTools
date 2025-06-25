@@ -48,7 +48,7 @@ birdnet_combine <- function(path) {
   }
 
   # initialize containers ---------------------------------------------------
-  results <- tibble::tibble()
+  results <- dplyr::tibble()
   error_files <- c()
 
   # process files one by one ------------------------------------------------
