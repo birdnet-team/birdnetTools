@@ -7,15 +7,20 @@
 birdnet_filter_threshold(data, threshold_arg)
 }
 \arguments{
-\item{data}{A data frame containing BirdNET output with \code{confidence} and \code{scientific_name} columns.}
+\item{data}{A data frame containing BirdNET output.}
 
-\item{threshold_arg}{Either a single numeric value (for universal threshold) or a data frame
-with \code{scientific_name} and \code{threshold} columns for species-specific thresholds.}
+\item{threshold_arg}{Either a single numeric value (for a universal threshold), or a data frame
+with columns \code{scientific_name} and \code{threshold} specifying species-specific thresholds.}
 }
 \value{
-A filtered data frame.
+A filtered data frame with only rows meeting the threshold criteria.
 }
 \description{
 Filters BirdNET data based on a universal or species-specific confidence threshold.
+Column names (e.g., for confidence and scientific name) are detected automatically.
+}
+\details{
+The function uses \code{\link{birdnet_detect_columns}} to detect the relevant columns
+(e.g., "Confidence", "Scientific Name") based on common patterns.
 }
 \keyword{internal}

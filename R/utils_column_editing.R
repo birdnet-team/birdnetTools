@@ -1,11 +1,13 @@
 #' Add datetime-related columns from BirdNET output filenames
 #'
-#' Extracts and parses datetime information from filenames in a specified column,
-#' then adds several useful time-related columns (e.g., `date`, `year`, `month`, `hour`)
-#' to the input data frame.
+#' Extracts and parses datetime information from filenames in the file path column
+#' (automatically detected), then adds several useful time-related columns
+#' (e.g., `date`, `year`, `month`, `hour`) to the input data frame.
+#'
+#' The function uses \code{\link{birdnet_detect_columns}} to find the column
+#' containing file paths based on common name patterns (e.g., "file", "path").
 #'
 #' @param data A data frame containing BirdNET output.
-#' @param col Unquoted name of the column that contains the file paths (e.g., `File`).
 #' @param tz Time zone to assign when parsing datetime. Defaults to `"UTC"`.
 #'
 #' @return A data frame with additional columns:
@@ -18,12 +20,12 @@
 #' @examples
 #' \dontrun{
 #' combined_data <- birdnet_combine("path/to/BirdNET/output")
-#' data_with_time <- birdnet_add_datetime(combined_data, col = File)
+#' data_with_time <- birdnet_add_datetime(combined_data)
 #' }
 #' @export
 birdnet_add_datetime <- function(
     data,
-    col = filepath,
+    #col = filepath,
     tz = "UTC") {
   # argument check ----------------------------------------------------------
 
@@ -33,14 +35,17 @@ birdnet_add_datetime <- function(
 
   # main function -----------------------------------------------------------
 
-  data_with_datetime <- data |>
+  cols <- birdnet_detect_columns(data)
+
+
+  data_with_datetime <- data %>%
 
     # parase the column name to the datetime format
-    dplyr::mutate(datetime = {{ col }} |>
-      basename() |>
-      stringr::str_extract("\\d{8}.\\d{6}") |>
+    dplyr::mutate(datetime = !!dplyr::sym(cols$filepath) %>%
+      basename() %>%
+      stringr::str_extract("\\d{8}.\\d{6}") %>%
       lubridate::parse_date_time(orders = c("ymd_HMS", "ymd-HMS", "ymdHMS"),
-                                 tz = tz)) |>
+                                 tz = tz)) %>%
 
     # mutate to add date and time components
     dplyr::mutate(
