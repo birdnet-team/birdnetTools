@@ -19,3 +19,4 @@ A filtered data frame.
 \description{
 Filters BirdNET data to only include rows within a specified date range.
 }
+\keyword{internal}

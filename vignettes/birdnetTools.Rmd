@@ -114,36 +114,36 @@ attr(data_filtered, "filter_log")
 ```
 
 
-You can also choose to use individual filtering functions. These include filters by species, threshold, year, date range, and hour. The `birdnet_filter()` function serves as a convenient wrapper that combines all of these helper functions.
-```{r}
-# detection for kinglets
-data_kinglet <- birdnet_filter_species(
-  data, 
-  c("Golden-crowned Kinglet", "Ruby-crowned Kinglet")
-  )
-```
+<!-- You can also choose to use individual filtering functions. These include filters by species, threshold, year, date range, and hour. The `birdnet_filter()` function serves as a convenient wrapper that combines all of these helper functions. -->
+<!-- ```{r} -->
+<!-- # detection for kinglets -->
+<!-- data_kinglet <- birdnet_filter_species( -->
+<!--   data,  -->
+<!--   c("Golden-crowned Kinglet", "Ruby-crowned Kinglet") -->
+<!--   ) -->
+<!-- ``` -->
 
-```{r}
-# detection with confidence above 0.85
-data_0.85 <- birdnet_filter_threshold(data, 0.85)
-```
+<!-- ```{r} -->
+<!-- # detection with confidence above 0.85 -->
+<!-- data_0.85 <- birdnet_filter_threshold(data, 0.85) -->
+<!-- ``` -->
 
-```{r}
-# detection in 2023
-data_2023 <- birdnet_filter_year(data, 2023)
-```
+<!-- ```{r} -->
+<!-- # detection in 2023 -->
+<!-- data_2023 <- birdnet_filter_year(data, 2023) -->
+<!-- ``` -->
 
-```{r}
-# detection on May 2023
-data_may <- birdnet_filter_date_range(data, 
-                                      min_date = "2023-05-01", 
-                                      max_date = "2023-05-31")
-```
+<!-- ```{r} -->
+<!-- # detection on May 2023 -->
+<!-- data_may <- birdnet_filter_date_range(data,  -->
+<!--                                       min_date = "2023-05-01",  -->
+<!--                                       max_date = "2023-05-31") -->
+<!-- ``` -->
 
-```{r}
-# detection in the morning (4am to 7am)
-data_morning <- birdnet_filter_hour(data, c(4:7))
-```
+<!-- ```{r} -->
+<!-- # detection in the morning (4am to 7am) -->
+<!-- data_morning <- birdnet_filter_hour(data, c(4:7)) -->
+<!-- ``` -->
 
 
 

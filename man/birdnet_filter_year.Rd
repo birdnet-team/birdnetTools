@@ -17,3 +17,4 @@ A filtered data frame.
 \description{
 Filters BirdNET data based on the year of detection.
 }
+\keyword{internal}

@@ -18,3 +18,4 @@ A filtered data frame.
 \description{
 Filters BirdNET data based on a universal or species-specific confidence threshold.
 }
+\keyword{internal}
