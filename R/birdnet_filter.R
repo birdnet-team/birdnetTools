@@ -4,7 +4,7 @@
 #' Supports filtering by species name, confidence threshold (universal or species-specific),
 #' year, date range, and hour of day.
 #'
-#' This function uses \code{\link{birdnet_detect_columns}} to automatically identify the relevant
+#' This function uses [birdnet_detect_columns] to automatically identify the relevant
 #' columns (e.g., for species names, confidence, datetime) based on common naming patterns.
 #'
 #' All applied filter parameters are stored as an attribute called `"filter_log"` attached to

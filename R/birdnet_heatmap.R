@@ -4,14 +4,13 @@
 #' detected in BirdNET output data. The heatmap shows detection counts by hour and date,
 #' optionally filtered by species, confidence threshold, date range, and hours of the day.
 #'
-#' @param data A data frame containing BirdNET output. Must include columns related to detection times,
-#'   species names, confidence scores, and file paths. Column names will be standardized internally
-#'   using [birdnet_clean_names()].
+#' @param data A data frame containing BirdNET output. Relevant columns (e.g., common name,
+#'   confidence, filepath) are automatically detected by [birdnet_detect_columns].
 #' @param species Character scalar or vector specifying the common name(s) of species to visualize.
 #'   If `NULL`, no species filtering is applied.
-#' @param threshold Numeric scalar between 0 and 1, data frame with columns `scientific_name` and
-#'   `threshold`, or `NULL`. If numeric, filters detections below this confidence value. If a data frame,
-#'   species-specific thresholds are applied. If `NULL`, no threshold filtering is done.
+#' @param threshold Numeric scalar between 0 and 1, or a data frame with columns `scientific_name`
+#'   and `threshold`, or `NULL`. If numeric, filters detections below this confidence value.
+#'   If a data frame, species-specific thresholds are applied. If `NULL`, no threshold filtering is done.
 #' @param min_date Character scalar specifying the earliest date to include (format `"YYYY-MM-DD"`).
 #'   If `NULL`, no lower date limit is applied.
 #' @param max_date Character scalar specifying the latest date to include (format `"YYYY-MM-DD"`).

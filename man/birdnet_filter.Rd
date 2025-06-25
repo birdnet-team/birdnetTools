@@ -40,7 +40,7 @@ Supports filtering by species name, confidence threshold (universal or species-s
 year, date range, and hour of day.
 }
 \details{
-This function uses \code{\link{birdnet_detect_columns}} to automatically identify the relevant
+This function uses \link{birdnet_detect_columns} to automatically identify the relevant
 columns (e.g., for species names, confidence, datetime) based on common naming patterns.
 
 All applied filter parameters are stored as an attribute called \code{"filter_log"} attached to

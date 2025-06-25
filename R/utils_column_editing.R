@@ -41,11 +41,12 @@ birdnet_add_datetime <- function(
   data_with_datetime <- data %>%
 
     # parase the column name to the datetime format
-    dplyr::mutate(datetime = !!dplyr::sym(cols$filepath) %>%
-      basename() %>%
-      stringr::str_extract("\\d{8}.\\d{6}") %>%
-      lubridate::parse_date_time(orders = c("ymd_HMS", "ymd-HMS", "ymdHMS"),
-                                 tz = tz)) %>%
+    dplyr::mutate(
+      datetime = basename(data[[cols$filepath]]) |>
+        stringr::str_extract("\\d{8}.\\d{6}") |>
+        lubridate::parse_date_time(
+          orders = c("ymd_HMS", "ymd-HMS", "ymdHMS"),
+          tz = tz)) |>
 
     # mutate to add date and time components
     dplyr::mutate(
@@ -143,7 +144,7 @@ birdnet_clean_names <- function(data) {
 
 
 
-#' Detect Standard BirdNET Column Names in a Data Frame
+#' Detect standard BirdNET column names in a data frame
 #'
 #' Helper function to identify the most likely columns representing
 #' key BirdNET output variables such as start time, end time,

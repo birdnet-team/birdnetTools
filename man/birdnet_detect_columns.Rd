@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils_column_editing.R
 \name{birdnet_detect_columns}
 \alias{birdnet_detect_columns}
-\title{Detect Standard BirdNET Column Names in a Data Frame}
+\title{Detect standard BirdNET column names in a data frame}
 \usage{
 birdnet_detect_columns(data)
 }

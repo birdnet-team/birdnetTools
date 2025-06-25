@@ -14,16 +14,15 @@ birdnet_heatmap(
 )
 }
 \arguments{
-\item{data}{A data frame containing BirdNET output. Must include columns related to detection times,
-species names, confidence scores, and file paths. Column names will be standardized internally
-using \code{\link[=birdnet_clean_names]{birdnet_clean_names()}}.}
+\item{data}{A data frame containing BirdNET output. Relevant columns (e.g., common name,
+confidence, filepath) are automatically detected by \link{birdnet_detect_columns}.}
 
 \item{species}{Character scalar or vector specifying the common name(s) of species to visualize.
 If \code{NULL}, no species filtering is applied.}
 
-\item{threshold}{Numeric scalar between 0 and 1, data frame with columns \code{scientific_name} and
-\code{threshold}, or \code{NULL}. If numeric, filters detections below this confidence value. If a data frame,
-species-specific thresholds are applied. If \code{NULL}, no threshold filtering is done.}
+\item{threshold}{Numeric scalar between 0 and 1, or a data frame with columns \code{scientific_name}
+and \code{threshold}, or \code{NULL}. If numeric, filters detections below this confidence value.
+If a data frame, species-specific thresholds are applied. If \code{NULL}, no threshold filtering is done.}
 
 \item{min_date}{Character scalar specifying the earliest date to include (format \code{"YYYY-MM-DD"}).
 If \code{NULL}, no lower date limit is applied.}
