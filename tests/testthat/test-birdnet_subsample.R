@@ -28,7 +28,6 @@ test_that("birdnet_subsample: works with method = 'stratified'", {
   result <- birdnet_subsample(valid_data, n = 20, method = "stratified")
 
   expect_s3_class(result, "data.frame")
-  expect_true(all(c("common_name", "confidence") %in% colnames(result)))
 })
 
 
@@ -38,9 +37,11 @@ test_that("birdnet_subsample: works with method = 'random'", {
   valid_data <- readr::read_csv(testthat::test_path("data", "test_example_1.csv"))
   result <- birdnet_subsample(valid_data, n = 20, method = "random")
 
+  cols <- birdnet_detect_columns(result)
+
   expect_s3_class(result, "data.frame")
   expect_lte(all(result |>
-               dplyr::summarize(count = dplyr::n(), .by = scientific_name) |>
+               dplyr::summarize(count = dplyr::n(), .by = !!dplyr::sym(cols$scientific_name)) |>
                dplyr::pull(count)),
              20)  # max 5 per species
 })
@@ -50,9 +51,11 @@ test_that("birdnet_subsample: works with method = 'top'", {
   valid_data <- readr::read_csv(testthat::test_path("data", "test_example_1.csv"))
   result <- birdnet_subsample(valid_data, n = 10, method = "top")
 
+  cols <- birdnet_detect_columns(result)
+
   expect_s3_class(result, "data.frame")
   expect_lte(all(result |>
-                   dplyr::summarize(count = dplyr::n(), .by = scientific_name) |>
+                   dplyr::summarize(count = dplyr::n(), .by = !!dplyr::sym(cols$scientific_name)) |>
                    dplyr::pull(count)), 10)
 })
 
@@ -73,3 +76,4 @@ test_that("birdnet_subsample: file output is created if save_to_file = TRUE", {
   expect_true(file.exists(tmp))
   unlink(tmp)
 })
+

@@ -4,12 +4,10 @@
 \alias{birdnet_add_datetime}
 \title{Add datetime-related columns from BirdNET output filenames}
 \usage{
-birdnet_add_datetime(data, col = filepath, tz = "UTC")
+birdnet_add_datetime(data, tz = "UTC")
 }
 \arguments{
 \item{data}{A data frame containing BirdNET output.}
-
-\item{col}{Unquoted name of the column that contains the file paths (e.g., \code{File}).}
 
 \item{tz}{Time zone to assign when parsing datetime. Defaults to \code{"UTC"}.}
 }
@@ -22,13 +20,17 @@ A data frame with additional columns:
 }
 }
 \description{
-Extracts and parses datetime information from filenames in a specified column,
-then adds several useful time-related columns (e.g., \code{date}, \code{year}, \code{month}, \code{hour})
-to the input data frame.
+Extracts and parses datetime information from filenames in the file path column
+(automatically detected), then adds several useful time-related columns
+(e.g., \code{date}, \code{year}, \code{month}, \code{hour}) to the input data frame.
+}
+\details{
+The function uses \code{\link{birdnet_detect_columns}} to find the column
+containing file paths based on common name patterns (e.g., "file", "path").
 }
 \examples{
 \dontrun{
 combined_data <- birdnet_combine("path/to/BirdNET/output")
-data_with_time <- birdnet_add_datetime(combined_data, col = File)
+data_with_time <- birdnet_add_datetime(combined_data)
 }
 }

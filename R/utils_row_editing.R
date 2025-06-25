@@ -1,16 +1,22 @@
 #' Filter data by species
 #'
-#' Filters BirdNET data for one or more specified species.
+#' Filters BirdNET data for one or more specified species using the column
+#' automatically detected as containing common species names.
 #'
-#' @param data A data frame containing BirdNET output with a `common_name` column.
+#' The function uses \code{\link{birdnet_detect_columns}} to detect the column
+#' containing common names (e.g., "Common Name", "common_name", etc.).
+#'
+#' @param data A data frame containing BirdNET output.
 #' @param species Character vector. One or more common names of species to keep.
 #'
-#' @return A filtered data frame.
-#' @export
+#' @return A filtered data frame containing only the specified species.
+#' @keywords internal
 birdnet_filter_species <- function(data, species){
 
+  cols <- birdnet_detect_columns(data)
+
   data <- data |>
-    dplyr::filter(common_name %in% species)
+    dplyr::filter(!!dplyr::sym(cols$common_name) %in% species)
 
   return(data)
 }
@@ -19,27 +25,35 @@ birdnet_filter_species <- function(data, species){
 #' Filter data by confidence threshold
 #'
 #' Filters BirdNET data based on a universal or species-specific confidence threshold.
+#' Column names (e.g., for confidence and scientific name) are detected automatically.
 #'
-#' @param data A data frame containing BirdNET output with `confidence` and `scientific_name` columns.
-#' @param threshold_arg Either a single numeric value (for universal threshold) or a data frame
-#'   with `scientific_name` and `threshold` columns for species-specific thresholds.
+#' The function uses \code{\link{birdnet_detect_columns}} to detect the relevant columns
+#' (e.g., "Confidence", "Scientific Name") based on common patterns.
 #'
-#' @return A filtered data frame.
-#' @export
+#' @param data A data frame containing BirdNET output.
+#' @param threshold_arg Either a single numeric value (for a universal threshold), or a data frame
+#'   with columns `scientific_name` and `threshold` specifying species-specific thresholds.
+#'
+#' @return A filtered data frame with only rows meeting the threshold criteria.
+#' @keywords internal
 birdnet_filter_threshold <- function(data, threshold_arg) {
+
+  cols <- birdnet_detect_columns(data)
 
   # check the threshold is either a single numeric value or
   # a dataframe with `scientific_name' and 'threshold' columns
 
   if (is.numeric(threshold_arg)) {
     # universal threshold
-    data_filtered <- dplyr::filter(data, confidence >= threshold_arg)
+    data_filtered <- data |>
+      dplyr::filter(!!dplyr::sym(cols$confidence) >= threshold_arg)
 
   } else if (is.data.frame(threshold_arg)) {
     # species-specific thresholds
     data_filtered <- data |>
-      dplyr::left_join(threshold_arg, by = "scientific_name") |>
-      dplyr::filter(confidence >= threshold) |>
+      dplyr::left_join(threshold_arg,
+                       by = dplyr::join_by(!!dplyr::sym(cols$scientific_name) == "scientific_name")) |>
+      dplyr::filter(!!dplyr::sym(cols$confidence) >= threshold) |>
       dplyr::select(-threshold)  # Optional: drop joined threshold column
   }
 
@@ -55,7 +69,7 @@ birdnet_filter_threshold <- function(data, threshold_arg) {
 #' @param year_arg Integer vector. The year(s) to keep.
 #'
 #' @return A filtered data frame.
-#' @export
+#' @keywords internal
 birdnet_filter_year <- function(data, year_arg) {
 
 
@@ -67,8 +81,10 @@ birdnet_filter_year <- function(data, year_arg) {
     has_datetime <- FALSE
   }
 
+
   # filter by year
-  data <- dplyr::filter(data, year %in% year_arg)
+  data <- data |>
+    dplyr::filter(year %in% year_arg)
 
   # drop datetime if it was added
   if (has_datetime) {
@@ -88,7 +104,7 @@ birdnet_filter_year <- function(data, year_arg) {
 #' @param max_date Date or character string coercible to Date. The maximum date (inclusive).
 #'
 #' @return A filtered data frame.
-#' @export
+#' @keywords internal
 birdnet_filter_date_range <- function(data,
                                       min_date = NULL,
                                       max_date = NULL) {
@@ -103,12 +119,14 @@ birdnet_filter_date_range <- function(data,
 
   # filter by minimum date
   if (!is.null(min_date)) {
-    data <- dplyr::filter(data, date >= as.Date(min_date))
+    data <- data |>
+      dplyr::filter(date >= as.Date(min_date))
   }
 
   # filter by maximum date
   if (!is.null(max_date)) {
-    data <- dplyr::filter(data, date <= as.Date(max_date))
+    data <- data |>
+      dplyr::filter(date <= as.Date(max_date))
   }
 
   # drop datetime if it was added
@@ -128,7 +146,7 @@ birdnet_filter_date_range <- function(data,
 #' @param hour_arg Integer vector of hours (0–23) to keep.
 #'
 #' @return A filtered data frame.
-#' @export
+#' @keywords internal
 birdnet_filter_hour <- function(data, hour_arg) {
 
   # add datetime info if 'hour' column is missing
@@ -140,7 +158,8 @@ birdnet_filter_hour <- function(data, hour_arg) {
   }
 
   # filter by year
-  data <- dplyr::filter(data, hour %in% hour_arg)
+  data <- data |>
+    dplyr::filter(hour %in% hour_arg)
 
   # drop datetime if it was added
   if (has_datetime) {

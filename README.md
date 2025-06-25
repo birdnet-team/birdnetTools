@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# birdnetTools
+# birdnetTools <a href="https://birdnet-team.github.io/birdnetTools/"><img src="man/figures/logo.png" align="right" height="120" alt="birdnetTools website" /></a>
 
 <!-- badges: start -->
 
@@ -82,7 +82,7 @@ birdnet_calc_threshold(data_sub, precision = 0.9)
 #> # A tibble: 1 × 2
 #>   common_name       threshold
 #>   <chr>                 <dbl>
-#> 1 Swainson's Thrush     0.917
+#> 1 Swainson's Thrush       0.8
 ```
 
 ## Acknowledgements

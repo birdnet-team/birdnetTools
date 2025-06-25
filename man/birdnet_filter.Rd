@@ -15,36 +15,46 @@ birdnet_filter(
 )
 }
 \arguments{
-\item{data}{A data frame containing BirdNET output. Column names will be standardized internally
-using \code{\link[=birdnet_clean_names]{birdnet_clean_names()}}.}
+\item{data}{A data frame containing BirdNET output. Relevant columns (e.g., \verb{common name},
+\code{confidence}, \code{datetime}) are automatically detected by \link{birdnet_detect_columns}.}
 
-\item{species}{Character vector. One or more common names of the species to filter by (e.g., \code{c("Swainson's Thrush", "American Robin")}).}
+\item{species}{Character vector. One or more common names of species to retain
+(e.g., \code{c("Swainson's Thrush", "American Robin")}).}
 
-\item{threshold}{Either a single numeric value between 0 and 1 (for universal threshold) or a data frame
-with \code{scientific_name} and \code{threshold} columns for species-specific thresholds. Rows with confidence below
-the threshold will be excluded.}
+\item{threshold}{Either a single numeric value between 0 and 1 (for a universal threshold),
+or a data frame with columns \code{scientific_name} and \code{threshold} for species-specific thresholds.}
 
-\item{year}{Integer or vector of integers. Year(s) to retain in the data (e.g., \code{c(2024:2025)}).}
+\item{year}{Integer or vector of integers specifying year(s) to retain (e.g., \code{2024:2025}).}
 
-\item{min_date, max_date}{Character strings or \code{Date} objects specifying the date range (inclusive).
-If only one is provided, filtering is open-ended on the other side (e.g., "2025-06-09").}
+\item{min_date, max_date}{Optional. Character strings or \code{Date} objects specifying a date range
+in "YYYY-MM-DD" format. If only one is provided, filtering is open-ended on the other side.}
 
-\item{hour}{Integer vector between 0 and 23 specifying which hours of the day to keep (e.g., \code{c(4:7)}).}
+\item{hour}{Integer vector between 0 and 23 specifying hours of the day to retain (e.g., \code{4:7}).}
 }
 \value{
-A filtered data frame with a \code{"filter_log"} attribute containing the filtering parameters used.
+A filtered data frame with an attribute \code{"filter_log"} containing the applied filters.
 }
 \description{
-Applies one or more common filtering operations to a BirdNET output dataframe.
-This includes filtering by species name, confidence threshold, year, date range, and hour range.
-The function also records the filtering parameters as an attribute (\code{filter_log})
-attached to the returned dataframe, allowing users to inspect what filters were applied.
+Applies one or more common filtering operations to a BirdNET output data frame.
+Supports filtering by species name, confidence threshold (universal or species-specific),
+year, date range, and hour of day.
+}
+\details{
+This function uses \link{birdnet_detect_columns} to automatically identify the relevant
+columns (e.g., for species names, confidence, datetime) based on common naming patterns.
+
+All applied filter parameters are stored as an attribute called \code{"filter_log"} attached to
+the returned data frame, which can be accessed via \code{attr(x, "filter_log")}.
 }
 \examples{
 \dontrun{
-filtered <- birdnet_filter(data,
+filtered <- birdnet_filter(
+  data = birdnet_combine("path/to/output"),
   species = "Swainson's Thrush",
-  threshold = 0.75
+  threshold = 0.75,
+  year = 2025,
+  min_date = "2025-06-01",
+  hour = 4:8
 )
 attr(filtered, "filter_log")
 }

@@ -3,7 +3,8 @@
 #' Subsamples a specified number of observations for a given species from a BirdNET output dataset
 #' using one of three methods: stratified, random, or top confidence. Optionally saves the result to a CSV file.
 #'
-#' @param data A data frame containing BirdNET output. It must include at least the columns `common_name` and `confidence`.
+#' @param data A data frame containing BirdNET output. Relevant columns (e.g., `common name`,
+#'   `confidence`, `datetime`) are automatically detected by [birdnet_detect_columns].
 #' @param n Integer. Total number of observations to subsample for each species in `data`.
 #' @param method Character string. Subsampling method to use. One of `"stratified"`, `"random"`, or `"top"`:
 #' \describe{
@@ -54,19 +55,19 @@ birdnet_subsample <- function(
 
   # main function -----------------------------------------------------------
 
-  data <- data |>
-    birdnet_clean_names()
+  # check if the required columns are present
+  cols <- birdnet_detect_columns(data)
 
   # balancing samples with different confidence scores
   if (method == "stratified") {
     data <- data |>
-      dplyr::mutate(category = cut(confidence,
+      dplyr::mutate(category = cut(!!dplyr::sym(cols$confidence),
         breaks = seq(0.1, 1, by = 0.05),
         right = FALSE
       )) |>
       dplyr::slice_sample(
         n = round(n / 18),
-        by = c(category, common_name)
+        by = c(category, !!dplyr::sym(cols$confidence))
       ) |>
       dplyr::select(-category)
 
@@ -76,15 +77,15 @@ birdnet_subsample <- function(
       dplyr::slice_sample(
         n = n,
         replace = FALSE,
-        by = common_name
+        by = !!dplyr::sym(cols$common_name)
       )
 
     # useful when checking the richness
   } else if (method == "top") {
     data <- data |>
-      dplyr::slice_max(confidence,
+      dplyr::slice_max(!!dplyr::sym(cols$confidence),
         n = n,
-        by = common_name
+        by = !!dplyr::sym(cols$common_name)
       )
   }
 

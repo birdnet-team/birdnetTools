@@ -7,13 +7,19 @@
 birdnet_filter_species(data, species)
 }
 \arguments{
-\item{data}{A data frame containing BirdNET output with a \code{common_name} column.}
+\item{data}{A data frame containing BirdNET output.}
 
 \item{species}{Character vector. One or more common names of species to keep.}
 }
 \value{
-A filtered data frame.
+A filtered data frame containing only the specified species.
 }
 \description{
-Filters BirdNET data for one or more specified species.
+Filters BirdNET data for one or more specified species using the column
+automatically detected as containing common species names.
 }
+\details{
+The function uses \code{\link{birdnet_detect_columns}} to detect the column
+containing common names (e.g., "Common Name", "common_name", etc.).
+}
+\keyword{internal}

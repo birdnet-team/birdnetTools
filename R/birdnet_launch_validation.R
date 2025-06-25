@@ -161,12 +161,10 @@ birdnet_validation_server <- function(input, output, session) {
     drives <- gsub("\\s", "", drives[-1])
 
     # add drives with their names as keys
-    c(
-      Desktop = file.path(Sys.getenv("USERPROFILE"), "Desktop"),
+    c(Desktop = file.path(Sys.getenv("USERPROFILE"), "Desktop"),
       Documents = file.path(Sys.getenv("USERPROFILE"), "Documents"),
       Working_dir = ".",
-      setNames(drives, drives)
-    )
+      setNames(drives, drives))
   } else {
     # for unix-like systems, include common mount points
     external_drives <- list.files("/Volumes", full.names = TRUE)

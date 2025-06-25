@@ -1,28 +1,37 @@
 #' Filter BirdNET output data by species, confidence, date, and time
 #'
-#' Applies one or more common filtering operations to a BirdNET output dataframe.
-#' This includes filtering by species name, confidence threshold, year, date range, and hour range.
-#' The function also records the filtering parameters as an attribute (`filter_log`)
-#' attached to the returned dataframe, allowing users to inspect what filters were applied.
+#' Applies one or more common filtering operations to a BirdNET output data frame.
+#' Supports filtering by species name, confidence threshold (universal or species-specific),
+#' year, date range, and hour of day.
 #'
-#' @param data A data frame containing BirdNET output. Column names will be standardized internally
-#'   using [birdnet_clean_names()].
-#' @param species Character vector. One or more common names of the species to filter by (e.g., `c("Swainson's Thrush", "American Robin")`).
-#' @param threshold Either a single numeric value between 0 and 1 (for universal threshold) or a data frame
-#'   with `scientific_name` and `threshold` columns for species-specific thresholds. Rows with confidence below
-#'   the threshold will be excluded.
-#' @param year Integer or vector of integers. Year(s) to retain in the data (e.g., `c(2024:2025)`).
-#' @param min_date,max_date Character strings or `Date` objects specifying the date range (inclusive).
-#'   If only one is provided, filtering is open-ended on the other side (e.g., "2025-06-09").
-#' @param hour Integer vector between 0 and 23 specifying which hours of the day to keep (e.g., `c(4:7)`).
+#' This function uses [birdnet_detect_columns] to automatically identify the relevant
+#' columns (e.g., for species names, confidence, datetime) based on common naming patterns.
 #'
-#' @return A filtered data frame with a `"filter_log"` attribute containing the filtering parameters used.
+#' All applied filter parameters are stored as an attribute called `"filter_log"` attached to
+#' the returned data frame, which can be accessed via \code{attr(x, "filter_log")}.
+#'
+#' @param data A data frame containing BirdNET output. Relevant columns (e.g., `common name`,
+#'   `confidence`, `datetime`) are automatically detected by [birdnet_detect_columns].
+#' @param species Character vector. One or more common names of species to retain
+#'   (e.g., \code{c("Swainson's Thrush", "American Robin")}).
+#' @param threshold Either a single numeric value between 0 and 1 (for a universal threshold),
+#'   or a data frame with columns `scientific_name` and `threshold` for species-specific thresholds.
+#' @param year Integer or vector of integers specifying year(s) to retain (e.g., \code{2024:2025}).
+#' @param min_date,max_date Optional. Character strings or \code{Date} objects specifying a date range
+#'   in "YYYY-MM-DD" format. If only one is provided, filtering is open-ended on the other side.
+#' @param hour Integer vector between 0 and 23 specifying hours of the day to retain (e.g., \code{4:7}).
+#'
+#' @return A filtered data frame with an attribute `"filter_log"` containing the applied filters.
 #'
 #' @examples
 #' \dontrun{
-#' filtered <- birdnet_filter(data,
+#' filtered <- birdnet_filter(
+#'   data = birdnet_combine("path/to/output"),
 #'   species = "Swainson's Thrush",
-#'   threshold = 0.75
+#'   threshold = 0.75,
+#'   year = 2025,
+#'   min_date = "2025-06-01",
+#'   hour = 4:8
 #' )
 #' attr(filtered, "filter_log")
 #' }
@@ -42,6 +51,21 @@ birdnet_filter <- function(
   # 1. Check data is a tibble with required columns
   checkmate::assert_data_frame(data)
 
+  cols <- birdnet_detect_columns(data)
+
+  required_cols <- c("start", "end", "scientific_name", "common_name", "confidence", "filepath")
+
+  missing_cols <- required_cols[is.na(cols)]
+
+  if (length(missing_cols) > 0) {
+    rlang::abort(
+      paste0(
+        "The input data is missing required BirdNET columns: ",
+        paste(missing_cols, collapse = ", "),
+        ". Please provide a valid BirdNET output data frame."
+      )
+    )
+  }
 
   # 2. species: NULL or character vector
   if (!is.null(species)) {
@@ -88,9 +112,6 @@ birdnet_filter <- function(
 
 
   # main function -----------------------------------------------------------
-  # clean column names first
-  data <- birdnet_clean_names(data)
-
   # initialize filter log
   filter_log <- list()
 

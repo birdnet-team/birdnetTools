@@ -13,7 +13,8 @@ birdnet_subsample(
 )
 }
 \arguments{
-\item{data}{A data frame containing BirdNET output. It must include at least the columns \code{common_name} and \code{confidence}.}
+\item{data}{A data frame containing BirdNET output. Relevant columns (e.g., \verb{common name},
+\code{confidence}, \code{datetime}) are automatically detected by \link{birdnet_detect_columns}.}
 
 \item{n}{Integer. Total number of observations to subsample for each species in \code{data}.}
 

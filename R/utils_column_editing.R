@@ -1,11 +1,13 @@
 #' Add datetime-related columns from BirdNET output filenames
 #'
-#' Extracts and parses datetime information from filenames in a specified column,
-#' then adds several useful time-related columns (e.g., `date`, `year`, `month`, `hour`)
-#' to the input data frame.
+#' Extracts and parses datetime information from filenames in the file path column
+#' (automatically detected), then adds several useful time-related columns
+#' (e.g., `date`, `year`, `month`, `hour`) to the input data frame.
+#'
+#' The function uses \code{\link{birdnet_detect_columns}} to find the column
+#' containing file paths based on common name patterns (e.g., "file", "path").
 #'
 #' @param data A data frame containing BirdNET output.
-#' @param col Unquoted name of the column that contains the file paths (e.g., `File`).
 #' @param tz Time zone to assign when parsing datetime. Defaults to `"UTC"`.
 #'
 #' @return A data frame with additional columns:
@@ -18,12 +20,12 @@
 #' @examples
 #' \dontrun{
 #' combined_data <- birdnet_combine("path/to/BirdNET/output")
-#' data_with_time <- birdnet_add_datetime(combined_data, col = File)
+#' data_with_time <- birdnet_add_datetime(combined_data)
 #' }
 #' @export
 birdnet_add_datetime <- function(
     data,
-    col = filepath,
+    #col = filepath,
     tz = "UTC") {
   # argument check ----------------------------------------------------------
 
@@ -33,14 +35,18 @@ birdnet_add_datetime <- function(
 
   # main function -----------------------------------------------------------
 
+  cols <- birdnet_detect_columns(data)
+
+
   data_with_datetime <- data |>
 
     # parase the column name to the datetime format
-    dplyr::mutate(datetime = {{ col }} |>
-      basename() |>
-      stringr::str_extract("\\d{8}.\\d{6}") |>
-      lubridate::parse_date_time(orders = c("ymd_HMS", "ymd-HMS", "ymdHMS"),
-                                 tz = tz)) |>
+    dplyr::mutate(
+      datetime = basename(data[[cols$filepath]]) |>
+        stringr::str_extract("\\d{8}.\\d{6}") |>
+        lubridate::parse_date_time(
+          orders = c("ymd_HMS", "ymd-HMS", "ymdHMS"),
+          tz = tz)) |>
 
     # mutate to add date and time components
     dplyr::mutate(
@@ -135,4 +141,51 @@ birdnet_clean_names <- function(data) {
   return(data_with_cleaned_names)
 }
 
+
+
+
+#' Detect standard BirdNET column names in a data frame
+#'
+#' Helper function to identify the most likely columns representing
+#' key BirdNET output variables such as start time, end time,
+#' scientific name, common name, confidence, and filepath.
+#'
+#' This function attempts to match user-supplied data frame column
+#' names to expected BirdNET output columns by pattern matching.
+#' It returns a named list with the detected column names or `NA`
+#' if no match is found.
+#'
+#' @param data A data frame containing BirdNET output data.
+#'
+#' @return A named list with elements:
+#' \describe{
+#'   \item{start}{Column name for start time (or NA).}
+#'   \item{end}{Column name for end time (or NA).}
+#'   \item{scientific_name}{Column name for scientific name (or NA).}
+#'   \item{common_name}{Column name for common name (or NA).}
+#'   \item{confidence}{Column name for confidence score (or NA).}
+#'   \item{filepath}{Column name for file path or file name (or NA).}
+#' }
+#'
+#' @keywords internal
+birdnet_detect_columns <- function(data) {
+  checkmate::assert_data_frame(data)
+
+  col_matches <- function(patterns) {
+    pattern <- stringr::str_c(patterns, collapse = "|")  # create a single regex pattern
+    match <- names(data)[stringr::str_detect(names(data),
+                                             stringr::regex(pattern, ignore_case = TRUE))]
+    if (length(match) == 0) return(NA_character_)
+    return(match[1])  # return first match
+  }
+
+  list(
+    start = col_matches("start"),
+    end = col_matches("end"),
+    scientific_name = col_matches("scientific"),
+    common_name = col_matches("common"),
+    confidence = col_matches("confidence"),
+    filepath = col_matches(c("file", "path"))
+  )
+}
 

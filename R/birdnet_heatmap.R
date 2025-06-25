@@ -1,22 +1,36 @@
 #' Create a heatmap of BirdNET detections by hour and date
 #'
-#' This function generates a heatmap showing the daily activity pattern of a specified species
-#' detected in BirdNET output data. The function optionally filters detections by a confidence
-#' threshold and displays activity levels (number of detections) across time.
+#' Generates a heatmap visualizing the daily activity pattern of a specified species
+#' detected in BirdNET output data. The heatmap shows detection counts by hour and date,
+#' optionally filtered by species, confidence threshold, date range, and hours of the day.
 #'
-#' @param data A data frame containing BirdNET output. Must include columns with time and species
-#'   information. Column names will be standardized internally using [birdnet_clean_names()].
-#' @param species Character. The common name of the species to visualize.
-#' @param threshold Numeric or `NULL`. Optional confidence threshold (0–1) used to filter detections.
-#'   If `NULL`, no threshold filtering is applied.
-#' @param hour Integer vector between 0 and 23 specifying which hours of the day to keep (e.g., `c(4:7)`).
-#' @param min_date Character or `NULL`. The minimum date to include in the heatmap. If `NULL`, the earliest date will be used.
-#' @param max_date Character or `NULL`. The maximum date to include in the heatmap. If `NULL`, the latest date will be used.
+#' @param data A data frame containing BirdNET output. Relevant columns (e.g., `common name`,
+#'   `confidence`, `datetime`) are automatically detected by [birdnet_detect_columns].
+#' @param species Character scalar or vector specifying the common name(s) of species to visualize.
+#'   If `NULL`, no species filtering is applied.
+#' @param threshold Numeric scalar between 0 and 1, or a data frame with columns `scientific_name`
+#'   and `threshold`, or `NULL`. If numeric, filters detections below this confidence value.
+#'   If a data frame, species-specific thresholds are applied. If `NULL`, no threshold filtering is done.
+#' @param min_date Character scalar specifying the earliest date to include (format `"YYYY-MM-DD"`).
+#'   If `NULL`, no lower date limit is applied.
+#' @param max_date Character scalar specifying the latest date to include (format `"YYYY-MM-DD"`).
+#'   If `NULL`, no upper date limit is applied.
+#' @param hour Integer vector of hours (0–23) specifying which hours of the day to include.
+#'   If `NULL`, all hours are included.
 #'
-#' @return A `ggplot` heatmap showing the number of detections by hour and date.
+#' @return A `ggplot` object showing a heatmap of detections by date (x-axis) and hour (y-axis).
+#'   The fill color corresponds to detection counts.
+#'
 #' @examples
 #' \dontrun{
-#' birdnet_heatmap(data = birdnet_output, species = "Swainson's Thrush", threshold = 0.7)
+#' birdnet_heatmap(
+#'   data = birdnet_output,
+#'   species = "Swainson's Thrush",
+#'   threshold = 0.7,
+#'   min_date = "2024-06-01",
+#'   max_date = "2024-06-30",
+#'   hour = 4:7
+#' )
 #' }
 #' @export
 birdnet_heatmap <- function(
@@ -33,11 +47,19 @@ birdnet_heatmap <- function(
   # 1. Check data is a tibble with required columns
   checkmate::assert_data_frame(data)
 
-  required_cols <- c("filepath", "start", "end", "common_name", "scientific_name", "confidence")
-  missing_cols <- setdiff(required_cols, names(data |> birdnet_clean_names()))
+  cols <- birdnet_detect_columns(data)
+
+  required_cols <- c("start", "end", "scientific_name", "common_name", "confidence", "filepath")
+
+  missing_cols <- required_cols[is.na(cols)]
+
   if (length(missing_cols) > 0) {
     rlang::abort(
-      message = paste0("Input `data` is missing required columns: ", paste(missing_cols, collapse = ", "))
+      paste0(
+        "The input data is missing required BirdNET columns: ",
+        paste(missing_cols, collapse = ", "),
+        ". Please provide a valid BirdNET output data frame."
+      )
     )
   }
 
@@ -75,9 +97,8 @@ birdnet_heatmap <- function(
 
 
   # main function -----------------------------------------------------------
-  # clean names and add datetime
+  # add datetime
   data_with_time <- data |>
-    birdnet_clean_names() |>
     birdnet_add_datetime()
 
 
@@ -97,9 +118,9 @@ birdnet_heatmap <- function(
     ggplot2::ggplot() +
     ggplot2::geom_tile(ggplot2::aes(y = hour, x = date, fill = activity)) +
     ggplot2::scale_fill_viridis_c(option = "A", direction = -1) +
-    ggplot2::labs(x = "Date", y = "Hour") +
+    ggplot2::labs(x = "Date", y = "Hour", fill = "Detections") +
     ggplot2::theme(
-      legend.position = "none",
+      legend.key.height = ggplot2::unit(1.5, "cm"),
       axis.text = ggplot2::element_text(size = 12),
       axis.title = ggplot2::element_text(
         size = 14,

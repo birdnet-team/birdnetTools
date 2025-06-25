@@ -14,30 +14,43 @@ birdnet_heatmap(
 )
 }
 \arguments{
-\item{data}{A data frame containing BirdNET output. Must include columns with time and species
-information. Column names will be standardized internally using \code{\link[=birdnet_clean_names]{birdnet_clean_names()}}.}
+\item{data}{A data frame containing BirdNET output. Relevant columns (e.g., \verb{common name},
+\code{confidence}, \code{datetime}) are automatically detected by \link{birdnet_detect_columns}.}
 
-\item{species}{Character. The common name of the species to visualize.}
+\item{species}{Character scalar or vector specifying the common name(s) of species to visualize.
+If \code{NULL}, no species filtering is applied.}
 
-\item{threshold}{Numeric or \code{NULL}. Optional confidence threshold (0–1) used to filter detections.
-If \code{NULL}, no threshold filtering is applied.}
+\item{threshold}{Numeric scalar between 0 and 1, or a data frame with columns \code{scientific_name}
+and \code{threshold}, or \code{NULL}. If numeric, filters detections below this confidence value.
+If a data frame, species-specific thresholds are applied. If \code{NULL}, no threshold filtering is done.}
 
-\item{min_date}{Character or \code{NULL}. The minimum date to include in the heatmap. If \code{NULL}, the earliest date will be used.}
+\item{min_date}{Character scalar specifying the earliest date to include (format \code{"YYYY-MM-DD"}).
+If \code{NULL}, no lower date limit is applied.}
 
-\item{max_date}{Character or \code{NULL}. The maximum date to include in the heatmap. If \code{NULL}, the latest date will be used.}
+\item{max_date}{Character scalar specifying the latest date to include (format \code{"YYYY-MM-DD"}).
+If \code{NULL}, no upper date limit is applied.}
 
-\item{hour}{Integer vector between 0 and 23 specifying which hours of the day to keep (e.g., \code{c(4:7)}).}
+\item{hour}{Integer vector of hours (0–23) specifying which hours of the day to include.
+If \code{NULL}, all hours are included.}
 }
 \value{
-A \code{ggplot} heatmap showing the number of detections by hour and date.
+A \code{ggplot} object showing a heatmap of detections by date (x-axis) and hour (y-axis).
+The fill color corresponds to detection counts.
 }
 \description{
-This function generates a heatmap showing the daily activity pattern of a specified species
-detected in BirdNET output data. The function optionally filters detections by a confidence
-threshold and displays activity levels (number of detections) across time.
+Generates a heatmap visualizing the daily activity pattern of a specified species
+detected in BirdNET output data. The heatmap shows detection counts by hour and date,
+optionally filtered by species, confidence threshold, date range, and hours of the day.
 }
 \examples{
 \dontrun{
-birdnet_heatmap(data = birdnet_output, species = "Swainson's Thrush", threshold = 0.7)
+birdnet_heatmap(
+  data = birdnet_output,
+  species = "Swainson's Thrush",
+  threshold = 0.7,
+  min_date = "2024-06-01",
+  max_date = "2024-06-30",
+  hour = 4:7
+)
 }
 }
