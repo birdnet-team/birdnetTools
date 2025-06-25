@@ -82,7 +82,7 @@ birdnet_calc_threshold(data_sub, precision = 0.9)
 #> # A tibble: 1 × 2
 #>   common_name       threshold
 #>   <chr>                 <dbl>
-#> 1 Swainson's Thrush     0.917
+#> 1 Swainson's Thrush       0.8
 ```
 
 ## Acknowledgements
