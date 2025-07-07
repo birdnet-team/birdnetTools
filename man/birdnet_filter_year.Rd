@@ -2,19 +2,24 @@
 % Please edit documentation in R/utils_row_editing.R
 \name{birdnet_filter_year}
 \alias{birdnet_filter_year}
-\title{Filter data by year}
+\title{Filter BirdNET data by year}
 \usage{
 birdnet_filter_year(data, year_arg)
 }
 \arguments{
-\item{data}{A data frame with (or without) a \code{year} column. If missing, datetime columns will be added.}
+\item{data}{A data frame containing BirdNET output. If the \code{year} column is absent,
+the function will attempt to extract datetime information using \link{birdnet_add_datetime}.}
 
-\item{year_arg}{Integer vector. The year(s) to keep.}
+\item{year_arg}{Integer vector. The year or years to retain in the filtered data.}
 }
 \value{
-A filtered data frame.
+A filtered data frame containing only rows with detections from the specified years.
 }
 \description{
-Filters BirdNET data based on the year of detection.
+Filters a BirdNET output data frame based on one or more specified years of detection.
+If the \code{year} column is missing, the function will extract it from available datetime columns.
+}
+\seealso{
+\link{birdnet_add_datetime}, \link{birdnet_drop_datetime}
 }
 \keyword{internal}

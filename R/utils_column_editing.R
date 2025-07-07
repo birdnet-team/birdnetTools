@@ -45,7 +45,7 @@ birdnet_add_datetime <- function(
       datetime = basename(data[[cols$filepath]]) |>
         stringr::str_extract("\\d{8}.\\d{6}") |>
         lubridate::parse_date_time(
-          orders = c("ymd_HMS", "ymd-HMS", "ymdHMS"),
+          orders = c("ymd_HMS", "ymd-HMS", "ymdHMS", "ymd HM"),
           tz = tz)) |>
 
     # mutate to add date and time components

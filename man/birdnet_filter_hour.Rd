@@ -2,19 +2,25 @@
 % Please edit documentation in R/utils_row_editing.R
 \name{birdnet_filter_hour}
 \alias{birdnet_filter_hour}
-\title{Filter data by hour}
+\title{Filter BirdNET data by hour of day}
 \usage{
 birdnet_filter_hour(data, hour_arg)
 }
 \arguments{
-\item{data}{A data frame with (or without) an \code{hour} column. If missing, datetime columns will be added.}
+\item{data}{A data frame containing BirdNET output. If the \code{hour} column is not present,
+the function will attempt to extract it using \link{birdnet_add_datetime}.}
 
-\item{hour_arg}{Integer vector of hours (0–23) to keep.}
+\item{hour_arg}{Integer vector of hours (from 0 to 23) to retain.}
 }
 \value{
-A filtered data frame.
+A data frame filtered to include only detections within the specified hours.
 }
 \description{
-Filters BirdNET data to only include rows from specific hours of the day.
+Filters a BirdNET output data frame to include only rows with detections
+occurring during specified hours of the day (0–23). If the \code{hour} column
+is missing, it will be extracted from available datetime columns.
+}
+\seealso{
+\link{birdnet_add_datetime}, \link{birdnet_drop_datetime}
 }
 \keyword{internal}

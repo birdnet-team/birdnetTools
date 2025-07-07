@@ -1,15 +1,19 @@
-#' Filter data by species
+#' Filter BirdNET data by species
 #'
-#' Filters BirdNET data for one or more specified species using the column
-#' automatically detected as containing common species names.
+#' Filters a BirdNET output data frame for one or more specified species using the
+#' column automatically detected as containing common species names.
 #'
-#' The function uses \code{\link{birdnet_detect_columns}} to detect the column
-#' containing common names (e.g., "Common Name", "common_name", etc.).
+#' This function uses [birdnet_detect_columns] to identify the
+#' appropriate column (e.g., "Common Name", "common_name", etc.) containing
+#' common names of species, then filters the data frame to retain only the rows
+#' matching the specified species.
 #'
 #' @param data A data frame containing BirdNET output.
 #' @param species Character vector. One or more common names of species to keep.
 #'
-#' @return A filtered data frame containing only the specified species.
+#' @return A data frame filtered to include only the specified species.
+#'
+#' @seealso [birdnet_detect_columns]
 #' @keywords internal
 birdnet_filter_species <- function(data, species){
 
@@ -22,19 +26,28 @@ birdnet_filter_species <- function(data, species){
 }
 
 
-#' Filter data by confidence threshold
+
+
+#' Filter BirdNET data by confidence threshold
 #'
-#' Filters BirdNET data based on a universal or species-specific confidence threshold.
-#' Column names (e.g., for confidence and scientific name) are detected automatically.
+#' Filters a BirdNET output data frame based on a confidence threshold, using either
+#' a universal numeric value or species-specific thresholds.
 #'
-#' The function uses \code{\link{birdnet_detect_columns}} to detect the relevant columns
-#' (e.g., "Confidence", "Scientific Name") based on common patterns.
+#' The function uses [birdnet_detect_columns] to automatically detect
+#' column names (e.g., "Confidence", "Scientific Name") based on common patterns.
 #'
 #' @param data A data frame containing BirdNET output.
-#' @param threshold_arg Either a single numeric value (for a universal threshold), or a data frame
-#'   with columns `scientific_name` and `threshold` specifying species-specific thresholds.
+#' @param threshold_arg Either:
+#'   \itemize{
+#'     \item A single numeric value specifying a universal confidence threshold, or
+#'     \item A data frame with columns `scientific_name` and `threshold`,
+#'     specifying species-specific thresholds.
+#'   }
 #'
-#' @return A filtered data frame with only rows meeting the threshold criteria.
+#' @return A data frame filtered to include only rows where confidence scores meet
+#' the threshold criteria.
+#'
+#' @seealso [birdnet_detect_columns]
 #' @keywords internal
 birdnet_filter_threshold <- function(data, threshold_arg) {
 
@@ -61,17 +74,20 @@ birdnet_filter_threshold <- function(data, threshold_arg) {
 }
 
 
-#' Filter data by year
+#' Filter BirdNET data by year
 #'
-#' Filters BirdNET data based on the year of detection.
+#' Filters a BirdNET output data frame based on one or more specified years of detection.
+#' If the `year` column is missing, the function will extract it from available datetime columns.
 #'
-#' @param data A data frame with (or without) a `year` column. If missing, datetime columns will be added.
-#' @param year_arg Integer vector. The year(s) to keep.
+#' @param data A data frame containing BirdNET output. If the `year` column is absent,
+#' the function will attempt to extract datetime information using [birdnet_add_datetime].
+#' @param year_arg Integer vector. The year or years to retain in the filtered data.
 #'
-#' @return A filtered data frame.
+#' @return A filtered data frame containing only rows with detections from the specified years.
+#'
+#' @seealso [birdnet_add_datetime], [birdnet_drop_datetime]
 #' @keywords internal
 birdnet_filter_year <- function(data, year_arg) {
-
 
   # add datetime info if 'year' column is missing
   if (!"year" %in% colnames(data)) {
@@ -80,7 +96,6 @@ birdnet_filter_year <- function(data, year_arg) {
   } else {
     has_datetime <- FALSE
   }
-
 
   # filter by year
   data <- data |>
@@ -95,15 +110,22 @@ birdnet_filter_year <- function(data, year_arg) {
 }
 
 
-#' Filter data by date range
+
+
+#' Filter BirdNET data by date range
 #'
-#' Filters BirdNET data to only include rows within a specified date range.
+#' Filters a BirdNET output data frame to include only rows with detections within
+#' a specified date range. If the `date` column is missing, it will be extracted
+#' from available datetime columns.
 #'
-#' @param data A data frame with (or without) a `date` column. If missing, datetime columns will be added.
-#' @param min_date Date or character string coercible to Date. The minimum date (inclusive).
-#' @param max_date Date or character string coercible to Date. The maximum date (inclusive).
+#' @param data A data frame containing BirdNET output. If the `date` column is not present,
+#' the function will attempt to extract it using `birdnet_add_datetime`.
+#' @param min_date Date or character string coercible to Date. The earliest date to include (inclusive).
+#' @param max_date Date or character string coercible to Date. The latest date to include (inclusive).
 #'
-#' @return A filtered data frame.
+#' @return A data frame filtered to include only rows within the specified date range.
+#'
+#' @seealso `birdnet_add_datetime`, `birdnet_drop_datetime`
 #' @keywords internal
 birdnet_filter_date_range <- function(data,
                                       min_date = NULL,
@@ -138,14 +160,21 @@ birdnet_filter_date_range <- function(data,
 }
 
 
-#' Filter data by hour
+
+
+#' Filter BirdNET data by hour of day
 #'
-#' Filters BirdNET data to only include rows from specific hours of the day.
+#' Filters a BirdNET output data frame to include only rows with detections
+#' occurring during specified hours of the day (0–23). If the `hour` column
+#' is missing, it will be extracted from available datetime columns.
 #'
-#' @param data A data frame with (or without) an `hour` column. If missing, datetime columns will be added.
-#' @param hour_arg Integer vector of hours (0–23) to keep.
+#' @param data A data frame containing BirdNET output. If the `hour` column is not present,
+#' the function will attempt to extract it using [birdnet_add_datetime].
+#' @param hour_arg Integer vector of hours (from 0 to 23) to retain.
 #'
-#' @return A filtered data frame.
+#' @return A data frame filtered to include only detections within the specified hours.
+#'
+#' @seealso [birdnet_add_datetime], [birdnet_drop_datetime]
 #' @keywords internal
 birdnet_filter_hour <- function(data, hour_arg) {
 
