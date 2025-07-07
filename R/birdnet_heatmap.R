@@ -5,18 +5,16 @@
 #' optionally filtered by species, confidence threshold, date range, and hours of the day.
 #'
 #' @param data A data frame containing BirdNET output. Relevant columns (e.g., `common name`,
-#'   `confidence`, `datetime`) are automatically detected by [birdnet_detect_columns].
+#'   `confidence`, `datetime`, `filepath`, etc.) are automatically detected by
+#'   [birdnet_detect_columns]. Must include columns like `common_name`, `confidence`, and `datetime`.
 #' @param species Character scalar or vector specifying the common name(s) of species to visualize.
 #'   If `NULL`, no species filtering is applied.
-#' @param threshold Numeric scalar between 0 and 1, or a data frame with columns `scientific_name`
-#'   and `threshold`, or `NULL`. If numeric, filters detections below this confidence value.
-#'   If a data frame, species-specific thresholds are applied. If `NULL`, no threshold filtering is done.
-#' @param min_date Character scalar specifying the earliest date to include (format `"YYYY-MM-DD"`).
-#'   If `NULL`, no lower date limit is applied.
-#' @param max_date Character scalar specifying the latest date to include (format `"YYYY-MM-DD"`).
-#'   If `NULL`, no upper date limit is applied.
-#' @param hour Integer vector of hours (0–23) specifying which hours of the day to include.
-#'   If `NULL`, all hours are included.
+#' @param threshold Either a numeric scalar between 0 and 1 (applied uniformly), or a data frame
+#'   with columns `scientific_name` and `threshold` for species-specific values. If `NULL`, no
+#'   threshold filtering is applied.
+#' @param min_date Optional character scalar giving the earliest date to include (`"YYYY-MM-DD"` format).
+#' @param max_date Optional character scalar giving the latest date to include (`"YYYY-MM-DD"` format).
+#' @param hour Optional integer vector (0–23) specifying hours of the day to include in the heatmap.
 #'
 #' @return A `ggplot` object showing a heatmap of detections by date (x-axis) and hour (y-axis).
 #'   The fill color corresponds to detection counts.
@@ -33,13 +31,7 @@
 #' )
 #' }
 #' @export
-birdnet_heatmap <- function(
-    data,
-    species = NULL,
-    threshold = NULL,
-    min_date = NULL,
-    max_date = NULL,
-    hour = NULL
+birdnet_heatmap <- function(data, species = NULL, threshold = NULL, min_date = NULL, max_date = NULL, hour = NULL
 ) {
 
   # argument check ----------------------------------------------------------
