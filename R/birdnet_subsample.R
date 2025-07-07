@@ -1,28 +1,33 @@
 #' Subsample BirdNET detections by species
 #'
-#' Subsamples a specified number of observations for a given species from a BirdNET output dataset
-#' using one of three methods: stratified, random, or top confidence. Optionally saves the result to a CSV file.
+#' Subsamples a specified number of observations per species from a BirdNET output dataset.
+#' Supports three subsampling methods: stratified by confidence score bins, random, or top confidence scores.
+#' Optionally saves the subsampled data to a CSV file.
 #'
-#' @param data A data frame containing BirdNET output. Relevant columns (e.g., `common name`,
-#'   `confidence`, `datetime`) are automatically detected by [birdnet_detect_columns].
-#' @param n Integer. Total number of observations to subsample for each species in `data`.
-#' @param method Character string. Subsampling method to use. One of `"stratified"`, `"random"`, or `"top"`:
-#' \describe{
-#'   \item{`"stratified"`}{Samples across confidence score strata (0.1 to 1 by 0.05 bins) evenly.}
-#'   \item{`"random"`}{Randomly samples `n` observations.}
-#'   \item{`"top"`}{Selects the top `n` observations with the highest confidence.}
-#' }
-#' @param save_to_file Logical. If `TRUE`, saves the output data frame to a file named `"subsampled_data.csv"` in the working directory. Default is `FALSE`. Automatically set to `TRUE` if `path` is defined.
-#' @param file Character string or `NULL`. File path to save the output.
-#' If `NULL` and `save_to_file = TRUE`, the file is saved as "subsampled_data.csv"
-#' in the working directory.
+#' @param data A data frame containing BirdNET output. Relevant columns
+#'   (e.g., common name, confidence, datetime) are automatically detected
+#'   by [birdnet_detect_columns].
+#' @param n Integer. Number of observations to subsample **per species**.
+#' @param method Character. Subsampling method to use. One of:
+#'   \describe{
+#'     \item{"stratified"}{Samples evenly across confidence score strata (0.1 to 1 by 0.05 bins).}
+#'     \item{"random"}{Randomly samples `n` observations per species.}
+#'     \item{"top"}{Selects the top `n` observations with the highest confidence per species.}
+#'   }
+#'   Defaults to `"stratified"`.
+#' @param save_to_file Logical. If `TRUE`, saves the output to a CSV file.
+#'   Defaults to `FALSE`. Automatically set to `TRUE` if `file` is provided.
+#' @param file Character or `NULL`. File path to save the output CSV.
+#'   If `NULL` and `save_to_file = TRUE`, saves as `"subsampled_data.csv"` in the working directory.
 #'
 #' @return A data frame containing the subsampled observations.
 #'
 #' @examples
 #' \dontrun{
-#' birdnet_subsample(data = my_data, species = "American Robin", n = 300, method = "stratified")
+#' birdnet_subsample(data = my_data, n = 300, method = "stratified")
+#' birdnet_subsample(data = my_data, n = 100, method = "top", save_to_file = TRUE, file = "top_samples.csv")
 #' }
+#'
 #' @export
 birdnet_subsample <- function(
     data,
