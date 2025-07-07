@@ -35,6 +35,7 @@ birdnet_subsample <- function(
     method = c("stratified", "random", "top"),
     save_to_file = FALSE,
     file = NULL) {
+
   # argument check ----------------------------------------------------------
 
   # data is a dataframe

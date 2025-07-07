@@ -10,18 +10,20 @@ birdnet_validation_ui(request)
 \item{request}{Internal parameter for \code{{shiny}} applications. Typically not set by the user.}
 }
 \value{
-A \code{shiny} UI object built with \code{bslib::page_sidebar()}.
+A Shiny UI definition built with \code{bslib::page_sidebar()}.
 }
 \description{
-Constructs the UI layout for the audio validation platform within the
-\code{birdnetTools} package. This UI includes file input, audio folder selection,
-spectrogram settings, and main output areas for data display and spectrogram
-plotting.
+Constructs the user interface layout for the BirdNET audio validation platform
+within the \code{birdnetTools} package. This UI includes inputs for file upload,
+audio folder selection, spectrogram settings, and outputs for data display
+and spectrogram plotting.
 }
 \details{
-This internal UI function is used by the Shiny validation app
-launched through higher-level user-facing functions. It sets up sidebar
-inputs for file import and settings, and main panel outputs for data and
-spectrogram display.
+This internal UI function is called by the Shiny validation app
+launched through higher-level user-facing functions. It sets up sidebar inputs
+for file import and settings, and main panel outputs for data and spectrogram display.
+}
+\seealso{
+\link{birdnet_validation_server}, \link{birdnet_launch_validation}
 }
 \keyword{internal}

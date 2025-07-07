@@ -11,7 +11,7 @@ A \code{shiny.appobj} that runs the BirdNET audio validation platform in a web b
 }
 \description{
 Starts an interactive Shiny application for manually validating BirdNET detections
-using audio clips and spectrograms.
+using audio clips and spectrograms.This tool is designed to support manual review of BirdNET results.
 }
 \details{
 This function launches a user-friendly Shiny app that allows you to:
@@ -21,12 +21,13 @@ This function launches a user-friendly Shiny app that allows you to:
 \item View and validate each detection using spectrograms and audio playback,
 \item Edit validation results interactively and save the updated table.
 }
-
-This tool is designed to support manual review of BirdNET results.
 }
 \examples{
 \dontrun{
 birdnet_launch_validation()
 }
 
+}
+\seealso{
+\link{birdnet_validation_ui}, \link{birdnet_validation_server}
 }
