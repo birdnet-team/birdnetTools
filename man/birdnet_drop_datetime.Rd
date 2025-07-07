@@ -7,12 +7,13 @@
 birdnet_drop_datetime(data)
 }
 \arguments{
-\item{data}{A data frame containing BirdNET output, with the datetime related columns present.}
+\item{data}{A data frame containing BirdNET output, with datetime-related columns present.}
 }
 \value{
-A data frame with datime related columns removed.
+A data frame with datetime-related columns removed, if present.
 }
 \description{
-Drop datetime-related columns from BirdNET output
+Removes datetime-related columns (e.g., \code{datetime}, \code{date}, \code{year}, \code{hour}, etc.)
+that may have been added using \link{birdnet_add_datetime}.
 }
 \keyword{internal}

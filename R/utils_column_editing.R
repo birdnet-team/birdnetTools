@@ -4,17 +4,25 @@
 #' (automatically detected), then adds several useful time-related columns
 #' (e.g., `date`, `year`, `month`, `hour`) to the input data frame.
 #'
-#' The function uses \code{\link{birdnet_detect_columns}} to find the column
+#' The function uses [birdnet_detect_columns] to find the column
 #' containing file paths based on common name patterns (e.g., "file", "path").
+#' Filenames are expected to contain a datetime string in the format
+#' `"YYYYMMDD_HHMMSS"` or similar.
 #'
 #' @param data A data frame containing BirdNET output.
-#' @param tz Time zone to assign when parsing datetime. Defaults to `"UTC"`.
+#' @param tz A character string specifying the time zone to assign when parsing datetime.
+#'   Defaults to `"UTC"`.
 #'
 #' @return A data frame with additional columns:
 #' \describe{
 #'   \item{datetime}{POSIXct datetime parsed from the filename.}
 #'   \item{date}{Date portion of the datetime.}
-#'   \item{year, month, mday, yday, hour, minute}{Individual datetime components.}
+#'   \item{year}{Year of detection.}
+#'   \item{month}{Month of detection.}
+#'   \item{mday}{Day of the month.}
+#'   \item{yday}{Day of the year.}
+#'   \item{hour}{Hour of the day.}
+#'   \item{minute}{Minute of the hour.}
 #' }
 #'
 #' @examples
@@ -22,6 +30,7 @@
 #' combined_data <- birdnet_combine("path/to/BirdNET/output")
 #' data_with_time <- birdnet_add_datetime(combined_data)
 #' }
+#'
 #' @export
 birdnet_add_datetime <- function(
     data,
@@ -67,9 +76,12 @@ birdnet_add_datetime <- function(
 
 #' Drop datetime-related columns from BirdNET output
 #'
-#' @param data A data frame containing BirdNET output, with the datetime related columns present.
+#' Removes datetime-related columns (e.g., `datetime`, `date`, `year`, `hour`, etc.)
+#' that may have been added using [birdnet_add_datetime].
 #'
-#' @returns A data frame with datime related columns removed.
+#' @param data A data frame containing BirdNET output, with datetime-related columns present.
+#'
+#' @return A data frame with datetime-related columns removed, if present.
 #' @keywords internal
 birdnet_drop_datetime <- function(data) {
   # Define expected datetime-related columns
@@ -94,14 +106,20 @@ birdnet_drop_datetime <- function(data) {
 
 #' Clean and standardize column names
 #'
-#' This function standardizes column names in a BirdNET output-like dataframe.
-#' It renames any columns that match patterns like "start", "end", "scientific",
-#' "common", "file", or "confidence" (case-insensitive) to consistent names:
+#' @description
+#' **DEPRECATED.** This function is no longer recommended for use. Consider using
+#' [birdnet_detect_columns] instead for robust column detection and standardization.
+#'
+#' Standardizes column names in a BirdNET-like data frame. This function renames columns
+#' matching patterns like "start", "end", "scientific", "common", "file", or "confidence"
+#' (case-insensitive) to consistent names:
 #' `"start"`, `"end"`, `"scientific_name"`, `"common_name"`, `"filepath"`, and `"confidence"`.
 #'
-#' @param data A data frame containing the output of BirdNET or similar data with timestamp and species information.
+#' @param data A data frame containing BirdNET output or similar data with timestamp and species information.
 #'
-#' @return A data frame with renamed columns.
+#' @return A data frame with renamed, standardized column names.
+#'
+#' @seealso [birdnet_detect_columns]
 #'
 #' @examples
 #' \dontrun{
@@ -115,31 +133,27 @@ birdnet_drop_datetime <- function(data) {
 #' )
 #' birdnet_clean_names(df)
 #' }
+#'
 #' @keywords internal
 birdnet_clean_names <- function(data) {
 
+  rename_if_single <- function(df, pattern, new_name) {
+    cols <- grep(pattern, names(df), ignore.case = TRUE, value = TRUE)
+    if (length(cols) == 1) {
+      df <- dplyr::rename(df, !!new_name := !!cols)
+    }
+    df
+  }
 
-  # argument check ----------------------------------------------------------
-
-
-  # main function -----------------------------------------------------------
-
-  data_with_cleaned_names <- data |>
-    dplyr::rename_with(~ "start",
-                       .cols = dplyr::matches("start", ignore.case = TRUE)) |>
-    dplyr::rename_with(~ "end",
-                       .cols = dplyr::matches("end", ignore.case = TRUE)) |>
-    dplyr::rename_with(~ "scientific_name",
-                       .cols = dplyr::matches("scientific", ignore.case = TRUE)) |>
-    dplyr::rename_with(~ "common_name",
-                       .cols = dplyr::matches("common", ignore.case = TRUE)) |>
-    dplyr::rename_with(~ "filepath",
-                       .cols = dplyr::matches("file", ignore.case = TRUE)) |>
-    dplyr::rename_with(~ "confidence",
-                       .cols = dplyr::matches("confidence", ignore.case = TRUE))
-
-  return(data_with_cleaned_names)
+  data %>%
+    rename_if_single("start", "start") %>%
+    rename_if_single("end", "end") %>%
+    rename_if_single("scientific", "scientific_name") %>%
+    rename_if_single("common", "common_name") %>%
+    rename_if_single("file", "filepath") %>%
+    rename_if_single("confidence", "confidence")
 }
+
 
 
 

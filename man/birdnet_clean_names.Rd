@@ -7,15 +7,18 @@
 birdnet_clean_names(data)
 }
 \arguments{
-\item{data}{A data frame containing the output of BirdNET or similar data with timestamp and species information.}
+\item{data}{A data frame containing BirdNET output or similar data with timestamp and species information.}
 }
 \value{
-A data frame with renamed columns.
+A data frame with renamed, standardized column names.
 }
 \description{
-This function standardizes column names in a BirdNET output-like dataframe.
-It renames any columns that match patterns like "start", "end", "scientific",
-"common", "file", or "confidence" (case-insensitive) to consistent names:
+\strong{DEPRECATED.} This function is no longer recommended for use. Consider using
+\link{birdnet_detect_columns} instead for robust column detection and standardization.
+
+Standardizes column names in a BirdNET-like data frame. This function renames columns
+matching patterns like "start", "end", "scientific", "common", "file", or "confidence"
+(case-insensitive) to consistent names:
 \code{"start"}, \code{"end"}, \code{"scientific_name"}, \code{"common_name"}, \code{"filepath"}, and \code{"confidence"}.
 }
 \examples{
@@ -30,5 +33,9 @@ df <- data.frame(
 )
 birdnet_clean_names(df)
 }
+
+}
+\seealso{
+\link{birdnet_detect_columns}
 }
 \keyword{internal}
