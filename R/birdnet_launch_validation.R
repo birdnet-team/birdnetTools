@@ -281,7 +281,7 @@ birdnet_validation_server <- function(input, output, session) {
 
   output$save_file <- downloadHandler(
     filename = function() {
-      paste0("validated_", input$import_file, ".csv")
+      paste0("validated.csv")
     },
     content = function(file) {
       readr::write_csv(rv$data_editable, file)
@@ -336,6 +336,7 @@ birdnet_validation_server <- function(input, output, session) {
     }
   })
 }
+
 
 
 
