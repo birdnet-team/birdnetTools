@@ -1,3 +1,4 @@
 # birdnetTools 0.1.0
 
-* Initial Github release.
+* Initial release!
+* Vignette for usage examples and workflow
