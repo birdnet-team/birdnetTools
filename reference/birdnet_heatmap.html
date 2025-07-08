@@ -11,7 +11,7 @@ optionally filtered by species, confidence threshold, date range, and hours of t
 
     <a class="navbar-brand me-2" href="../index.html">birdnetTools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -21,6 +21,7 @@ optionally filtered by species, confidence threshold, date range, and hours of t
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/birdnetTools.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/birdnet-team/birdnetTools/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -60,7 +61,8 @@ optionally filtered by species, confidence threshold, date range, and hours of t
 
 <dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
 <dd><p>A data frame containing BirdNET output. Relevant columns (e.g., <code>common name</code>,
-<code>confidence</code>, <code>datetime</code>) are automatically detected by <a href="birdnet_detect_columns.html">birdnet_detect_columns</a>.</p></dd>
+<code>confidence</code>, <code>datetime</code>, <code>filepath</code>, etc.) are automatically detected by
+<a href="birdnet_detect_columns.html">birdnet_detect_columns</a>. Must include columns like <code>common_name</code>, <code>confidence</code>, and <code>datetime</code>.</p></dd>
 
 
 <dt id="arg-species">species<a class="anchor" aria-label="anchor" href="#arg-species"></a></dt>
@@ -69,24 +71,21 @@ If <code>NULL</code>, no species filtering is applied.</p></dd>
 
 
 <dt id="arg-threshold">threshold<a class="anchor" aria-label="anchor" href="#arg-threshold"></a></dt>
-<dd><p>Numeric scalar between 0 and 1, or a data frame with columns <code>scientific_name</code>
-and <code>threshold</code>, or <code>NULL</code>. If numeric, filters detections below this confidence value.
-If a data frame, species-specific thresholds are applied. If <code>NULL</code>, no threshold filtering is done.</p></dd>
+<dd><p>Either a numeric scalar between 0 and 1 (applied uniformly), or a data frame
+with columns <code>common_name</code> and <code>threshold</code> for species-specific values. If <code>NULL</code>, no
+threshold filtering is applied.</p></dd>
 
 
 <dt id="arg-min-date">min_date<a class="anchor" aria-label="anchor" href="#arg-min-date"></a></dt>
-<dd><p>Character scalar specifying the earliest date to include (format <code>"YYYY-MM-DD"</code>).
-If <code>NULL</code>, no lower date limit is applied.</p></dd>
+<dd><p>Optional character scalar giving the earliest date to include (<code>"YYYY-MM-DD"</code> format).</p></dd>
 
 
 <dt id="arg-max-date">max_date<a class="anchor" aria-label="anchor" href="#arg-max-date"></a></dt>
-<dd><p>Character scalar specifying the latest date to include (format <code>"YYYY-MM-DD"</code>).
-If <code>NULL</code>, no upper date limit is applied.</p></dd>
+<dd><p>Optional character scalar giving the latest date to include (<code>"YYYY-MM-DD"</code> format).</p></dd>
 
 
 <dt id="arg-hour">hour<a class="anchor" aria-label="anchor" href="#arg-hour"></a></dt>
-<dd><p>Integer vector of hours (0–23) specifying which hours of the day to include.
-If <code>NULL</code>, all hours are included.</p></dd>
+<dd><p>Optional integer vector (0–23) specifying hours of the day to include in the heatmap.</p></dd>
 
 </dl></div>
     <div class="section level2">

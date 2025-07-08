@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">birdnetTools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,6 +39,7 @@
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="articles/birdnetTools.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -60,6 +61,7 @@
 </div>
 <!-- badges: start -->
 
+<!-- badges: end -->
 <p>The <code>birdnetTools</code> is an R package designed to streamline the post-processing and validation of output from BirdNET, an open-source neural network developed by the <a href="https://www.birds.cornell.edu/home/" class="external-link">Cornell Lab of Ornithology</a> and <a href="https://www.tu-chemnitz.de/index.html.en" class="external-link">Chemnitz University of Technology</a> for detecting and identifying bird sounds.</p>
 <p>The goal of <code>birdnetTools</code> is to help researchers manage, explore, and validate BirdNET results, which can be derived by <a href="https://github.com/BirdNET-Team/BirdNET-Analyzer" class="external-link">BirdNET Analyzer</a>, or the <a href="https://birdnet-team.github.io/birdnetR/index.html" class="external-link">birdnetR</a> package. It includes functions for filtering detections by species, confidence, and date/time; visualizing temporal patterns; and validating detections with an interactive Shiny app to support threshold-setting workflows.</p>
 <div class="section level2">
@@ -78,28 +80,29 @@
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://birdnet-team.github.io/birdnetTools/">birdnetTools</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Load built-in dataset</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">example_jprf_2023</span>, package <span class="op">=</span> <span class="st">"birdnetTools"</span><span class="op">)</span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">example_jprf_2023</span></span>
+<span></span>
 <span></span>
 <span><span class="co"># Filter for Swainson's Thrush detections during spring</span></span>
 <span><span class="va">data_filtered</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/birdnet_filter.html">birdnet_filter</a></span><span class="op">(</span><span class="va">data</span>,</span>
-<span>  species <span class="op">=</span> <span class="st">"Swainson's Thrush"</span>,</span>
-<span>  threshold <span class="op">=</span> <span class="fl">0.2</span>,</span>
-<span>  year <span class="op">=</span> <span class="fl">2023</span>,</span>
-<span>  min_date <span class="op">=</span> <span class="st">"2023-05-01"</span>,</span>
-<span>  max_date <span class="op">=</span> <span class="st">"2023-06-30"</span></span>
-<span><span class="op">)</span></span>
+<span>                                species <span class="op">=</span> <span class="st">"Swainson's Thrush"</span>,</span>
+<span>                                threshold <span class="op">=</span> <span class="fl">0.2</span>,</span>
+<span>                                year <span class="op">=</span> <span class="fl">2023</span>,</span>
+<span>                                min_date <span class="op">=</span> <span class="st">"2023-05-01"</span>,</span>
+<span>                                max_date <span class="op">=</span> <span class="st">"2023-06-30"</span><span class="op">)</span></span>
+<span></span>
 <span></span>
 <span><span class="co"># Visualize daily detection patterns across sites</span></span>
 <span><span class="fu"><a href="reference/birdnet_heatmap.html">birdnet_heatmap</a></span><span class="op">(</span><span class="va">data_filtered</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-example-1.png" width="100%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span></span>
-<span><span class="co"># Simulate validation (for demonstration only)</span></span>
+<code class="sourceCode R"><span><span class="co"># Simulate validation (for demonstration only)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">data_sub</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/birdnet_subsample.html">birdnet_subsample</a></span><span class="op">(</span><span class="va">data_filtered</span>, n <span class="op">=</span> <span class="fl">300</span>, method <span class="op">=</span> <span class="st">"stratified"</span><span class="op">)</span></span>
-<span><span class="va">data_sub</span><span class="op">$</span><span class="va">validation</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">data_sub</span><span class="op">)</span>, <span class="fl">1</span>, prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmin</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax</a></span><span class="op">(</span><span class="va">data_sub</span><span class="op">$</span><span class="va">confidence</span>, <span class="fl">0</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">data_sub</span><span class="op">$</span><span class="va">validation</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">data_sub</span><span class="op">)</span>, <span class="fl">1</span>, </span>
+<span>                              prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmin</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax</a></span><span class="op">(</span><span class="va">data_sub</span><span class="op">$</span><span class="va">confidence</span>, <span class="fl">0</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
 <span></span>
 <span><span class="co"># Calculate species-specific threshold for 90% precision</span></span>
 <span><span class="fu"><a href="reference/birdnet_calc_threshold.html">birdnet_calc_threshold</a></span><span class="op">(</span><span class="va">data_sub</span>, precision <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span></span>
@@ -160,8 +163,8 @@
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://github.com/birdnet-team/birdnetTools/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/birdnet-team/birdnetTools/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
 <li><a href="https://app.codecov.io/gh/birdnet-team/birdnetTools" class="external-link"><img src="https://codecov.io/gh/birdnet-team/birdnetTools/graph/badge.svg" alt="Codecov test coverage"></a></li>
+<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
 </ul>
 </div>
 

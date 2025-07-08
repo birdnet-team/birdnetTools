@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">birdnetTools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,6 +36,7 @@
       <ul class="navbar-nav me-auto">
 <li class="active nav-item"><a class="nav-link" href="../articles/birdnetTools.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -77,27 +78,15 @@ package. It includes functions for filtering detections by species,
 confidence, and date/time; visualizing temporal patterns; and validating
 detections with an interactive Shiny app to support threshold-setting
 workflows.</p>
-<blockquote>
-<p>Make a diagram for the workflow for how users can use this package
-:)</p>
-</blockquote>
 <div class="section level2">
 <h2 id="data-import">Data Import<a class="anchor" aria-label="anchor" href="#data-import"></a>
 </h2>
 <p>BirdNET detections can be imported in various formats depending on
 how your data was processed and saved. The <code>birdnetTools</code>
 package supports three main workflows:</p>
-<ul>
-<li>Importing <strong>multiple detection files</strong> from separate
-audio recordings</li>
-<li>Importing a <strong>single file</strong> containing combined
-results</li>
-<li>Using detection results that are <strong>already loaded</strong>
-into R</li>
-</ul>
-<div class="section level3">
-<h3 id="importing-multiple-detection-results">Importing multiple detection results<a class="anchor" aria-label="anchor" href="#importing-multiple-detection-results"></a>
-</h3>
+<ol style="list-style-type: decimal">
+<li>Importing multiple detection results</li>
+</ol>
 <p>After processing audio files through BirdNET, you may have several
 <code>.csv</code> files—each corresponding to a separate recording. The
 <code><a href="../reference/birdnet_combine.html">birdnet_combine()</a></code> function allows you to import and merge
@@ -109,10 +98,9 @@ audio recordings and want to work with them collectively in R.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># import multiple detection files</span></span>
 <span><span class="fu"><a href="../reference/birdnet_combine.html">birdnet_combine</a></span><span class="op">(</span>path <span class="op">=</span> <span class="st">"PATH_TO_BIDNET_OUTPUT_FOLDER"</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="importing-combined-detection-results">Importing combined detection results<a class="anchor" aria-label="anchor" href="#importing-combined-detection-results"></a>
-</h3>
+<ol start="2" style="list-style-type: decimal">
+<li>Importing combined detection results</li>
+</ol>
 <p>If you already have a combined output file, for example, if you
 checked the “combine output table” option in the BirdNET GUI, you can
 read it directly into R using the <code>readr</code> package:</p>
@@ -120,10 +108,9 @@ read it directly into R using the <code>readr</code> package:</p>
 <code class="sourceCode R"><span><span class="co"># Import a combined detection CSV</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://readr.tidyverse.org" class="external-link">readr</a></span><span class="op">)</span></span>
 <span><span class="va">detections</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="st">"PATH_TO_BIRDNET_OUTPUT_FILE.csv"</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="using-detection-results-already-in-r">Using detection results already in R<a class="anchor" aria-label="anchor" href="#using-detection-results-already-in-r"></a>
-</h3>
+<ol start="3" style="list-style-type: decimal">
+<li>Using detection results already in R</li>
+</ol>
 <p>Another possibility is that you analyzed the audio files using the <a href="https://github.com/birdnet-team/birdnetR" class="external-link"><code>birdnetR</code></a>
 package, which by default returns a data frame containing BirdNET
 detections. In this case, you can use the data frame directly in your
@@ -133,13 +120,9 @@ include the necessary columns: <code>start</code>, <code>end</code>,
 <code>common_name</code>, <code>confidence</code>, and
 <code>filepath</code>.</p>
 </div>
-</div>
 <div class="section level2">
 <h2 id="exploring-and-preparing-data">Exploring and Preparing Data<a class="anchor" aria-label="anchor" href="#exploring-and-preparing-data"></a>
 </h2>
-<div class="section level3">
-<h3 id="example-dataset">Example dataset<a class="anchor" aria-label="anchor" href="#example-dataset"></a>
-</h3>
 <p>To demonstrate how the functions in <code>birdnetTools</code> work,
 we will use the built-in dataset <code>example_jprf_2023</code>. This
 dataset contains BirdNET detections recorded at the John Prince Research
@@ -155,7 +138,6 @@ species names, and confidence scores.</p>
 <span></span>
 <span><span class="co"># view the dataset documentation</span></span>
 <span><span class="op">?</span><span class="va">example_jprf_2023</span></span></code></pre></div>
-</div>
 <div class="section level3">
 <h3 id="filtering-data-with-customized-criteria">Filtering data with customized criteria<a class="anchor" aria-label="anchor" href="#filtering-data-with-customized-criteria"></a>
 </h3>
