@@ -22,18 +22,18 @@ test_that("birdnet_filter_threshold() works for universal threshold", {
 
 test_that("birdnet_filter_threshold() works for species-specific thresholds", {
   df <- data.frame(
-    scientific_name = c("Passerella iliaca", "Catharus ustulatus"),
+    common_name = c("Passerella iliaca", "Catharus ustulatus"),
     confidence = c(0.8, 0.6)
   )
 
   thresholds <- data.frame(
-    scientific_name = c("Passerella iliaca", "Catharus ustulatus"),
+    common_name = c("Passerella iliaca", "Catharus ustulatus"),
     threshold = c(0.75, 0.7)
   )
 
   out <- birdnet_filter_threshold(df, thresholds)
   expect_equal(nrow(out), 1)
-  expect_equal(out$scientific_name, "Passerella iliaca")
+  expect_equal(out$common_name, "Passerella iliaca")
 })
 
 test_that("birdnet_filter_year() works with and without year column", {

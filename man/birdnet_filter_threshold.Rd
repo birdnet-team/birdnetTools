@@ -12,7 +12,7 @@ birdnet_filter_threshold(data, threshold_arg)
 \item{threshold_arg}{Either:
 \itemize{
 \item A single numeric value specifying a universal confidence threshold, or
-\item A data frame with columns \code{scientific_name} and \code{threshold},
+\item A data frame with columns \code{common_name} and \code{threshold},
 specifying species-specific thresholds.
 }}
 }

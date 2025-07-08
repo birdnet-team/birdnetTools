@@ -15,7 +15,7 @@
 #' @param species Character vector. One or more common names of species to retain
 #'   (e.g., `c("Swainson's Thrush", "American Robin")`).
 #' @param threshold Either a single numeric value between 0 and 1 (for a universal threshold),
-#'   or a data frame with columns `scientific_name` and `threshold` for species-specific thresholds.
+#'   or a data frame with columns `common_name` and `threshold` for species-specific thresholds.
 #' @param year Integer or vector of integers specifying year(s) to retain (e.g., `2024:2025`).
 #' @param min_date,max_date Optional. Character strings or `Date` objects specifying a date range
 #'   in "YYYY-MM-DD" format. If only one is provided, filtering is open-ended on the other side.
@@ -75,8 +75,8 @@ birdnet_filter <- function(
   # 3. threshold: NULL or numeric scalar/vector or tibble with "species" and "threshold" columns
   if (!is.null(threshold)) {
     if (inherits(threshold, "tbl") || inherits(threshold, "data.frame")) {
-      checkmate::assert_names(names(threshold), must.include = c("scientific_name", "threshold"))
-      checkmate::assert_character(threshold$scientific_name, any.missing = FALSE)
+      checkmate::assert_names(names(threshold), must.include = c("common_name", "threshold"))
+      checkmate::assert_character(threshold$common_name, any.missing = FALSE)
       checkmate::assert_numeric(threshold$threshold, lower = 0, upper = 1, any.missing = FALSE)
     } else {
       # numeric scalar or vector with values between 0 and 1

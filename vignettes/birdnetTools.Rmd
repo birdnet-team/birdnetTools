@@ -62,8 +62,6 @@ Another possibility is that you analyzed the audio files using the [`birdnetR`](
 
 ## Exploring and Preparing Data
 
-
-### Example dataset
 To demonstrate how the functions in `birdnetTools` work, we will use the built-in dataset `example_jprf_2023`. This dataset contains BirdNET detections recorded at the John Prince Research Forest in British Columbia, Canada, over a continuous 24-hour period during May–June 2023, from 5 ARU locations. The recordings were processed using the BirdNET GUI (model v2.4) with a confidence threshold of 0.1. The dataset contains 392,300 rows and 14 columns, including information such as the file path, start and end times of detections, species names, and confidence scores.
 
 

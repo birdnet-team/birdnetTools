@@ -59,7 +59,7 @@ test_that("threshold must be NULL, numeric vector between 0 and 1, or tibble wit
 
   # valid tibble with species and threshold columns
   valid_threshold_tbl <- dplyr::tibble(
-    scientific_name = c("Species A", "Species B"),
+    common_name = c("Species A", "Species B"),
     threshold = c(0.6, 0.8)
   )
   expect_silent(birdnet_filter(valid_data, threshold = valid_threshold_tbl))
@@ -73,7 +73,7 @@ test_that("threshold must be NULL, numeric vector between 0 and 1, or tibble wit
 
   # threshold column with invalid values
   invalid_values_tbl <- dplyr::tibble(
-    scientific_name = c("A"),
+    common_name = c("A"),
     threshold = c(1.5)
   )
   expect_error(birdnet_filter(valid_data, threshold = invalid_values_tbl))

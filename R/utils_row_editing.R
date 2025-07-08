@@ -40,7 +40,7 @@ birdnet_filter_species <- function(data, species){
 #' @param threshold_arg Either:
 #'   \itemize{
 #'     \item A single numeric value specifying a universal confidence threshold, or
-#'     \item A data frame with columns `scientific_name` and `threshold`,
+#'     \item A data frame with columns `common_name` and `threshold`,
 #'     specifying species-specific thresholds.
 #'   }
 #'
@@ -65,7 +65,7 @@ birdnet_filter_threshold <- function(data, threshold_arg) {
     # species-specific thresholds
     data_filtered <- data |>
       dplyr::left_join(threshold_arg,
-                       by = dplyr::join_by(!!dplyr::sym(cols$scientific_name) == "scientific_name")) |>
+                       by = dplyr::join_by(!!dplyr::sym(cols$common_name) == "common_name")) |>
       dplyr::filter(!!dplyr::sym(cols$confidence) >= threshold) |>
       dplyr::select(-threshold)  # Optional: drop joined threshold column
   }
