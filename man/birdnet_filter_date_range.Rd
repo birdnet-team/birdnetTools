@@ -2,21 +2,27 @@
 % Please edit documentation in R/utils_row_editing.R
 \name{birdnet_filter_date_range}
 \alias{birdnet_filter_date_range}
-\title{Filter data by date range}
+\title{Filter BirdNET data by date range}
 \usage{
 birdnet_filter_date_range(data, min_date = NULL, max_date = NULL)
 }
 \arguments{
-\item{data}{A data frame with (or without) a \code{date} column. If missing, datetime columns will be added.}
+\item{data}{A data frame containing BirdNET output. If the \code{date} column is not present,
+the function will attempt to extract it using \code{birdnet_add_datetime}.}
 
-\item{min_date}{Date or character string coercible to Date. The minimum date (inclusive).}
+\item{min_date}{Date or character string coercible to Date. The earliest date to include (inclusive).}
 
-\item{max_date}{Date or character string coercible to Date. The maximum date (inclusive).}
+\item{max_date}{Date or character string coercible to Date. The latest date to include (inclusive).}
 }
 \value{
-A filtered data frame.
+A data frame filtered to include only rows within the specified date range.
 }
 \description{
-Filters BirdNET data to only include rows within a specified date range.
+Filters a BirdNET output data frame to include only rows with detections within
+a specified date range. If the \code{date} column is missing, it will be extracted
+from available datetime columns.
+}
+\seealso{
+\code{birdnet_add_datetime}, \code{birdnet_drop_datetime}
 }
 \keyword{internal}

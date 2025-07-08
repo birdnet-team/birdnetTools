@@ -13,33 +13,39 @@ birdnet_subsample(
 )
 }
 \arguments{
-\item{data}{A data frame containing BirdNET output. Relevant columns (e.g., \verb{common name},
-\code{confidence}, \code{datetime}) are automatically detected by \link{birdnet_detect_columns}.}
+\item{data}{A data frame containing BirdNET output. Relevant columns
+(e.g., common name, confidence, datetime) are automatically detected
+by \link{birdnet_detect_columns}.}
 
-\item{n}{Integer. Total number of observations to subsample for each species in \code{data}.}
+\item{n}{Integer. Number of observations to subsample \strong{per species}.}
 
-\item{method}{Character string. Subsampling method to use. One of \code{"stratified"}, \code{"random"}, or \code{"top"}:
+\item{method}{Character. Subsampling method to use. One of:
 \describe{
-\item{\code{"stratified"}}{Samples across confidence score strata (0.1 to 1 by 0.05 bins) evenly.}
-\item{\code{"random"}}{Randomly samples \code{n} observations.}
-\item{\code{"top"}}{Selects the top \code{n} observations with the highest confidence.}
-}}
+\item{"stratified"}{Samples evenly across confidence score strata (0.1 to 1 by 0.05 bins).}
+\item{"random"}{Randomly samples \code{n} observations per species.}
+\item{"top"}{Selects the top \code{n} observations with the highest confidence per species.}
+}
+Defaults to \code{"stratified"}.}
 
-\item{save_to_file}{Logical. If \code{TRUE}, saves the output data frame to a file named \code{"subsampled_data.csv"} in the working directory. Default is \code{FALSE}. Automatically set to \code{TRUE} if \code{path} is defined.}
+\item{save_to_file}{Logical. If \code{TRUE}, saves the output to a CSV file.
+Defaults to \code{FALSE}. Automatically set to \code{TRUE} if \code{file} is provided.}
 
-\item{file}{Character string or \code{NULL}. File path to save the output.
-If \code{NULL} and \code{save_to_file = TRUE}, the file is saved as "subsampled_data.csv"
-in the working directory.}
+\item{file}{Character or \code{NULL}. File path to save the output CSV.
+If \code{NULL} and \code{save_to_file = TRUE}, saves as \code{"subsampled_data.csv"} in the working directory.}
 }
 \value{
 A data frame containing the subsampled observations.
 }
 \description{
-Subsamples a specified number of observations for a given species from a BirdNET output dataset
-using one of three methods: stratified, random, or top confidence. Optionally saves the result to a CSV file.
+Subsamples a specified number of observations per species from a BirdNET output dataset.
+Supports three subsampling methods: stratified by confidence score bins, random, or top confidence scores.
+Optionally saves the subsampled data to a CSV file.
 }
 \examples{
 \dontrun{
-birdnet_subsample(data = my_data, species = "American Robin", n = 300, method = "stratified")
+birdnet_subsample(data = my_data, n = 300, method = "stratified")
+birdnet_subsample(data = my_data, n = 100, method = "top", save_to_file = TRUE,
+file = "top_samples.csv")
 }
+
 }

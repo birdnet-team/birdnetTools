@@ -1,15 +1,16 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# birdnetTools <a href="https://birdnet-team.github.io/birdnetTools/"><img src="man/figures/logo.png" align="right" height="120" alt="birdnetTools website" /></a>
+# birdnetTools <a href="https://birdnet-team.github.io/birdnetTools/"><img src="man/figures/logo.png" alt="birdnetTools website" align="right" height="120"/></a>
 
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/birdnet-team/birdnetTools/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/birdnet-team/birdnetTools/actions/workflows/R-CMD-check.yaml)
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![Codecov test
 coverage](https://codecov.io/gh/birdnet-team/birdnetTools/graph/badge.svg)](https://app.codecov.io/gh/birdnet-team/birdnetTools)
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+
 <!-- badges: end -->
 
 The `birdnetTools` is an R package designed to streamline the
@@ -49,17 +50,17 @@ simulated validation data.
 library(birdnetTools)
 
 # Load built-in dataset
-data(example_jprf_2023, package = "birdnetTools")
 data <- example_jprf_2023
+
 
 # Filter for Swainson's Thrush detections during spring
 data_filtered <- birdnet_filter(data,
-  species = "Swainson's Thrush",
-  threshold = 0.2,
-  year = 2023,
-  min_date = "2023-05-01",
-  max_date = "2023-06-30"
-)
+                                species = "Swainson's Thrush",
+                                threshold = 0.2,
+                                year = 2023,
+                                min_date = "2023-05-01",
+                                max_date = "2023-06-30")
+
 
 # Visualize daily detection patterns across sites
 birdnet_heatmap(data_filtered)
@@ -68,12 +69,13 @@ birdnet_heatmap(data_filtered)
 <img src="man/figures/README-example-1.png" width="100%" style="display: block; margin: auto;" />
 
 ``` r
-
-
 # Simulate validation (for demonstration only)
 set.seed(123)
 data_sub <- birdnet_subsample(data_filtered, n = 300, method = "stratified")
-data_sub$validation <- rbinom(nrow(data_sub), 1, prob = pmin(pmax(data_sub$confidence, 0), 1))
+
+data_sub$validation <- rbinom(nrow(data_sub), 1, 
+                              prob = pmin(pmax(data_sub$confidence, 0), 1))
+
 
 # Calculate species-specific threshold for 90% precision
 birdnet_calc_threshold(data_sub, precision = 0.9)

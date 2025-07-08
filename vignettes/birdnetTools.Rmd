@@ -23,21 +23,13 @@ The `birdnetTools` is an R package designed to streamline the post-processing an
 
 The goal of `birdnetTools` is to help researchers manage, explore, and validate BirdNET results, which can be derived by [BirdNET Analyzer](https://github.com/BirdNET-Team/BirdNET-Analyzer), or the [birdnetR](https://birdnet-team.github.io/birdnetR/index.html) package. It includes functions for filtering detections by species, confidence, and date/time; visualizing temporal patterns; and validating detections with an interactive Shiny app to support threshold-setting workflows.
 
-> Make a diagram for the workflow for how users can use this package :) 
-
-
 
 
 ## Data Import
 
 BirdNET detections can be imported in various formats depending on how your data was processed and saved. The `birdnetTools` package supports three main workflows:
 
-- Importing **multiple detection files** from separate audio recordings
-- Importing a **single file** containing combined results
-- Using detection results that are **already loaded** into R
-
-
-### Importing multiple detection results
+1. Importing multiple detection results
 
 After processing audio files through BirdNET, you may have several `.csv` files—each corresponding to a separate recording. The `birdnet_combine()` function allows you to import and merge these files into R all at once. It reads all `.csv` files in a specified directory, combines them into a single data frame, and adds a `filepath` column if it's not already present.
 
@@ -49,7 +41,7 @@ birdnet_combine(path = "PATH_TO_BIDNET_OUTPUT_FOLDER")
 ```
 
 
-### Importing combined detection results
+2. Importing combined detection results
 
 If you already have a combined output file, for example, if you checked the "combine output table" option in the BirdNET GUI, you can read it directly into R using the `readr` package:
 
@@ -61,7 +53,7 @@ detections <- read_csv("PATH_TO_BIRDNET_OUTPUT_FILE.csv")
 
 
 
-### Using detection results already in R
+3. Using detection results already in R
 
 Another possibility is that you analyzed the audio files using the [`birdnetR`](https://github.com/birdnet-team/birdnetR) package, which by default returns a data frame containing BirdNET detections. In this case, you can use the data frame directly in your analysis without needing to import it again. The functions in `birdnetTools` are designed to work with data frames that include the necessary columns: `start`, `end`, `common_name`, `confidence`, and `filepath`.
 
@@ -70,8 +62,6 @@ Another possibility is that you analyzed the audio files using the [`birdnetR`](
 
 ## Exploring and Preparing Data
 
-
-### Example dataset
 To demonstrate how the functions in `birdnetTools` work, we will use the built-in dataset `example_jprf_2023`. This dataset contains BirdNET detections recorded at the John Prince Research Forest in British Columbia, Canada, over a continuous 24-hour period during May–June 2023, from 5 ARU locations. The recordings were processed using the BirdNET GUI (model v2.4) with a confidence threshold of 0.1. The dataset contains 392,300 rows and 14 columns, including information such as the file path, start and end times of detections, species names, and confidence scores.
 
 

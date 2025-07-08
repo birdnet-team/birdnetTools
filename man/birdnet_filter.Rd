@@ -22,7 +22,7 @@ birdnet_filter(
 (e.g., \code{c("Swainson's Thrush", "American Robin")}).}
 
 \item{threshold}{Either a single numeric value between 0 and 1 (for a universal threshold),
-or a data frame with columns \code{scientific_name} and \code{threshold} for species-specific thresholds.}
+or a data frame with columns \code{common_name} and \code{threshold} for species-specific thresholds.}
 
 \item{year}{Integer or vector of integers specifying year(s) to retain (e.g., \code{2024:2025}).}
 

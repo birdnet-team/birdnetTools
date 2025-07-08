@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils_row_editing.R
 \name{birdnet_filter_species}
 \alias{birdnet_filter_species}
-\title{Filter data by species}
+\title{Filter BirdNET data by species}
 \usage{
 birdnet_filter_species(data, species)
 }
@@ -12,14 +12,19 @@ birdnet_filter_species(data, species)
 \item{species}{Character vector. One or more common names of species to keep.}
 }
 \value{
-A filtered data frame containing only the specified species.
+A data frame filtered to include only the specified species.
 }
 \description{
-Filters BirdNET data for one or more specified species using the column
-automatically detected as containing common species names.
+Filters a BirdNET output data frame for one or more specified species using the
+column automatically detected as containing common species names.
 }
 \details{
-The function uses \code{\link{birdnet_detect_columns}} to detect the column
-containing common names (e.g., "Common Name", "common_name", etc.).
+This function uses \link{birdnet_detect_columns} to identify the
+appropriate column (e.g., "Common Name", "common_name", etc.) containing
+common names of species, then filters the data frame to retain only the rows
+matching the specified species.
+}
+\seealso{
+\link{birdnet_detect_columns}
 }
 \keyword{internal}

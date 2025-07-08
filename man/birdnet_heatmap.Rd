@@ -15,23 +15,21 @@ birdnet_heatmap(
 }
 \arguments{
 \item{data}{A data frame containing BirdNET output. Relevant columns (e.g., \verb{common name},
-\code{confidence}, \code{datetime}) are automatically detected by \link{birdnet_detect_columns}.}
+\code{confidence}, \code{datetime}, \code{filepath}, etc.) are automatically detected by
+\link{birdnet_detect_columns}. Must include columns like \code{common_name}, \code{confidence}, and \code{datetime}.}
 
 \item{species}{Character scalar or vector specifying the common name(s) of species to visualize.
 If \code{NULL}, no species filtering is applied.}
 
-\item{threshold}{Numeric scalar between 0 and 1, or a data frame with columns \code{scientific_name}
-and \code{threshold}, or \code{NULL}. If numeric, filters detections below this confidence value.
-If a data frame, species-specific thresholds are applied. If \code{NULL}, no threshold filtering is done.}
+\item{threshold}{Either a numeric scalar between 0 and 1 (applied uniformly), or a data frame
+with columns \code{common_name} and \code{threshold} for species-specific values. If \code{NULL}, no
+threshold filtering is applied.}
 
-\item{min_date}{Character scalar specifying the earliest date to include (format \code{"YYYY-MM-DD"}).
-If \code{NULL}, no lower date limit is applied.}
+\item{min_date}{Optional character scalar giving the earliest date to include (\code{"YYYY-MM-DD"} format).}
 
-\item{max_date}{Character scalar specifying the latest date to include (format \code{"YYYY-MM-DD"}).
-If \code{NULL}, no upper date limit is applied.}
+\item{max_date}{Optional character scalar giving the latest date to include (\code{"YYYY-MM-DD"} format).}
 
-\item{hour}{Integer vector of hours (0–23) specifying which hours of the day to include.
-If \code{NULL}, all hours are included.}
+\item{hour}{Optional integer vector (0–23) specifying hours of the day to include in the heatmap.}
 }
 \value{
 A \code{ggplot} object showing a heatmap of detections by date (x-axis) and hour (y-axis).

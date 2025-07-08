@@ -7,14 +7,18 @@
 birdnet_validation_server(input, output, session)
 }
 \arguments{
-\item{input, output, session}{Standard \code{shiny} server function parameters.}
+\item{input}{Shiny input object.}
+
+\item{output}{Shiny output object.}
+
+\item{session}{Shiny session object.}
 }
 \value{
-This function is called for its side effects in the context of a \code{shinyApp}.
+Called for its side effects within a \code{shinyApp} context.
 }
 \description{
-Defines the server-side logic for the audio validation app within the
-\code{birdnetTools} package. This server handles file imports, audio directory
+Defines the server-side logic for the BirdNET audio validation Shiny app within the
+\code{birdnetTools} package. This function handles file imports, audio directory
 selection, spectrogram generation, interactive table editing, and audio playback.
 }
 \details{
@@ -22,5 +26,8 @@ This internal server function powers the interactive audio validation
 interface. Users can import a CSV of BirdNET detections, link to local audio
 directories, view spectrograms, and manually validate detections through a
 Shiny DataTable interface. Audio playback and validation column editing are supported.
+}
+\seealso{
+\link{birdnet_validation_ui}, \link{birdnet_launch_validation}
 }
 \keyword{internal}

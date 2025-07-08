@@ -16,40 +16,44 @@ birdnet_calc_threshold(
 \code{confidence}, and \code{validation}. The \code{validation} column must contain 1 (true positives)
 and 0 (false positives).}
 
-\item{full_data}{Optional. A data frame of all BirdNET detections. Must contain at least \code{common_name}
-and \code{confidence} columns. If \code{NULL}, \code{validated_data} will be used.}
+\item{full_data}{Optional. A data frame of all BirdNET detections with at least \code{common_name}
+and \code{confidence} columns. If \code{NULL}, \code{validated_data} is used instead.}
 
-\item{probability}{Target predicted probability (between 0 and 1) used to calculate the threshold from the logistic regression.}
+\item{probability}{Numeric. A target predicted probability (between 0 and 1) used to calculate thresholds
+from the logistic regression model.}
 
-\item{precision}{Target precision (between 0 and 1) used to select the threshold achieving that precision.}
+\item{precision}{Numeric. A target precision (between 0 and 1) used to select the lowest threshold
+that achieves the desired precision.}
 }
 \value{
 A tibble with two columns:
 \describe{
-\item{common_name}{Species common name}
-\item{threshold}{Calculated confidence threshold}
+\item{common_name}{Species common name.}
+\item{threshold}{The calculated confidence threshold for that species.}
 }
 }
 \description{
-Calculates species-specific confidence thresholds for BirdNET detections based on either a target
-\code{precision} or a predicted \code{probability} from a logistic regression model. Returns a tibble
-with one threshold per species. The \code{precision} approach is based on \href{https://link.springer.com/article/10.1007/s10336-025-02260-w}{Tseng et al., 2025},
-while the \code{probability} approach is based on \href{https://link.springer.com/article/10.1007/s10336-024-02144-5}{Wood and Kahl, 2024}.
+Computes species-specific confidence thresholds for BirdNET detections using either a target
+\code{precision} or a target predicted \code{probability} from a logistic regression model.
+The function returns one threshold per species.
+The \code{precision}-based approach follows \href{https://link.springer.com/article/10.1007/s10336-025-02260-w}{Tseng et al. (2025)},
+while the \code{probability}-based method is adapted from \href{https://link.springer.com/article/10.1007/s10336-024-02144-5}{Wood and Kahl (2024)}.
 }
 \details{
-If \code{precision} is provided, thresholds are selected based on the lowest confidence score that achieves or exceeds
-the desired precision when applied to predicted probabilities. If \code{probability} is provided instead, thresholds are calculated
-directly from the inverse logit of the logistic regression model. You must provide exactly one of \code{precision} or \code{probability}.
+You must supply exactly one of \code{precision} or \code{probability}. If both or neither are provided,
+the function will throw an error.
 
-All calculated thresholds are clamped to the range between the minimum observed confidence
-in \code{validated_data} and 1.
+When using the precision method, the function predicts probabilities for each detection using a logistic
+regression model fit to \code{validated_data}. It then identifies the lowest confidence threshold that meets
+or exceeds the target precision.
+
+When using the probability method, the function calculates the confidence threshold corresponding to
+the inverse logit of the target predicted probability from the regression model.
+
+All thresholds are clamped to fall between the minimum observed confidence in \code{validated_data}
+and 1.
 }
-\examples{
-\dontrun{
-birdnet_calc_threshold(
-  validated_data = validated_df,
-  full_data = full_df,
-  precision = 0.9
-)
-}
+\references{
+Tseng, S., Hodder, D. P., & Otter, K. A. (2025). Setting BirdNET confidence thresholds: Species-specific vs. universal approaches. \emph{Journal of Ornithology}. https://doi.org/10.1007/s10336-025-02260-w
+Wood, C. M., & Kahl, S. (2024). Guidelines for appropriate use of BirdNET scores and other detector outputs. \emph{Journal of Ornithology}. https://doi.org/10.1007/s10336-024-02144-5
 }

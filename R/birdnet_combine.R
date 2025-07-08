@@ -1,29 +1,41 @@
 #' Combine BirdNET output files from a directory
 #'
 #' Reads and combines multiple BirdNET output `.csv` or `.txt` files from a specified directory
-#' into a single data frame. Subdirectories are searched recursively. Files named with
-#' `"analysis_params"` or `"CombinedTable"` are automatically excluded.
+#' (including subdirectories) into a single data frame.
 #'
-#' @param path Character string. Path to the directory containing BirdNET output files.
+#' Files named `"analysis_params"` or `"CombinedTable"` are automatically excluded. Files that are
+#' empty or cannot be read are skipped. A summary of how many files were successfully read and which
+#' files (if any) caused errors is printed at the end.
 #'
-#' @return A data frame combining all valid BirdNET output files found in the directory.
-#' The column names and structure depend on the input files and are not standardized by this function.
+#' @param path Character string. Path to a directory containing BirdNET output files.
+#'
+#' @return A data frame combining all readable BirdNET `.csv` or `.txt` files found in the directory.
+#'   The column structure depends on the input files and is not standardized by this function.
 #'
 #' @details
-#' Files are read using `readr::read_csv()`. Files that are empty or cannot be read are skipped.
-#' A summary of the number of files combined and any files skipped due to error is printed at the end.
+#' This function is useful for aggregating large batches of BirdNET results without requiring
+#' consistent formatting. All subdirectories are searched recursively. Files are read using
+#' [readr::read_csv()], and empty files are silently ignored.
 #'
-#' This function is useful for aggregating large batches of BirdNET results without requiring consistent formatting.
+#' If no valid files are found, or if all files are excluded or cause read errors, the function
+#' aborts with an informative message.
 #'
 #' @examples
 #' \dontrun{
+#' # Combine all BirdNET output files in a directory and its subfolders
 #' data <- birdnet_combine("path/to/BirdNET/output")
+#'
+#' # View a few rows of the result
+#' head(data)
 #' }
+#'
+#' @seealso [readr::read_csv()], [list.files()]
 #'
 #' @importFrom readr read_csv
 #' @importFrom dplyr bind_rows tibble
 #' @importFrom cli cli_alert_success cli_alert_warning cli_li
 #' @export
+
 birdnet_combine <- function(path) {
   # argument check ----------------------------------------------------------
   checkmate::assert_character(path, len = 1, any.missing = FALSE)
