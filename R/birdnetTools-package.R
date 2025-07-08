@@ -16,4 +16,11 @@ utils::globalVariables(c("filepath",
                          "common_name",
                          "confidence",
                          "category",
-                         "activity"))
+                         "activity",
+                         "glm",
+                         "binomial",
+                         "predict",
+                         "coef",
+                         ":=",
+                         "%>%",
+                         "setNames"))

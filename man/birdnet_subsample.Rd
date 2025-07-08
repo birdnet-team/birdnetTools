@@ -44,7 +44,8 @@ Optionally saves the subsampled data to a CSV file.
 \examples{
 \dontrun{
 birdnet_subsample(data = my_data, n = 300, method = "stratified")
-birdnet_subsample(data = my_data, n = 100, method = "top", save_to_file = TRUE, file = "top_samples.csv")
+birdnet_subsample(data = my_data, n = 100, method = "top", save_to_file = TRUE,
+file = "top_samples.csv")
 }
 
 }

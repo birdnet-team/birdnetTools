@@ -10,7 +10,7 @@
 #' @param species Character scalar or vector specifying the common name(s) of species to visualize.
 #'   If `NULL`, no species filtering is applied.
 #' @param threshold Either a numeric scalar between 0 and 1 (applied uniformly), or a data frame
-#'   with columns `scientific_name` and `threshold` for species-specific values. If `NULL`, no
+#'   with columns `common_name` and `threshold` for species-specific values. If `NULL`, no
 #'   threshold filtering is applied.
 #' @param min_date Optional character scalar giving the earliest date to include (`"YYYY-MM-DD"` format).
 #' @param max_date Optional character scalar giving the latest date to include (`"YYYY-MM-DD"` format).
@@ -61,11 +61,11 @@ birdnet_heatmap <- function(data, species = NULL, threshold = NULL, min_date = N
   }
 
   # 3. threshold: NULL or numeric scalar/vector between 0 and 1 OR
-  # dataframe with columns "scientific_name" and "threshold"
+  # dataframe with columns "common_name" and "threshold"
   if (!is.null(threshold)) {
     if (inherits(threshold, "tbl") || inherits(threshold, "data.frame")) {
-      checkmate::assert_names(names(threshold), must.include = c("scientific_name", "threshold"))
-      checkmate::assert_character(threshold$scientific_name, any.missing = FALSE)
+      checkmate::assert_names(names(threshold), must.include = c("common_name", "threshold"))
+      checkmate::assert_character(threshold$common_name, any.missing = FALSE)
       checkmate::assert_numeric(threshold$threshold, lower = 0, upper = 1, any.missing = FALSE)
     } else {
       checkmate::assert_numeric(threshold, lower = 0, upper = 1, any.missing = FALSE)

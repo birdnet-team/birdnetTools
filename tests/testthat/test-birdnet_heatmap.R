@@ -18,7 +18,7 @@ test_that("birdnet_heatmap argument checks work", {
   expect_error(birdnet_heatmap(data = valid_data, threshold = c(0.1, 0.5)))
   expect_silent(birdnet_heatmap(data = valid_data, threshold = 0.7))
 
-  df_threshold <- dplyr::tibble(scientific_name = c("Turdus migratorius"), threshold = c(0.8))
+  df_threshold <- dplyr::tibble(common_name = c("Turdus migratorius"), threshold = c(0.8))
   expect_silent(birdnet_heatmap(data = valid_data, threshold = df_threshold))
 
   df_bad_threshold <- dplyr::tibble(name = "Turdus migratorius", value = 0.8)

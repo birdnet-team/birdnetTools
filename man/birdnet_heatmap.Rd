@@ -22,7 +22,7 @@ birdnet_heatmap(
 If \code{NULL}, no species filtering is applied.}
 
 \item{threshold}{Either a numeric scalar between 0 and 1 (applied uniformly), or a data frame
-with columns \code{scientific_name} and \code{threshold} for species-specific values. If \code{NULL}, no
+with columns \code{common_name} and \code{threshold} for species-specific values. If \code{NULL}, no
 threshold filtering is applied.}
 
 \item{min_date}{Optional character scalar giving the earliest date to include (\code{"YYYY-MM-DD"} format).}
