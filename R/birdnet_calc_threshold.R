@@ -1,10 +1,10 @@
 #' Calculate species-specific confidence thresholds for BirdNET detections
 #'
 #' Computes species-specific confidence thresholds for BirdNET detections using either a target
-#' \code{precision} or a target predicted \code{probability} from a logistic regression model.
+#' `precision` or a target predicted `probability` from a logistic regression model.
 #' The function returns one threshold per species.
-#' The \code{precision}-based approach follows [Tseng et al. (2025)](https://link.springer.com/article/10.1007/s10336-025-02260-w),
-#' while the \code{probability}-based method is adapted from [Wood and Kahl (2024)](https://link.springer.com/article/10.1007/s10336-024-02144-5).
+#' The `precision`-based approach follows [Tseng et al. (2025)](https://link.springer.com/article/10.1007/s10336-025-02260-w),
+#' while the `probability`-based method is adapted from [Wood and Kahl (2024)](https://link.springer.com/article/10.1007/s10336-024-02144-5).
 #'
 #' @param validated_data A data frame of validated BirdNET detections with columns `common_name`,
 #'   `confidence`, and `validation`. The `validation` column must contain 1 (true positives)
@@ -36,6 +36,7 @@
 #' All thresholds are clamped to fall between the minimum observed confidence in `validated_data`
 #' and 1.
 #'
+#' @export
 #' @references
 #' Tseng, S., Hodder, D. P., & Otter, K. A. (2025). Setting BirdNET confidence thresholds: Species-specific vs. universal approaches. *Journal of Ornithology*. https://doi.org/10.1007/s10336-025-02260-w
 #' Wood, C. M., & Kahl, S. (2024). Guidelines for appropriate use of BirdNET scores and other detector outputs. *Journal of Ornithology*. https://doi.org/10.1007/s10336-024-02144-5
