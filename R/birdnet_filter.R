@@ -55,7 +55,7 @@ birdnet_filter <- function(
 
   required_cols <- c("common_name", "confidence", "filepath")
 
-  missing_cols <- required_cols[is.na(cols)]
+  missing_cols <- required_cols[is.na(cols[required_cols])]
 
   if (length(missing_cols) > 0) {
     rlang::abort(
