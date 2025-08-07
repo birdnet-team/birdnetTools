@@ -53,7 +53,7 @@ birdnet_filter <- function(
 
   cols <- birdnet_detect_columns(data)
 
-  required_cols <- c("start", "end", "scientific_name", "common_name", "confidence", "filepath")
+  required_cols <- c("common_name", "confidence", "filepath")
 
   missing_cols <- required_cols[is.na(cols)]
 

@@ -194,7 +194,7 @@ birdnet_detect_columns <- function(data) {
   }
 
   list(
-    start = col_matches(c("start", "begin")),
+    start = col_matches(c("start", "begin time")),
     end = col_matches("end"),
     scientific_name = col_matches("scientific"),
     common_name = col_matches(c("common", "label")),
