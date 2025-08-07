@@ -194,11 +194,11 @@ birdnet_detect_columns <- function(data) {
   }
 
   list(
-    start = col_matches("start"),
+    start = col_matches(c("start", "begin")),
     end = col_matches("end"),
     scientific_name = col_matches("scientific"),
     common_name = col_matches("common"),
-    confidence = col_matches("confidence"),
+    confidence = col_matches(c("confidence", "score")),
     filepath = col_matches(c("file", "path"))
   )
 }
