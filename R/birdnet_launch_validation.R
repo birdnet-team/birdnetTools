@@ -70,22 +70,34 @@ birdnet_validation_ui <- function(request) {
         # button: praise_me
         shiny::actionButton("praise_me", "Praise me")
       ), bslib::card(
-        "Spectrogram settings",
+        "Settings",
 
-        # input: flim, wl
+
+        # input: duration
+        shiny::numericInput(
+          inputId = "duration",
+          label = "Duration:",
+          value = 9,
+          min = 3
+        ),
+
+        # input: flim
         shinyWidgets::numericRangeInput(
           inputId = "flim",
-          "Frequency range:",
+          label = "Frequency range:",
           min = 1, max = 10,
           value = c(0, 6)
         ),
+
+        # input: wl
         shiny::numericInput(
           inputId = "wl",
-          "Window length:",
+          label = "Window length:",
           value = 512
         )
       )
     ),
+
 
     # main content
 
@@ -139,17 +151,23 @@ birdnet_validation_server <- function(input, output, session) {
   # Helper functions --------------------------------------------------------
 
   # the function to play audio
-  play_audio <- function(filepath, start, end) {
+  play_audio <- function(filepath, start, end, buffer) {
     if (Sys.info()["sysname"] == "Darwin") {
       tuneR::setWavPlayer("afplay")
     }
-    song <- tuneR::readWave(filepath, from = start - 3, to = end + 3, units = "seconds")
+    song <- tuneR::readWave(filepath,
+                            from = start - buffer,
+                            to = end + buffer,
+                            units = "seconds")
     tuneR::play(song)
   }
 
   # the function to view spectrogram
-  view_spectrogram <- function(filepath, flim, wl, start, end) {
-    song <- tuneR::readWave(filepath, from = start - 3, to = end + 3, units = "seconds")
+  view_spectrogram <- function(filepath, flim, wl, start, end, buffer) {
+    song <- tuneR::readWave(filepath,
+                            from = start - buffer,
+                            to = end + buffer,
+                            units = "seconds")
     seewave::spectro(song,
       f = song@samp.rate, flim = flim, ovlp = 50,
       collevels = seq(-40, 0, 1), wl = wl, scale = FALSE,
@@ -312,7 +330,8 @@ birdnet_validation_server <- function(input, output, session) {
             flim = input$flim,
             wl = input$wl,
             start = selected_row$start,
-            end = selected_row$end
+            end = selected_row$end,
+            buffer = (input$duration - 3)/2
           )
         })
       } else {
@@ -328,7 +347,8 @@ birdnet_validation_server <- function(input, output, session) {
         play_audio(
           filepath = filepath,
           start = selected_row$start,
-          end = selected_row$end
+          end = selected_row$end,
+          buffer = (input$duration - 3)/2
         )
       } else {
         shiny::showNotification("Audio file not found.", type = "error")
