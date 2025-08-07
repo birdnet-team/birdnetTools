@@ -197,7 +197,7 @@ birdnet_detect_columns <- function(data) {
     start = col_matches(c("start", "begin")),
     end = col_matches("end"),
     scientific_name = col_matches("scientific"),
-    common_name = col_matches("common"),
+    common_name = col_matches(c("common", "label")),
     confidence = col_matches(c("confidence", "score")),
     filepath = col_matches(c("file", "path"))
   )
