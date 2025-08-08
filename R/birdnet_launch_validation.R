@@ -245,27 +245,25 @@ birdnet_validation_server <- function(input, output, session) {
       }
     )
 
-    rv$cols <- shiny::reactive({
-      birdnet_detect_columns(rv$data_editable)
-    })
+    rv$cols <- birdnet_detect_columns(rv$data_editable)
 
 
-    if (is.na(rv$cols()$filepath)) {
+    if (is.na(rv$cols$filepath)) {
       # handle missing filepath column: warning, error, or skip basename step
       filepath_vec <- NA_character_
     } else {
-      filepath_vec <- basename(rv$data_editable[[rv$cols()$filepath]])
+      filepath_vec <- basename(rv$data_editable[[rv$cols$filepath]])
     }
 
     # render the data table with a play button
     rv$data_display <- rv$data_editable |>
-      dplyr::mutate(!!dplyr::sym(rv$cols()$filepath) := filepath_vec) |>
+      dplyr::mutate(!!dplyr::sym(rv$cols$filepath) := filepath_vec) |>
       dplyr::select(
-        !!dplyr::sym(rv$cols()$filepath),
-        !!dplyr::sym(rv$cols()$common_name),
-        !!dplyr::sym(rv$cols()$start),
-        !!dplyr::sym(rv$cols()$end),
-        !!dplyr::sym(rv$cols()$confidence),
+        !!dplyr::sym(rv$cols$filepath),
+        !!dplyr::sym(rv$cols$common_name),
+        !!dplyr::sym(rv$cols$start),
+        !!dplyr::sym(rv$cols$end),
+        !!dplyr::sym(rv$cols$confidence),
         "validation"
       ) |>
       dplyr::mutate(
@@ -338,7 +336,7 @@ birdnet_validation_server <- function(input, output, session) {
     if (info$col == 7) {
       selected_row <- rv$data_display[info$row, ]
       filepath <- file.path(dir_path(),
-                            basename(selected_row[[rv$cols()$filepath]]))
+                            basename(selected_row[[rv$cols$filepath]]))
 
       if (file.exists(filepath)) {
         output$spectrogram <- shiny::renderPlot({
@@ -346,8 +344,8 @@ birdnet_validation_server <- function(input, output, session) {
             filepath = filepath,
             flim = input$flim,
             wl = input$wl,
-            start = selected_row[[rv$cols()$start]],
-            end = selected_row[[rv$cols()$end]],
+            start = selected_row[[rv$cols$start]],
+            end = selected_row[[rv$cols$end]],
             buffer = (input$duration - 3)/2
           )
         })
@@ -360,13 +358,13 @@ birdnet_validation_server <- function(input, output, session) {
     if (info$col == 8) {
       selected_row <- rv$data_display[info$row, ]
       filepath <- file.path(dir_path(),
-                            basename(selected_row[[rv$cols()$filepath]]))
+                            basename(selected_row[[rv$cols$filepath]]))
 
       if (file.exists(filepath)) {
         play_audio(
           filepath = filepath,
-          start = selected_row[[rv$cols()$start]],
-          end = selected_row[[rv$cols()$end]],
+          start = selected_row[[rv$cols$start]],
+          end = selected_row[[rv$cols$end]],
           buffer = (input$duration - 3)/2
         )
       } else {
