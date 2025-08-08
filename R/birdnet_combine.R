@@ -15,7 +15,7 @@
 #' @details
 #' This function is useful for aggregating large batches of BirdNET results without requiring
 #' consistent formatting. All subdirectories are searched recursively. Files are read using
-#' [readr::read_csv()], and empty files are silently ignored.
+#' [readr::read_delim()], and empty files are silently ignored.
 #'
 #' If no valid files are found, or if all files are excluded or cause read errors, the function
 #' aborts with an informative message.
@@ -29,9 +29,9 @@
 #' head(data)
 #' }
 #'
-#' @seealso [readr::read_csv()], [list.files()]
+#' @seealso [readr::read_delim()], [list.files()]
 #'
-#' @importFrom readr read_csv
+#' @importFrom readr read_delim
 #' @importFrom dplyr bind_rows tibble
 #' @importFrom cli cli_alert_success cli_alert_warning cli_li
 #' @export
@@ -68,7 +68,7 @@ birdnet_combine <- function(path) {
 
     detection_ind <- tryCatch({
 
-      df <- readr::read_csv(file, show_col_types = FALSE)
+      df <- readr::read_delim(file, show_col_types = FALSE)
 
       if (nrow(df) == 0) {
         next

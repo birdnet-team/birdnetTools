@@ -24,7 +24,7 @@ files (if any) caused errors is printed at the end.
 
 This function is useful for aggregating large batches of BirdNET results without requiring
 consistent formatting. All subdirectories are searched recursively. Files are read using
-\code{\link[readr:read_delim]{readr::read_csv()}}, and empty files are silently ignored.
+\code{\link[readr:read_delim]{readr::read_delim()}}, and empty files are silently ignored.
 
 If no valid files are found, or if all files are excluded or cause read errors, the function
 aborts with an informative message.
@@ -40,5 +40,5 @@ head(data)
 
 }
 \seealso{
-\code{\link[readr:read_delim]{readr::read_csv()}}, \code{\link[=list.files]{list.files()}}
+\code{\link[readr:read_delim]{readr::read_delim()}}, \code{\link[=list.files]{list.files()}}
 }

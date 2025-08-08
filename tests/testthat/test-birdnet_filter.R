@@ -17,7 +17,7 @@ test_that("data must be a tibble with required columns", {
 
   # Missing required column
   invalid_data <- valid_data |>
-    select(-start)
+    select(-common_name)
   expect_error(birdnet_filter(invalid_data))
 })
 
@@ -137,3 +137,4 @@ test_that("hour must be NULL or numeric vector between 0 and 23", {
   expect_error(birdnet_filter(valid_data, hour = 24))
   expect_error(birdnet_filter(valid_data, hour = c(12, NA)))
 })
+
