@@ -31,7 +31,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Combine BirdNET output files from a directory</h1>
-      <small class="dont-index">Source: <a href="https://github.com/birdnet-team/birdnetTools/blob/v0.1.0/R/birdnet_combine.R" class="external-link"><code>R/birdnet_combine.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/birdnet-team/birdnetTools/blob/master/R/birdnet_combine.R" class="external-link"><code>R/birdnet_combine.R</code></a></small>
       <div class="d-none name"><code>birdnet_combine.Rd</code></div>
     </div>
 
@@ -65,13 +65,13 @@ empty or cannot be read are skipped. A summary of how many files were successful
 files (if any) caused errors is printed at the end.</p>
 <p>This function is useful for aggregating large batches of BirdNET results without requiring
 consistent formatting. All subdirectories are searched recursively. Files are read using
-<code><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">readr::read_csv()</a></code>, and empty files are silently ignored.</p>
+<code><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">readr::read_delim()</a></code>, and empty files are silently ignored.</p>
 <p>If no valid files are found, or if all files are excluded or cause read errors, the function
 aborts with an informative message.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">readr::read_csv()</a></code>, <code><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files()</a></code></p></div>
+    <div class="dont-index"><p><code><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">readr::read_delim()</a></code>, <code><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files()</a></code></p></div>
     </div>
 
     <div class="section level2">
