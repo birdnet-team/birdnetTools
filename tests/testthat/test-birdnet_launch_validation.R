@@ -44,7 +44,8 @@ create_sample_csv <- function() {
     scientific_name = c("Turdus migratorius", "Sturnus vulgaris"),
     common_name = c("American Robin", "European Starling"),
     start = c(10, 20),
-    end = c(15, 25)
+    end = c(15, 25),
+    confidence = c(0.95, 0.85)
   )
   write.csv(df, tmp, row.names = FALSE)
   tmp
@@ -71,6 +72,7 @@ test_that("Server reacts to file input and renders table", {
 
     # Wait for reactive to update
     # Reactive values should be populated
+
     expect_true(!is.null(rv$data_editable))
     expect_true("validation" %in% names(rv$data_editable))
 
@@ -94,6 +96,7 @@ test_that("Editing table updates validation column", {
 
     # Simulate editing cell (validation column)
     # Column index is 6 for validation (assuming columns: filepath, sci_name, common_name, start, end, validation)
+
     session$setInputs(main_table_cell_edit = list(row = 1, col = 6, value = "Y"))
 
     expect_equal(rv$data_editable$validation[1], "Y")
