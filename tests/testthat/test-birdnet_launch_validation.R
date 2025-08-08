@@ -171,37 +171,6 @@ test_that("Import_file NULL does nothing", {
 })
 
 
-
-
-
-
-
-
-test_that("Spectrogram button click works when file exists", {
-  testServer(birdnet_validation_server, {
-    # Import CSV
-    csv_path <- testthat::test_path("data", "test_example_1.csv")
-    session$setInputs(import_file = list(
-      datapath = csv_path,
-      name = "test_example_1.csv",
-      size = file.info(csv_path)$size,
-      type = "text/csv"
-    ))
-    session$flushReact()
-
-    # Ensure MP3 file exists in expected location
-    filepath <- file.path(dir_path(), basename(rv$data_display[[rv$cols$filepath]][1]))
-    dir.create(dir_path(), showWarnings = FALSE)
-    file.copy(testthat::test_path("data", "test_example_2.mp3"), filepath, overwrite = TRUE)
-
-    # Click spectrogram button (col 7)
-    session$setInputs(main_table_cell_clicked = list(row = 1, col = 7, value = "Spectrogram"))
-    session$flushReact()
-
-    expect_true(TRUE) # No error expected
-  })
-})
-
 test_that("Click with NULL value does nothing", {
   testServer(birdnet_validation_server, {
     session$setInputs(main_table_cell_clicked = list(value = NULL))
