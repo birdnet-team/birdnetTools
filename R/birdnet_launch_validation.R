@@ -222,14 +222,14 @@ birdnet_validation_server <- function(input, output, session) {
 
   rv <- shiny::reactiveValues()
 
+
   # if importing file, create data_editable and data_display reactive values
   shiny::observeEvent(input$import_file, {
     # read in the csv file and clean names based on the path input
     tryCatch(
       {
         rv$data_editable <- input$import_file$datapath |>
-          readr::read_csv(show_col_types = FALSE) |>
-          birdnet_clean_names()
+          readr::read_csv(show_col_types = FALSE)
 
         # check if the data frame has the validation column already
         if (!"validation" %in% names(rv$data_editable)) {
@@ -245,13 +245,28 @@ birdnet_validation_server <- function(input, output, session) {
       }
     )
 
+    rv$cols <- shiny::reactive({
+      birdnet_detect_columns(rv$data_editable)
+    })
+
+
+    if (is.na(rv$cols()$filepath)) {
+      # handle missing filepath column: warning, error, or skip basename step
+      filepath_vec <- NA_character_
+    } else {
+      filepath_vec <- basename(rv$data_editable[[rv$cols()$filepath]])
+    }
 
     # render the data table with a play button
     rv$data_display <- rv$data_editable |>
-      dplyr::mutate(filepath = filepath |> basename()) |>
+      dplyr::mutate(!!dplyr::sym(rv$cols()$filepath) := filepath_vec) |>
       dplyr::select(
-        "filepath", "scientific_name", "common_name",
-        "start", "end", "validation"
+        !!dplyr::sym(rv$cols()$filepath),
+        !!dplyr::sym(rv$cols()$common_name),
+        !!dplyr::sym(rv$cols()$start),
+        !!dplyr::sym(rv$cols()$end),
+        !!dplyr::sym(rv$cols()$confidence),
+        "validation"
       ) |>
       dplyr::mutate(
         Spectrogram = '<button class="spectrogram">Spectrogram</button>',
@@ -321,7 +336,8 @@ birdnet_validation_server <- function(input, output, session) {
 
     if (info$col == 7) { # Spectrogram button column
       selected_row <- rv$data_display[info$row, ]
-      filepath <- file.path(dir_path(), basename(selected_row$filepath))
+      filepath <- file.path(dir_path(),
+                            basename(selected_row[[rv$cols()$filepath]]))
 
       if (file.exists(filepath)) {
         output$spectrogram <- shiny::renderPlot({
@@ -329,8 +345,8 @@ birdnet_validation_server <- function(input, output, session) {
             filepath = filepath,
             flim = input$flim,
             wl = input$wl,
-            start = selected_row$start,
-            end = selected_row$end,
+            start = selected_row[[rv$cols()$start]],
+            end = selected_row[[rv$cols()$end]],
             buffer = (input$duration - 3)/2
           )
         })
@@ -341,13 +357,14 @@ birdnet_validation_server <- function(input, output, session) {
 
     if (info$col == 8) { # Audio play button column
       selected_row <- rv$data_display[info$row, ]
-      filepath <- file.path(dir_path(), basename(selected_row$filepath))
+      filepath <- file.path(dir_path(),
+                            basename(selected_row[[rv$cols()$filepath]]))
 
       if (file.exists(filepath)) {
         play_audio(
           filepath = filepath,
-          start = selected_row$start,
-          end = selected_row$end,
+          start = selected_row[[rv$cols()$start]],
+          end = selected_row[[rv$cols()$end]],
           buffer = (input$duration - 3)/2
         )
       } else {
