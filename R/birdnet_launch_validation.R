@@ -334,7 +334,8 @@ birdnet_validation_server <- function(input, output, session) {
       return()
     }
 
-    if (info$col == 7) { # Spectrogram button column
+    # Spectrogram button column
+    if (info$col == 7) {
       selected_row <- rv$data_display[info$row, ]
       filepath <- file.path(dir_path(),
                             basename(selected_row[[rv$cols()$filepath]]))
@@ -355,7 +356,8 @@ birdnet_validation_server <- function(input, output, session) {
       }
     }
 
-    if (info$col == 8) { # Audio play button column
+    # Audio play button column
+    if (info$col == 8) {
       selected_row <- rv$data_display[info$row, ]
       filepath <- file.path(dir_path(),
                             basename(selected_row[[rv$cols()$filepath]]))
