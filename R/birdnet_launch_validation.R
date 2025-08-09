@@ -133,7 +133,7 @@ birdnet_validation_ui <- function(request) {
 #' @details This internal server function powers the interactive audio validation
 #' interface. Users can import a CSV of BirdNET detections, link to local audio
 #' directories, view spectrograms, and manually validate detections through a
-#' Shiny DataTable interface. Audio playback and validation column editing are supported.
+#' Shiny DataTable interface.
 #'
 #' @seealso [birdnet_validation_ui], [birdnet_launch_validation]
 #'
@@ -143,35 +143,55 @@ birdnet_validation_ui <- function(request) {
 #' @importFrom DT renderDT datatable
 #' @importFrom tuneR readWave play setWavPlayer
 #' @importFrom seewave spectro
-#' @importFrom stringr str_extract
 #' @importFrom praise praise
 #' @importFrom readr read_csv write_csv
 #' @importFrom dplyr mutate select
+#' @importFrom av av_audio_convert
+
 birdnet_validation_server <- function(input, output, session) {
   # Helper functions --------------------------------------------------------
 
   # the function to play audio
   play_audio <- function(filepath, start, end, buffer) {
+
+    # check the OS system
     if (Sys.info()["sysname"] == "Darwin") {
       tuneR::setWavPlayer("afplay")
     }
-    song <- tuneR::readWave(filepath,
-                            from = start - buffer,
+
+    # convert any audio format to a temporary WAV file
+    tmp_wav <- tempfile(fileext = ".wav")
+    av::av_audio_convert(filepath, tmp_wav)
+
+    # read the file
+    song <- tuneR::readWave(tmp_wav,
+                            from = max(0, start - buffer),
                             to = end + buffer,
                             units = "seconds")
+    # play audio
     tuneR::play(song)
   }
 
+
+
   # the function to view spectrogram
   view_spectrogram <- function(filepath, flim, wl, start, end, buffer) {
-    song <- tuneR::readWave(filepath,
-                            from = start - buffer,
+
+    # convert any audio format to a temporary WAV file
+    tmp_wav <- tempfile(fileext = ".wav")
+    av::av_audio_convert(filepath, tmp_wav)
+
+    # read the file
+    song <- tuneR::readWave(tmp_wav,
+                            from = max(0, start - buffer),
                             to = end + buffer,
                             units = "seconds")
+
+    # show the spectrogram
     seewave::spectro(song,
       f = song@samp.rate, flim = flim, ovlp = 50,
       collevels = seq(-40, 0, 1), wl = wl, scale = FALSE,
-      main = stringr::str_extract(filepath, "[^/]+(?=\\.wav$)")
+      main = tools::file_path_sans_ext(basename(filepath))
     )
   }
 
@@ -385,12 +405,19 @@ birdnet_validation_server <- function(input, output, session) {
 #' @details This function launches a user-friendly Shiny app that allows you to:
 #' \itemize{
 #'   \item Import a CSV file of BirdNET detections (selection table format),
-#'   \item Select the directory containing your `.wav` audio files,
+#'   \item Select the directory containing your audio files,
 #'   \item View and validate each detection using spectrograms and audio playback,
 #'   \item Edit validation results interactively and save the updated table.
 #' }
 #'
 #' @return A `shiny.appobj` that runs the BirdNET audio validation platform in a web browser.
+#'
+#' @details Audio playback and spectrogram generation now support multiple audio formats
+#' (e.g., WAV, MP3, FLAC, OGG) through the \pkg{av} package. Internally, all
+#' files are converted to temporary WAV files with \code{av::av_audio_convert()}
+#' before being read by \code{tuneR::readWave()}, ensuring compatibility without
+#' quality loss. File names are displayed without their extensions using base R
+#' functions.
 #'
 #' @examples
 #' \dontrun{

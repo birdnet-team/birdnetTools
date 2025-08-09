@@ -25,7 +25,7 @@ selection, spectrogram generation, interactive table editing, and audio playback
 This internal server function powers the interactive audio validation
 interface. Users can import a CSV of BirdNET detections, link to local audio
 directories, view spectrograms, and manually validate detections through a
-Shiny DataTable interface. Audio playback and validation column editing are supported.
+Shiny DataTable interface.
 }
 \seealso{
 \link{birdnet_validation_ui}, \link{birdnet_launch_validation}
