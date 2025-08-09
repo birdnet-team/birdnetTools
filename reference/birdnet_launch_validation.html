@@ -52,10 +52,16 @@ using audio clips and spectrograms.This tool is designed to support manual revie
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This function launches a user-friendly Shiny app that allows you to:</p><ul><li><p>Import a CSV file of BirdNET detections (selection table format),</p></li>
-<li><p>Select the directory containing your <code>.wav</code> audio files,</p></li>
+<li><p>Select the directory containing your audio files,</p></li>
 <li><p>View and validate each detection using spectrograms and audio playback,</p></li>
 <li><p>Edit validation results interactively and save the updated table.</p></li>
-</ul></div>
+</ul><p>Audio playback and spectrogram generation now support multiple audio formats
+(e.g., WAV, MP3, FLAC, OGG) through the <span class="pkg">av</span> package. Internally, all
+files are converted to temporary WAV files with <code><a href="https://docs.ropensci.org/av//reference/encoding.html" class="external-link">av::av_audio_convert()</a></code>
+before being read by <code><a href="https://rdrr.io/pkg/tuneR/man/readWave.html" class="external-link">tuneR::readWave()</a></code>, ensuring compatibility without
+quality loss. File names are displayed without their extensions using base R
+functions.</p>
+    </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><a href="birdnet_validation_ui.html">birdnet_validation_ui</a>, <a href="birdnet_validation_server.html">birdnet_validation_server</a></p></div>
