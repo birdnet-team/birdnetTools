@@ -14,9 +14,7 @@ birdnet_heatmap(
 )
 }
 \arguments{
-\item{data}{A data frame containing BirdNET output. Relevant columns (e.g., \verb{common name},
-\code{confidence}, \code{datetime}, \code{filepath}, etc.) are automatically detected by
-\link{birdnet_detect_columns}. Must include columns like \code{common_name}, \code{confidence}, and \code{datetime}.}
+\item{data}{A data frame containing BirdNET output. Must include columns like \code{common_name}, \code{confidence}, and \code{filepath}.}
 
 \item{species}{Character scalar or vector specifying the common name(s) of species to visualize.
 If \code{NULL}, no species filtering is applied.}
@@ -29,11 +27,13 @@ threshold filtering is applied.}
 
 \item{max_date}{Optional character scalar giving the latest date to include (\code{"YYYY-MM-DD"} format).}
 
-\item{hour}{Optional integer vector (0–23) specifying hours of the day to include in the heatmap.}
+\item{hour}{Optional numeric (typically integer) vector of hours (0–23)
+to include in the heatmap.}
 }
 \value{
-A \code{ggplot} object showing a heatmap of detections by date (x-axis) and hour (y-axis).
-The fill color corresponds to detection counts.
+A \code{ggplot} object showing a heatmap of detection counts by
+date (x-axis) and hour (y-axis). Fill color corresponds to the number
+of detections per date-hour combination.
 }
 \description{
 Generates a heatmap visualizing the daily activity pattern of a specified species
