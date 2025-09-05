@@ -48,7 +48,7 @@ birdnet_filter <- function(
 
 
   # argument check ----------------------------------------------------------
-  # 1. Check data is a tibble with required columns
+  # 1. Check data is a tibble with required columns.
   checkmate::assert_data_frame(data)
 
   cols <- birdnet_detect_columns(data)
