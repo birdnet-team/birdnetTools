@@ -53,19 +53,32 @@ birdnet_filter <- function(
 
   cols <- birdnet_detect_columns(data)
 
-  required_cols <- c("common_name", "confidence", "filepath")
-
-  missing_cols <- required_cols[is.na(cols[required_cols])]
-
-  if (length(missing_cols) > 0) {
-    rlang::abort(
-      paste0(
-        "The input data is missing required BirdNET columns: ",
-        paste(missing_cols, collapse = ", "),
-        ". Please provide a valid BirdNET output data frame."
+  check_required_cols <- function(cols, required) {
+    missing_cols <- required[is.na(cols[required])]
+    if (length(missing_cols) > 0) {
+      rlang::abort(
+        paste0(
+          "The input data is missing required BirdNET columns: ",
+          paste(missing_cols, collapse = ", "),
+          ". Please provide a valid BirdNET output data frame."
+        )
       )
-    )
+    }
   }
+
+  if (!is.null(species)) {
+    check_required_cols(cols, "common_name")
+  }
+
+  if (!is.null(threshold)) {
+    check_required_cols(cols, "confidence")
+  }
+
+  if (any(!is.null(year), !is.null(min_date), !is.null(max_date), !is.null(hour))) {
+    check_required_cols(cols, "filepath")
+  }
+
+
 
   # 2. species: NULL or character vector
   if (!is.null(species)) {
