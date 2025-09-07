@@ -67,6 +67,8 @@ birdnet_combine <- function(path,
   dfs <- list()
   error_files <- character()
 
+  expected_cols <- NULL
+
 
   # process files one by one ------------------------------------------------
 
@@ -80,14 +82,28 @@ birdnet_combine <- function(path,
     )
 
     if (!is.null(df) && nrow(df) > 0) {
+      # set expected columns based on first successful file
+      if (is.null(expected_cols)) {
+        expected_cols <- names(df)
+      }
+
+      # check if column names match
+      if (!identical(names(df), expected_cols)) {
+        error_files <- c(error_files, file)
+        next
+      }
+
+      # add filepath if requested
       if (add_filepath) {
         df$filepath <- file
       }
+
       dfs[[length(dfs) + 1]] <- df
     }
   }
 
   results <- dplyr::bind_rows(dfs)
+
 
 
   # reporting ---------------------------------------------------------------
