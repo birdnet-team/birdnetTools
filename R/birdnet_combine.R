@@ -36,10 +36,13 @@
 #' @importFrom cli cli_alert_success cli_alert_warning cli_li
 #' @export
 
-birdnet_combine <- function(path) {
+birdnet_combine <- function(path,
+                            add_filepath = FALSE) {
+
   # argument check ----------------------------------------------------------
   checkmate::assert_character(path, len = 1, any.missing = FALSE)
   checkmate::assert_directory_exists(path)
+
 
   # list and filter files ---------------------------------------------------
   all_files <- list.files(
@@ -69,6 +72,13 @@ birdnet_combine <- function(path) {
     detection_ind <- tryCatch({
 
       df <- readr::read_delim(file, show_col_types = FALSE)
+
+      # mutate a column called filepath if the add_filepath argument is TRUE
+      if (add_filepath) {
+        df <- df %>%
+          dplyr::mutate(filepath = file)
+      }
+
 
       if (nrow(df) == 0) {
         next
