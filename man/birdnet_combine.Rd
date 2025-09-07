@@ -4,10 +4,15 @@
 \alias{birdnet_combine}
 \title{Combine BirdNET output files from a directory}
 \usage{
-birdnet_combine(path)
+birdnet_combine(path, add_filepath = FALSE)
 }
 \arguments{
 \item{path}{Character string. Path to a directory containing BirdNET output files.}
+
+\item{add_filepath}{Logical. If \code{TRUE}, adds a column \code{filepath} to the
+output data frame indicating the source file for each row. Use with
+caution: if the input files already contain a column named \code{filepath},
+it will be overwritten. Default is \code{FALSE}.}
 }
 \value{
 A data frame combining all readable BirdNET \code{.csv} or \code{.txt} files found in the directory.
@@ -32,7 +37,7 @@ aborts with an informative message.
 \examples{
 \dontrun{
 # Combine all BirdNET output files in a directory and its subfolders
-data <- birdnet_combine("path/to/BirdNET/output")
+data <- birdnet_combine(path = "path/to/BirdNET/output", add_filepath = FALSE)
 
 # View a few rows of the result
 head(data)

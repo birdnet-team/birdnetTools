@@ -9,6 +9,11 @@
 #'
 #' @param path Character string. Path to a directory containing BirdNET output files.
 #'
+#' @param add_filepath Logical. If `TRUE`, adds a column `filepath` to the
+#'   output data frame indicating the source file for each row. Use with
+#'   caution: if the input files already contain a column named `filepath`,
+#'   it will be overwritten. Default is `FALSE`.
+#'
 #' @return A data frame combining all readable BirdNET `.csv` or `.txt` files found in the directory.
 #'   The column structure depends on the input files and is not standardized by this function.
 #'
@@ -23,7 +28,7 @@
 #' @examples
 #' \dontrun{
 #' # Combine all BirdNET output files in a directory and its subfolders
-#' data <- birdnet_combine("path/to/BirdNET/output")
+#' data <- birdnet_combine(path = "path/to/BirdNET/output", add_filepath = FALSE)
 #'
 #' # View a few rows of the result
 #' head(data)
