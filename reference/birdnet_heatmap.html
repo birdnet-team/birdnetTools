@@ -60,9 +60,7 @@ optionally filtered by species, confidence threshold, date range, and hours of t
 
 
 <dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>A data frame containing BirdNET output. Relevant columns (e.g., <code>common name</code>,
-<code>confidence</code>, <code>datetime</code>, <code>filepath</code>, etc.) are automatically detected by
-<a href="birdnet_detect_columns.html">birdnet_detect_columns</a>. Must include columns like <code>common_name</code>, <code>confidence</code>, and <code>datetime</code>.</p></dd>
+<dd><p>A data frame containing BirdNET output. Must include columns like <code>common_name</code>, <code>confidence</code>, and <code>filepath</code>.</p></dd>
 
 
 <dt id="arg-species">species<a class="anchor" aria-label="anchor" href="#arg-species"></a></dt>
@@ -85,13 +83,15 @@ threshold filtering is applied.</p></dd>
 
 
 <dt id="arg-hour">hour<a class="anchor" aria-label="anchor" href="#arg-hour"></a></dt>
-<dd><p>Optional integer vector (0–23) specifying hours of the day to include in the heatmap.</p></dd>
+<dd><p>Optional numeric (typically integer) vector of hours (0–23)
+to include in the heatmap.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A <code>ggplot</code> object showing a heatmap of detections by date (x-axis) and hour (y-axis).
-The fill color corresponds to detection counts.</p>
+    <p>A <code>ggplot</code> object showing a heatmap of detection counts by
+date (x-axis) and hour (y-axis). Fill color corresponds to the number
+of detections per date-hour combination.</p>
     </div>
 
     <div class="section level2">
