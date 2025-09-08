@@ -9,6 +9,11 @@
 #'
 #' @param path Character string. Path to a directory containing BirdNET output files.
 #'
+#' @param add_filepath Logical. If `TRUE`, adds a column `filepath` to the
+#'   output data frame indicating the source file for each row. Use with
+#'   caution: if the input files already contain a column named `filepath`,
+#'   it will be overwritten. Default is `FALSE`.
+#'
 #' @return A data frame combining all readable BirdNET `.csv` or `.txt` files found in the directory.
 #'   The column structure depends on the input files and is not standardized by this function.
 #'
@@ -23,7 +28,7 @@
 #' @examples
 #' \dontrun{
 #' # Combine all BirdNET output files in a directory and its subfolders
-#' data <- birdnet_combine("path/to/BirdNET/output")
+#' data <- birdnet_combine(path = "path/to/BirdNET/output", add_filepath = FALSE)
 #'
 #' # View a few rows of the result
 #' head(data)
@@ -36,10 +41,13 @@
 #' @importFrom cli cli_alert_success cli_alert_warning cli_li
 #' @export
 
-birdnet_combine <- function(path) {
+birdnet_combine <- function(path,
+                            add_filepath = FALSE) {
+
   # argument check ----------------------------------------------------------
   checkmate::assert_character(path, len = 1, any.missing = FALSE)
   checkmate::assert_directory_exists(path)
+  checkmate::assert_flag(add_filepath)
 
   # list and filter files ---------------------------------------------------
   all_files <- list.files(
@@ -60,29 +68,48 @@ birdnet_combine <- function(path) {
   }
 
   # initialize containers ---------------------------------------------------
-  results <- dplyr::tibble()
-  error_files <- c()
+
+  dfs <- list()
+  error_files <- character()
+
+  expected_cols <- NULL
+
 
   # process files one by one ------------------------------------------------
-  for (file in filtered_files) {
 
-    detection_ind <- tryCatch({
+  for (file in all_files) {
+    df <- tryCatch(
+      readr::read_delim(file, show_col_types = FALSE),
+      error = function(e) {
+        error_files <<- c(error_files, file)
+        return(NULL)
+      }
+    )
 
-      df <- readr::read_delim(file, show_col_types = FALSE)
+    if (!is.null(df) && nrow(df) > 0) {
+      # set expected columns based on first successful file
+      if (is.null(expected_cols)) {
+        expected_cols <- names(df)
+      }
 
-      if (nrow(df) == 0) {
+      # check if column names match
+      if (!identical(names(df), expected_cols)) {
+        error_files <- c(error_files, file)
         next
       }
 
-      # If not empty, append to results
-      results <- dplyr::bind_rows(results, df)
+      # add filepath if requested
+      if (add_filepath) {
+        df$filepath <- file
+      }
 
-
-    }, error = function(e) {
-      error_files <<- c(error_files, file)
-      NA
-    })
+      dfs[[length(dfs) + 1]] <- df
+    }
   }
+
+  results <- dplyr::bind_rows(dfs)
+
+
 
   # reporting ---------------------------------------------------------------
   if (length(error_files) > 0) {

@@ -2,6 +2,13 @@ url: https://birdnet-team.github.io/birdnetTools/
 template:
   bootstrap: 5
 
+# Point favicon to your current logo
+favicon: man/figures/logo.png
+
+# Point the main logo (top-left of site) to your package logo
+logo: man/figures/logo.png
+
+
 reference:
   - title: "Data Import"
     contents:

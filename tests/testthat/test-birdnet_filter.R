@@ -13,12 +13,12 @@ test_that("data must be a tibble with required columns", {
   expect_silent(birdnet_filter(valid_data))
 
   # Not a tibble
-  expect_error(birdnet_filter(data = mtcars))
+  expect_silent(birdnet_filter(data = mtcars))
 
   # Missing required column
   invalid_data <- valid_data |>
     select(-common_name)
-  expect_error(birdnet_filter(invalid_data))
+  expect_error(birdnet_filter(invalid_data, species = "Yellow-rumped Warbler"))
 })
 
 

@@ -4,9 +4,7 @@
 #' detected in BirdNET output data. The heatmap shows detection counts by hour and date,
 #' optionally filtered by species, confidence threshold, date range, and hours of the day.
 #'
-#' @param data A data frame containing BirdNET output. Relevant columns (e.g., `common name`,
-#'   `confidence`, `datetime`, `filepath`, etc.) are automatically detected by
-#'   [birdnet_detect_columns]. Must include columns like `common_name`, `confidence`, and `datetime`.
+#' @param data A data frame containing BirdNET output. Must include columns like `common_name`, `confidence`, and `filepath`.
 #' @param species Character scalar or vector specifying the common name(s) of species to visualize.
 #'   If `NULL`, no species filtering is applied.
 #' @param threshold Either a numeric scalar between 0 and 1 (applied uniformly), or a data frame
@@ -14,10 +12,13 @@
 #'   threshold filtering is applied.
 #' @param min_date Optional character scalar giving the earliest date to include (`"YYYY-MM-DD"` format).
 #' @param max_date Optional character scalar giving the latest date to include (`"YYYY-MM-DD"` format).
-#' @param hour Optional integer vector (0–23) specifying hours of the day to include in the heatmap.
+#' @param hour Optional numeric (typically integer) vector of hours (0–23)
+#'   to include in the heatmap.
 #'
-#' @return A `ggplot` object showing a heatmap of detections by date (x-axis) and hour (y-axis).
-#'   The fill color corresponds to detection counts.
+#'
+#' @return A `ggplot` object showing a heatmap of detection counts by
+#'   date (x-axis) and hour (y-axis). Fill color corresponds to the number
+#'   of detections per date-hour combination.
 #'
 #' @examples
 #' \dontrun{
@@ -31,7 +32,14 @@
 #' )
 #' }
 #' @export
-birdnet_heatmap <- function(data, species = NULL, threshold = NULL, min_date = NULL, max_date = NULL, hour = NULL
+
+birdnet_heatmap <- function(
+    data,
+    species = NULL,
+    threshold = NULL,
+    min_date = NULL,
+    max_date = NULL,
+    hour = NULL
 ) {
 
   # argument check ----------------------------------------------------------
@@ -41,9 +49,9 @@ birdnet_heatmap <- function(data, species = NULL, threshold = NULL, min_date = N
 
   cols <- birdnet_detect_columns(data)
 
-  required_cols <- c("start", "end", "scientific_name", "common_name", "confidence", "filepath")
+  required_cols <- c("common_name", "confidence", "filepath")
 
-  missing_cols <- required_cols[is.na(cols)]
+  missing_cols <- required_cols[is.na(cols[required_cols])]
 
   if (length(missing_cols) > 0) {
     rlang::abort(
