@@ -40,7 +40,7 @@ The `birdnetTools` package fills this gap by providing functions to clean and wr
 
 
 # Key functionalities
-Functions in `birdnetTools` fall into three categories: data import, data exploration, and detection validation (Figure \autoref{fig:workflow}).
+Functions in `birdnetTools` fall into three categories: data import, data exploration, and detection validation (\autoref{fig:workflow}).
 
 1. Data import: `birdnet_combine()` integrates BirdNET outputs into R, supporting formats from the BirdNET GUI, Raven Pro, and the `birdnetR` package.
 
@@ -48,7 +48,7 @@ Functions in `birdnetTools` fall into three categories: data import, data explor
 
 3. Detection validation: an R ShinyApp was developed, implementing threshold-setting approaches, including the precision-based method of @tseng:2025 and the probability-based method of @wood:2024.
 
-![\label{fig:workflow}](./fig_workflow.png)
+![Workflow of the birdnetTools R package. \label{fig:workflow}](./fig_workflow.png)
 
 # Acknowledgements
 The `birdnetTools` project was supported by the Michael Smith Foreign Study Supplements, funded by the Natural Sciences and Engineering Research Council of Canada (NSERC). We thank all members of the BirdNET team for their valuable contributions, and we are grateful to Connor Wood and Trey Ursillo for their insightful feedback in improving the package.
