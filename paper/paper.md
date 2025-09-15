@@ -34,9 +34,9 @@ bibliography: paper.bib
 
 
 # Statement of need
-Automated acoustic monitoring is increasingly used in ecology and conservation, with BirdNET, created with python, being one of the most widely adopted tools for bird sound identification. While the `birdnetR` [@kahl:2025] package allows R users to run BirdNET classifications, there is no dedicated framework for post-processing these outputs within R.
+Automated acoustic monitoring is increasingly used in ecology and conservation [@perezgranados:2023], with BirdNET being one of the most widely adopted tools for bird sound identification (e.g., @funosas:2024, mcginn:2023, and bota:2023). Although BirdNET was developed in Python, most of its primary users are ecologists who conduct analyses primarily in R. This language difference can limit accessibility for some research teams. While the `birdnetR` package [@kahl:2025] enables R users to run BirdNET classifications, there is no dedicated framework in R for post-processing these outputs.
 
-The `birdnetTools` package fills this gap by providing functions to clean and wrangle BirdNET detections, apply species-specific or universal confidence thresholds, visualize results, and validate predictions through an interactive Shiny app. Its design is based on workflows commonly used in published studies (e.g., @tseng:2024) and incorporates methods for threshold setting and validation developed in recent research (i.e., @tseng:2025; @wood:2024). By consolidating these tools, birdnetTools streamlines analysis and lowers barriers for ecologists and conservation practitioners adopting BirdNET in large-scale monitoring projects.
+The `birdnetTools` R package fills this gap by providing functions to clean and wrangle BirdNET detections, apply species-specific or universal confidence thresholds, visualize results, and validate predictions through an interactive R Shiny app. Its design is based on workflows commonly used in published studies (e.g., @tseng:2024) and incorporates methods for threshold setting and validation developed in recent research (i.e., @tseng:2025; @wood:2024). By consolidating these tools, birdnetTools streamlines analysis and lowers barriers for ecologists and conservation practitioners adopting BirdNET in large-scale monitoring projects.
 
 
 # Key functionalities
