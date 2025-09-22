@@ -200,14 +200,28 @@ birdnet_validation_server <- function(input, output, session) {
 
   roots <- if (.Platform$OS.type == "windows") {
     # list all available drives on Windows
-    drives <- system("wmic logicaldisk get name", intern = TRUE)
-    drives <- gsub("\\s", "", drives[-1])
+    ps_cmd <- paste(
+      "powershell -NoProfile -Command",
+      "\"Get-PSDrive -PSProvider FileSystem | Select-Object -ExpandProperty Root\""
+    )
+
+    drives <- tryCatch(
+      system(ps_cmd, intern = TRUE, ignore.stderr = TRUE),
+      error = function(e) character()
+    )
+
+    # Clean and keep only those that look like "C:\"
+    drives <- drives[grepl("^[A-Z]:\\\\$", drives)]
+    drives <- gsub("\\\\$", "", drives)   # remove trailing backslash to match old style
+
 
     # add drives with their names as keys
     c(Desktop = file.path(Sys.getenv("USERPROFILE"), "Desktop"),
       Documents = file.path(Sys.getenv("USERPROFILE"), "Documents"),
       Working_dir = ".",
       setNames(drives, drives))
+
+
   } else {
     # for unix-like systems, include common mount points
     external_drives <- list.files("/Volumes", full.names = TRUE)
