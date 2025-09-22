@@ -1,20 +1,19 @@
 #' Subsample BirdNET detections by species
 #'
-#' Subsamples a specified number of observations per species from a BirdNET output dataset.
-#' Supports three subsampling methods: stratified by confidence score bins, random, or top confidence scores.
-#' Optionally saves the subsampled data to a CSV file.
+#' Subsamples a specified number of observations from a BirdNET output dataset.
+#' Supports four subsampling methods: propotional stratified by confidence score, random, or
+#' top confidence scores. Optionally saves the subsampled data to a CSV file.
 #'
-#' @param data A data frame containing BirdNET output. Relevant columns
-#'   (e.g., common name, confidence, datetime) are automatically detected
-#'   by [birdnet_detect_columns].
-#' @param n Integer. Number of observations to subsample **per species**.
+#' @param data A data frame containing BirdNET output.
+#' @param n Integer. Number of observations to subsample.
 #' @param method Character. Subsampling method to use. One of:
 #'   \describe{
-#'     \item{"stratified"}{Samples evenly across confidence score strata (0.1 to 1 by 0.05 bins).}
+#'     \item{"propotional_stratified"}{Samples propotionally across confidence score strata.}
+#'     \item{"even_stratified"}{Samples evenly across confidence score strata.}
 #'     \item{"random"}{Randomly samples `n` observations per species.}
 #'     \item{"top"}{Selects the top `n` observations with the highest confidence per species.}
 #'   }
-#'   Defaults to `"stratified"`.
+#'   Defaults to `"propotional_stratified"`.
 #' @param save_to_file Logical. If `TRUE`, saves the output to a CSV file.
 #'   Defaults to `FALSE`. Automatically set to `TRUE` if `file` is provided.
 #' @param file Character or `NULL`. File path to save the output CSV.
@@ -24,7 +23,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' birdnet_subsample(data = my_data, n = 300, method = "stratified")
+#' birdnet_subsample(data = my_data, n = 300, method = "propotional_stratified")
 #' birdnet_subsample(data = my_data, n = 100, method = "top", save_to_file = TRUE,
 #' file = "top_samples.csv")
 #' }
@@ -35,7 +34,7 @@
 birdnet_subsample <- function(
     data,
     n,
-    method = c("stratified", "random", "top"),
+    method = c("even_stratified", "propotional-stratified", "random", "top"),
     save_to_file = FALSE,
     file = NULL
 ) {
@@ -51,7 +50,7 @@ birdnet_subsample <- function(
 
   # method is one of the accepted values
   method <- match.arg(method)
-  checkmate::assert_choice(method, choices = c("stratified", "random", "top"))
+  checkmate::assert_choice(method, choices = c("even_stratified", "propotional-stratified", "random", "top"))
 
   # save_to_file is a logical value
   checkmate::assert_flag(save_to_file)
@@ -83,7 +82,16 @@ birdnet_subsample <- function(
     sampled_data <- dplyr::slice_max(data, order_by = !!dplyr::sym(cols$confidence),
                                      n = n, with_ties = FALSE)
 
-  } else if (method == "stratified") {
+  } else if (method == "even_stratified") {
+    sampled_data <- data |>
+      dplyr::mutate(category = cut(!!dplyr::sym(cols$confidence),
+                                   breaks = seq(0.1, 1, by = 0.05),
+                                   right = FALSE)) |>
+      dplyr::slice_sample(n = round(n / 18),
+                          by = c(category, !!dplyr::sym(cols$confidence))) |>
+      dplyr::select(-category)
+
+  } else if (method == "propotional_stratified") {
     # assign bins
     data <- data |> dplyr::mutate(category = cut(!!dplyr::sym(cols$confidence),
                                                  breaks = seq(0.1, 1, by = 0.05),
