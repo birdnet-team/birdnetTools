@@ -282,19 +282,20 @@ and Kahl 2024</a>.</p>
 detections in <code>data_filtered</code>, which contains Swainson’s
 Thrush detections filtered at a 0.2 confidence threshold. First, we will
 need to subsample a portion for manual review. The
-<code><a href="../reference/birdnet_subsample.html">birdnet_subsample()</a></code> function supports three sampling
-methods: <code>stratified</code> (evenly across confidence levels),
-<code>random</code> (selection based on confidence score distribution),
-and <code>top</code> (highest confidence detections). The
-<code>stratified</code> and <code>random</code> approaches help create a
-representative validation set, while <code>top</code> sampling targets
-the most confident predictions.</p>
+<code><a href="../reference/birdnet_subsample.html">birdnet_subsample()</a></code> function supports four sampling
+methods: <code>propotional_stratified</code> (propotional across
+confidence scores), <code>even_stratified</code> (evenly across
+confidence scores), <code>random</code> (selection based on confidence
+score distribution), and <code>top</code> (highest confidence
+detections). The <code>even_stratified</code>,
+<code>propotional_stratified</code>, and <code>random</code> approaches
+help create a representative validation set, while <code>top</code>
+sampling targets the most confident predictions.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># subsample 300 detections from the filtered data</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>  <span class="co"># for reproducibility</span></span>
 <span><span class="va">data_subsampled</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/birdnet_subsample.html">birdnet_subsample</a></span><span class="op">(</span><span class="va">data_filtered</span>,</span>
-<span>                                     n <span class="op">=</span> <span class="fl">300</span>,</span>
-<span>                                     method <span class="op">=</span> <span class="st">"stratified"</span><span class="op">)</span></span>
+<span>                                     n <span class="op">=</span> <span class="fl">300</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># view function documentation</span></span>
 <span><span class="op">?</span><span class="fu"><a href="../reference/birdnet_subsample.html">birdnet_subsample</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -305,7 +306,6 @@ the most confident predictions.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/birdnet_subsample.html">birdnet_subsample</a></span><span class="op">(</span></span>
 <span>  <span class="va">data_filtered</span>,</span>
 <span>  n <span class="op">=</span> <span class="fl">300</span>,</span>
-<span>  method <span class="op">=</span> <span class="st">"stratified"</span>,</span>
 <span>  save_to_file <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># whether to save the subsample to a file</span></span>
 <span>  file <span class="op">=</span> <span class="st">"swainsons_thrush_validation.csv"</span> <span class="co"># name of the file</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -398,7 +398,7 @@ documentation (<code>?birdnet_calc_threshold()</code>).</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 2</span></span></span>
 <span><span class="co">#&gt;   common_name       threshold</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Swainson's Thrush       0.8</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Swainson's Thrush     0.879</span></span></code></pre></div>
 <blockquote>
 <p>Note: To demonstrate this function, we use a simulated validation
 dataset included in the package. This dataset mimics what a real
