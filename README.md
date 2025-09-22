@@ -71,7 +71,7 @@ birdnet_heatmap(data_filtered)
 ``` r
 # Simulate validation (for demonstration only)
 set.seed(123)
-data_sub <- birdnet_subsample(data_filtered, n = 300, method = "stratified")
+data_sub <- birdnet_subsample(data_filtered, n = 300)
 
 data_sub$validation <- rbinom(nrow(data_sub), 1, 
                               prob = pmin(pmax(data_sub$confidence, 0), 1))

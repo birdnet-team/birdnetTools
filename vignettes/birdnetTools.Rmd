@@ -170,15 +170,14 @@ Each BirdNET detection includes a "confidence" score, but this score does not re
 
 ### 1. Get a validation set by subsampling
 
-To get the species-specific threshold, we will need to validate detections in `data_filtered`, which contains Swainson’s Thrush detections filtered at a 0.2 confidence threshold. First, we will need to subsample a portion for manual review. The `birdnet_subsample()` function supports three sampling methods: `stratified` (evenly across confidence levels), `random` (selection based on confidence score distribution), and `top` (highest confidence detections). The `stratified` and `random` approaches help create a representative validation set, while `top` sampling targets the most confident predictions.
+To get the species-specific threshold, we will need to validate detections in `data_filtered`, which contains Swainson’s Thrush detections filtered at a 0.2 confidence threshold. First, we will need to subsample a portion for manual review. The `birdnet_subsample()` function supports four sampling methods: `propotional_stratified` (propotional across confidence scores), `even_stratified` (evenly across confidence scores), `random` (selection based on confidence score distribution), and `top` (highest confidence detections). The `even_stratified`, `propotional_stratified`, and `random` approaches help create a representative validation set, while `top` sampling targets the most confident predictions.
 
 
 ```{r}
 # subsample 300 detections from the filtered data
 set.seed(123)  # for reproducibility
 data_subsampled <- birdnet_subsample(data_filtered,
-                                     n = 300,
-                                     method = "stratified")
+                                     n = 300)
 
 # view function documentation
 ?birdnet_subsample()
@@ -191,7 +190,6 @@ Optionally, you can save the subsampled detections as a `.csv` file in your work
 birdnet_subsample(
   data_filtered,
   n = 300,
-  method = "stratified",
   save_to_file = TRUE, # whether to save the subsample to a file
   file = "swainsons_thrush_validation.csv" # name of the file
 )

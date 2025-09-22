@@ -23,4 +23,8 @@ utils::globalVariables(c("filepath",
                          "coef",
                          ":=",
                          "%>%",
-                         "setNames"))
+                         "setNames",
+                         "count",
+                         "frac",
+                         "prop_sample",
+                         "sample_n"))

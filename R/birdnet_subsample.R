@@ -1,20 +1,19 @@
 #' Subsample BirdNET detections by species
 #'
-#' Subsamples a specified number of observations per species from a BirdNET output dataset.
-#' Supports three subsampling methods: stratified by confidence score bins, random, or top confidence scores.
-#' Optionally saves the subsampled data to a CSV file.
+#' Subsamples a specified number of observations from a BirdNET output dataset.
+#' Supports four subsampling methods: proportional stratified by confidence score, random, or
+#' top confidence scores. Optionally saves the subsampled data to a CSV file.
 #'
-#' @param data A data frame containing BirdNET output. Relevant columns
-#'   (e.g., common name, confidence, datetime) are automatically detected
-#'   by [birdnet_detect_columns].
-#' @param n Integer. Number of observations to subsample **per species**.
+#' @param data A data frame containing BirdNET output.
+#' @param n Integer. Number of observations to subsample.
 #' @param method Character. Subsampling method to use. One of:
 #'   \describe{
-#'     \item{"stratified"}{Samples evenly across confidence score strata (0.1 to 1 by 0.05 bins).}
+#'     \item{"proportional_stratified"}{Samples proportionally across confidence score strata.}
+#'     \item{"even_stratified"}{Samples evenly across confidence score strata.}
 #'     \item{"random"}{Randomly samples `n` observations per species.}
 #'     \item{"top"}{Selects the top `n` observations with the highest confidence per species.}
 #'   }
-#'   Defaults to `"stratified"`.
+#'   Defaults to `"proportional_stratified"`.
 #' @param save_to_file Logical. If `TRUE`, saves the output to a CSV file.
 #'   Defaults to `FALSE`. Automatically set to `TRUE` if `file` is provided.
 #' @param file Character or `NULL`. File path to save the output CSV.
@@ -24,18 +23,22 @@
 #'
 #' @examples
 #' \dontrun{
-#' birdnet_subsample(data = my_data, n = 300, method = "stratified")
+#' birdnet_subsample(data = my_data, n = 300, method = "proportional_stratified")
 #' birdnet_subsample(data = my_data, n = 100, method = "top", save_to_file = TRUE,
 #' file = "top_samples.csv")
 #' }
 #'
 #' @export
+
+
 birdnet_subsample <- function(
     data,
     n,
-    method = c("stratified", "random", "top"),
+    method = c("even_stratified", "proportional_stratified", "random", "top"),
     save_to_file = FALSE,
-    file = NULL) {
+    file = NULL
+) {
+
 
   # argument check ----------------------------------------------------------
 
@@ -47,7 +50,12 @@ birdnet_subsample <- function(
 
   # method is one of the accepted values
   method <- match.arg(method)
-  checkmate::assert_choice(method, choices = c("stratified", "random", "top"))
+
+  if (method == "stratified") {
+    message('`method = "stratified"` is deprecated. Using `method = "even_stratified"` or `method = "proportional_stratified"` instead.')
+  }
+
+  checkmate::assert_choice(method, choices = c("even_stratified", "proportional_stratified", "random", "top"))
 
   # save_to_file is a logical value
   checkmate::assert_flag(save_to_file)
@@ -58,48 +66,95 @@ birdnet_subsample <- function(
     if (!grepl("\\.csv$", file, ignore.case = TRUE)) {
       rlang::abort("`file` must end with '.csv'.")
     }
+    save_to_file <- TRUE
   }
+
 
   # main function -----------------------------------------------------------
 
   # check if the required columns are present
   cols <- birdnet_detect_columns(data)
+  total_rows <- nrow(data)
 
-  # balancing samples with different confidence scores
-  if (method == "stratified") {
-    data <- data |>
-      dplyr::mutate(category = cut(!!dplyr::sym(cols$confidence),
-        breaks = seq(0.1, 1, by = 0.05),
-        right = FALSE
-      )) |>
-      dplyr::slice_sample(
-        n = round(n / 18),
-        by = c(category, !!dplyr::sym(cols$confidence))
-      ) |>
+  if (total_rows <= n) {
+    sampled_data <- data
+
+  } else if (method == "random") {
+    sampled_data <- dplyr::slice_sample(data, n = n,
+                                        replace = FALSE)
+
+  } else if (method == "top") {
+    sampled_data <- dplyr::slice_max(data, order_by = !!dplyr::sym(cols$confidence),
+                                     n = n, with_ties = FALSE)
+
+  } else if (method == "even_stratified") {
+    # assign bins
+    data <- data |> dplyr::mutate(category = cut(!!dplyr::sym(cols$confidence),
+                                                 breaks = seq(0.1, 1, by = 0.05),
+                                                 right = FALSE))
+    n_bins <- length(unique(data$category))
+    n_per_bin <- floor(n / n_bins)
+
+    # sample from each bin evenly
+    sampled_data <- dplyr::bind_rows(lapply(unique(data$category), function(bin) {
+      bin_data <- dplyr::filter(data, category == bin)
+      if (nrow(bin_data) <= n_per_bin) {
+        # take all if not enough rows
+        bin_data
+      } else {
+        dplyr::slice_sample(bin_data, n = n_per_bin)
+      }
+    })) |>
       dplyr::select(-category)
 
-    # random sampling the data
-  } else if (method == "random") {
-    data <- data |>
-      dplyr::slice_sample(
-        n = n,
-        replace = FALSE,
-        by = !!dplyr::sym(cols$common_name)
-      )
 
-    # useful when checking the richness
-  } else if (method == "top") {
-    data <- data |>
-      dplyr::slice_max(!!dplyr::sym(cols$confidence),
-        n = n,
-        by = !!dplyr::sym(cols$common_name)
-      )
+  } else if (method == "proportional_stratified") {
+    # assign bins
+    data <- data |> dplyr::mutate(category = cut(!!dplyr::sym(cols$confidence),
+                                                 breaks = seq(0.1, 1, by = 0.05),
+                                                 right = FALSE))
+
+    # count per bin
+    bin_counts <- data |>
+      dplyr::group_by(category) |>
+      dplyr::summarise(count = dplyr::n(), .groups = "drop")
+
+    # proportional allocation
+    bin_counts <- bin_counts |>
+      dplyr::mutate(prop_sample = n * count / sum(count),
+                    sample_n = floor(prop_sample),
+                    frac = prop_sample - sample_n)
+
+    # leftover allocation by largest fractional part
+    leftover <- n - sum(bin_counts$sample_n)
+    if (leftover > 0) {
+      bin_counts <- bin_counts |>
+        dplyr::arrange(dplyr::desc(frac))
+      for (i in seq_len(leftover)) {
+        bin_counts$sample_n[i] <- bin_counts$sample_n[i] + 1
+      }
+    }
+
+    # don't oversample bins
+    bin_counts <- bin_counts |>
+      dplyr::mutate(sample_n = pmin(sample_n, count))
+
+    # sample from bins
+    sampled_data <- dplyr::bind_rows(lapply(seq_len(nrow(bin_counts)), function(i) {
+      bin <- bin_counts$category[i]
+      n_bin <- bin_counts$sample_n[i]
+      if (n_bin <= 0) return(NULL)
+      bin_data <- dplyr::filter(data, category == bin)
+      if (nrow(bin_data) <= n_bin) bin_data else dplyr::slice_sample(bin_data, n = n_bin)
+    })) |> dplyr::select(-category)
   }
 
-  if (!is.null(file) || save_to_file) {
+
+  # optional write to CSV
+  if (save_to_file) {
     file_to_write <- if (is.null(file)) "subsampled_data.csv" else file
-    readr::write_csv(data, file = file_to_write)
+    readr::write_csv(sampled_data, file_to_write)
   }
 
-  return(data)
+  return(sampled_data)
 }

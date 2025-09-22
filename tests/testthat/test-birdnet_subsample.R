@@ -25,7 +25,7 @@ test_that("birdnet_subsample: input validation works", {
 test_that("birdnet_subsample: works with method = 'stratified'", {
 
   valid_data <- readr::read_csv(testthat::test_path("data", "test_example_1.csv"))
-  result <- birdnet_subsample(valid_data, n = 20, method = "stratified")
+  result <- birdnet_subsample(valid_data, n = 20, method = "even_stratified")
 
   expect_s3_class(result, "data.frame")
 })
