@@ -25,12 +25,12 @@ date/time; visualizing temporal patterns; and validating detections with
 an interactive Shiny app to support threshold-setting workflows.
 
 A cheatsheet showing the `birdnetTools` workflow can be found
-[here](https://birdnet-team.github.io/birdnetTools/).
+[here](https://github.com/birdnet-team/birdnetTools/blob/main/man/figures/workflow.png).
 
 ## Installation
 
-You can install the development version of birdnetTools from
-[GitHub](https://github.com/) with:
+You can install the development version of birdnetTools from GitHub
+with:
 
 ``` r
 # install.packages("pak")
