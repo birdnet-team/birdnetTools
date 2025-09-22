@@ -65,20 +65,26 @@ birdnet_subsample <- function(
     save_to_file <- TRUE
   }
 
+
   # main function -----------------------------------------------------------
 
   # check if the required columns are present
   cols <- birdnet_detect_columns(data)
-  conf_col <- cols$confidence
 
   total_rows <- nrow(data)
   if (total_rows <= n) {
     sampled_data <- data
+
   } else if (method == "random") {
-    sampled_data <- dplyr::slice_sample(data, n = n, replace = FALSE)
+    sampled_data <- dplyr::slice_sample(data, n = n,
+                                        replace = FALSE,
+                                        by = !!dplyr::sym(cols$common_name))
+
   } else if (method == "top") {
-    sampled_data <- dplyr::slice_max(data, order_by = !!rlang::sym(conf_col),
-                                     n = n, with_ties = FALSE)
+    sampled_data <- dplyr::slice_max(data, order_by = !!dplyr::sym(cols$confidence),
+                                     n = n, with_ties = FALSE,
+                                     by = !!dplyr::sym(cols$common_name))
+
   } else if (method == "stratified") {
     # assign bins
     data <- dplyr::mutate(
