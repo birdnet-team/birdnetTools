@@ -7,7 +7,7 @@
 birdnet_subsample(
   data,
   n,
-  method = c("even_stratified", "propotional-stratified", "random", "top"),
+  method = c("even_stratified", "proportional_stratified", "random", "top"),
   save_to_file = FALSE,
   file = NULL
 )
@@ -19,12 +19,12 @@ birdnet_subsample(
 
 \item{method}{Character. Subsampling method to use. One of:
 \describe{
-\item{"propotional_stratified"}{Samples propotionally across confidence score strata.}
+\item{"proportional_stratified"}{Samples proportionally across confidence score strata.}
 \item{"even_stratified"}{Samples evenly across confidence score strata.}
 \item{"random"}{Randomly samples \code{n} observations per species.}
 \item{"top"}{Selects the top \code{n} observations with the highest confidence per species.}
 }
-Defaults to \code{"propotional_stratified"}.}
+Defaults to \code{"proportional_stratified"}.}
 
 \item{save_to_file}{Logical. If \code{TRUE}, saves the output to a CSV file.
 Defaults to \code{FALSE}. Automatically set to \code{TRUE} if \code{file} is provided.}
@@ -37,12 +37,12 @@ A data frame containing the subsampled observations.
 }
 \description{
 Subsamples a specified number of observations from a BirdNET output dataset.
-Supports four subsampling methods: propotional stratified by confidence score, random, or
+Supports four subsampling methods: proportional stratified by confidence score, random, or
 top confidence scores. Optionally saves the subsampled data to a CSV file.
 }
 \examples{
 \dontrun{
-birdnet_subsample(data = my_data, n = 300, method = "propotional_stratified")
+birdnet_subsample(data = my_data, n = 300, method = "proportional_stratified")
 birdnet_subsample(data = my_data, n = 100, method = "top", save_to_file = TRUE,
 file = "top_samples.csv")
 }

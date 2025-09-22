@@ -177,8 +177,7 @@ To get the species-specific threshold, we will need to validate detections in `d
 # subsample 300 detections from the filtered data
 set.seed(123)  # for reproducibility
 data_subsampled <- birdnet_subsample(data_filtered,
-                                     n = 300,
-                                     method = "stratified")
+                                     n = 300)
 
 # view function documentation
 ?birdnet_subsample()
@@ -191,7 +190,6 @@ Optionally, you can save the subsampled detections as a `.csv` file in your work
 birdnet_subsample(
   data_filtered,
   n = 300,
-  method = "even_stratified",
   save_to_file = TRUE, # whether to save the subsample to a file
   file = "swainsons_thrush_validation.csv" # name of the file
 )

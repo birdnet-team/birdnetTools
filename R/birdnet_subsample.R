@@ -1,19 +1,19 @@
 #' Subsample BirdNET detections by species
 #'
 #' Subsamples a specified number of observations from a BirdNET output dataset.
-#' Supports four subsampling methods: propotional stratified by confidence score, random, or
+#' Supports four subsampling methods: proportional stratified by confidence score, random, or
 #' top confidence scores. Optionally saves the subsampled data to a CSV file.
 #'
 #' @param data A data frame containing BirdNET output.
 #' @param n Integer. Number of observations to subsample.
 #' @param method Character. Subsampling method to use. One of:
 #'   \describe{
-#'     \item{"propotional_stratified"}{Samples propotionally across confidence score strata.}
+#'     \item{"proportional_stratified"}{Samples proportionally across confidence score strata.}
 #'     \item{"even_stratified"}{Samples evenly across confidence score strata.}
 #'     \item{"random"}{Randomly samples `n` observations per species.}
 #'     \item{"top"}{Selects the top `n` observations with the highest confidence per species.}
 #'   }
-#'   Defaults to `"propotional_stratified"`.
+#'   Defaults to `"proportional_stratified"`.
 #' @param save_to_file Logical. If `TRUE`, saves the output to a CSV file.
 #'   Defaults to `FALSE`. Automatically set to `TRUE` if `file` is provided.
 #' @param file Character or `NULL`. File path to save the output CSV.
@@ -23,7 +23,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' birdnet_subsample(data = my_data, n = 300, method = "propotional_stratified")
+#' birdnet_subsample(data = my_data, n = 300, method = "proportional_stratified")
 #' birdnet_subsample(data = my_data, n = 100, method = "top", save_to_file = TRUE,
 #' file = "top_samples.csv")
 #' }
@@ -34,7 +34,7 @@
 birdnet_subsample <- function(
     data,
     n,
-    method = c("even_stratified", "propotional_stratified", "random", "top"),
+    method = c("even_stratified", "proportional_stratified", "random", "top"),
     save_to_file = FALSE,
     file = NULL
 ) {
@@ -52,10 +52,10 @@ birdnet_subsample <- function(
   method <- match.arg(method)
 
   if (method == "stratified") {
-    message('`method = "stratified"` is deprecated. Using `method = "even_stratified"` or `method = "propotional_stratified"` instead.')
+    message('`method = "stratified"` is deprecated. Using `method = "even_stratified"` or `method = "proportional_stratified"` instead.')
   }
 
-  checkmate::assert_choice(method, choices = c("even_stratified", "propotional_stratified", "random", "top"))
+  checkmate::assert_choice(method, choices = c("even_stratified", "proportional_stratified", "random", "top"))
 
   # save_to_file is a logical value
   checkmate::assert_flag(save_to_file)
@@ -108,7 +108,7 @@ birdnet_subsample <- function(
       dplyr::select(-category)
 
 
-  } else if (method == "propotional_stratified") {
+  } else if (method == "proportional_stratified") {
     # assign bins
     data <- data |> dplyr::mutate(category = cut(!!dplyr::sym(cols$confidence),
                                                  breaks = seq(0.1, 1, by = 0.05),
