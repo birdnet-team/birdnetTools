@@ -52,7 +52,7 @@ birdnet_subsample <- function(
   method <- match.arg(method)
 
   if (method == "stratified") {
-    message('`method = "stratified"` is deprecated. Using `method = "even_stratified"` instead.')
+    message('`method = "stratified"` is deprecated. Using `method = "even_stratified"` or `method = "propotional_stratified"` instead.')
   }
 
   checkmate::assert_choice(method, choices = c("even_stratified", "propotional_stratified", "random", "top"))
@@ -88,21 +88,24 @@ birdnet_subsample <- function(
                                      n = n, with_ties = FALSE)
 
   } else if (method == "even_stratified") {
-    sampled_data <- data |>
-      dplyr::mutate(category = cut(!!dplyr::sym(cols$confidence),
-                                   breaks = seq(0.1, 1, by = 0.05),
-                                   right = FALSE)) |>
-      dplyr::slice_sample(n = round(n / 18),
-                          by = c(category, !!dplyr::sym(cols$confidence))) |>
+    # assign bins
+    data <- data |> dplyr::mutate(category = cut(!!dplyr::sym(cols$confidence),
+                                                 breaks = seq(0.1, 1, by = 0.05),
+                                                 right = FALSE))
+    n_bins <- length(unique(data$category))
+    n_per_bin <- floor(n / n_bins)
+
+    # sample from each bin evenly
+    sampled_data <- dplyr::bind_rows(lapply(unique(data$category), function(bin) {
+      bin_data <- dplyr::filter(data, category == bin)
+      if (nrow(bin_data) <= n_per_bin) {
+        # take all if not enough rows
+        bin_data
+      } else {
+        dplyr::slice_sample(bin_data, n = n_per_bin)
+      }
+    })) |>
       dplyr::select(-category)
-
-
-
-
-
-
-
-
 
 
   } else if (method == "propotional_stratified") {
