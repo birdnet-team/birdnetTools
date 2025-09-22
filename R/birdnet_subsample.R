@@ -50,6 +50,11 @@ birdnet_subsample <- function(
 
   # method is one of the accepted values
   method <- match.arg(method)
+
+  if (method == "stratified") {
+    message('`method = "stratified"` is deprecated. Using `method = "even_stratified"` instead.')
+  }
+
   checkmate::assert_choice(method, choices = c("even_stratified", "propotional_stratified", "random", "top"))
 
   # save_to_file is a logical value
@@ -90,6 +95,15 @@ birdnet_subsample <- function(
       dplyr::slice_sample(n = round(n / 18),
                           by = c(category, !!dplyr::sym(cols$confidence))) |>
       dplyr::select(-category)
+
+
+
+
+
+
+
+
+
 
   } else if (method == "propotional_stratified") {
     # assign bins
