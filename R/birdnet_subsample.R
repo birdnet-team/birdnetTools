@@ -39,6 +39,8 @@ birdnet_subsample <- function(
     save_to_file = FALSE,
     file = NULL
 ) {
+
+
   # argument check ----------------------------------------------------------
 
   # data is a dataframe
@@ -49,6 +51,7 @@ birdnet_subsample <- function(
 
   # method is one of the accepted values
   method <- match.arg(method)
+  checkmate::assert_choice(method, choices = c("stratified", "random", "top"))
 
   # save_to_file is a logical value
   checkmate::assert_flag(save_to_file)
