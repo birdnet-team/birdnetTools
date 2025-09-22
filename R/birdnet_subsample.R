@@ -70,39 +70,32 @@ birdnet_subsample <- function(
 
   # check if the required columns are present
   cols <- birdnet_detect_columns(data)
-
   total_rows <- nrow(data)
+
   if (total_rows <= n) {
     sampled_data <- data
 
   } else if (method == "random") {
     sampled_data <- dplyr::slice_sample(data, n = n,
-                                        replace = FALSE,
-                                        by = !!dplyr::sym(cols$common_name))
+                                        replace = FALSE)
 
   } else if (method == "top") {
     sampled_data <- dplyr::slice_max(data, order_by = !!dplyr::sym(cols$confidence),
-                                     n = n, with_ties = FALSE,
-                                     by = !!dplyr::sym(cols$common_name))
+                                     n = n, with_ties = FALSE)
 
   } else if (method == "stratified") {
     # assign bins
-    data <- dplyr::mutate(
-      data,
-      category = cut(
-        !!dplyr::sym(cols$confidence),
-        breaks = seq(0.1, 1, by = 0.05),
-        right = FALSE
-      )
-    )
+    data <- data |> dplyr::mutate(category = cut(!!dplyr::sym(cols$confidence),
+                                                 breaks = seq(0.1, 1, by = 0.05),
+                                                 right = FALSE))
 
     # count per bin
-    bin_counts <- data %>%
-      dplyr::group_by(category) %>%
+    bin_counts <- data |>
+      dplyr::group_by(category) |>
       dplyr::summarise(count = dplyr::n(), .groups = "drop")
 
     # proportional allocation
-    bin_counts <- bin_counts %>%
+    bin_counts <- bin_counts |>
       dplyr::mutate(prop_sample = n * count / sum(count),
                     sample_n = floor(prop_sample),
                     frac = prop_sample - sample_n)
@@ -130,6 +123,7 @@ birdnet_subsample <- function(
       if (nrow(bin_data) <= n_bin) bin_data else dplyr::slice_sample(bin_data, n = n_bin)
     })) %>% dplyr::select(-category)
   }
+
 
   # optional write to CSV
   if (save_to_file) {
