@@ -18,11 +18,11 @@ authors:
 
 
 affiliations:
- - name: University of Northern British Columbia, Prince George, BC, Canada
+ - name: Natural Resources and Environmental Studies, University of Northern British Columbia, Prince George, BC, Canada
    index: 1
- - name: Center for Conservation Bioacoustics, Cornell Lab of Ornithology, Cornell University, Ithaca, NY, USA
+ - name: K. Lisa Yang Center for Conservation Bioacoustics, Cornell Lab of Ornithology, Cornell University, Ithaca, NY, USA
    index: 2
- - name: Technische Universität Chemnitz, D-09111 Chemnitz, Germany
+ - name: Chemnitz University of Technology, Chemnitz, Germany
    index: 3
 date: 09 September 2025
 bibliography: paper.bib
@@ -34,9 +34,15 @@ bibliography: paper.bib
 
 
 # Statement of need
-Automated acoustic monitoring is increasingly used in ecology and conservation [@perezgranados:2023], with BirdNET being one of the most widely adopted tools for bird sound identification (e.g., @funosas:2024, @mcginn:2023, and @bota:2023). Although BirdNET was developed in Python, most of its primary users are ecologists who conduct analyses primarily in R. This language difference can limit accessibility for some research teams. While the `birdnetR` package [@kahl:2025] enables R users to run BirdNET classifications, there is no dedicated framework in R for post-processing these outputs.
+Automated acoustic monitoring is increasingly used in ecology and conservation [@perezgranados:2023], with BirdNET being one of the most widely adopted tools for bird sound identification (e.g., @funosas:2024, @mcginn:2023, and @bota:2023). Although BirdNET was developed in Python, most of its primary users are ecologists who conduct analyses primarily in R. This language difference can limit accessibility for some research teams. While the `birdnetR` package [@günther:2025] enables R users to run BirdNET classifications, there is no dedicated framework in R for post-processing these outputs (\autoref{fig:packages}).
 
 The `birdnetTools` R package fills this gap by providing functions to clean and wrangle BirdNET detections, apply species-specific or universal confidence thresholds, visualize results, and validate predictions through an interactive R Shiny app. Its design is based on workflows commonly used in published studies (e.g., @tseng:2024) and incorporates methods for threshold setting and validation developed in recent research (i.e., @tseng:2025; @wood:2024). By consolidating these tools, birdnetTools streamlines analysis and lowers barriers for ecologists and conservation practitioners adopting BirdNET in large-scale monitoring projects.
+
+
+<div style="text-align: center;">
+![Integration of BirdNET R packages. birdnetR produces species detections from audio recordings, while birdnetTools provides tools for post-processing, data cleaning, and validation. \label{fig:packages}](./fig_packages.png){width=60%}
+</div>
+
 
 
 # Key functionalities
@@ -50,7 +56,10 @@ Functions in `birdnetTools` fall into three categories: data import, data explor
 
 ![Workflow of the birdnetTools R package. \label{fig:workflow}](./fig_workflow.png)
 
+
 # Acknowledgements
-The `birdnetTools` project was supported by the Michael Smith Foreign Study Supplements, funded by the Natural Sciences and Engineering Research Council of Canada (NSERC). We thank all members of the BirdNET team for their valuable contributions, and we are grateful to Connor Wood and Trey Ursillo for their insightful feedback in improving the package.
+The `birdnetTools` project was supported by the Michael Smith Foreign Study Supplements, funded by the Natural Sciences and Engineering Research Council of Canada (NSERC). We thank all members of the BirdNET team for their valuable contributions, and we are grateful to Connor M. Wood and Trey Ursillo for their insightful feedback in improving the package.
+
+The development of BirdNET is supported by the German Federal Ministry of Research, Technology and Space (FKZ 01|S22072), the German Federal Ministry for the Environment, Climate Action, Nature Conservation and Nuclear Safety (FKZ 67KI31040E), the German Federal Ministry of Economic Affairs and Energy (FKZ 16KN095550), the Deutsche Bundesstiftung Umwelt (project 39263/01) and the European Social Fund.
 
 # References
