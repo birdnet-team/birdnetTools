@@ -34,7 +34,7 @@
 birdnet_subsample <- function(
     data,
     n,
-    method = c("even_stratified", "propotional-stratified", "random", "top"),
+    method = c("even_stratified", "propotional_stratified", "random", "top"),
     save_to_file = FALSE,
     file = NULL
 ) {
@@ -50,7 +50,7 @@ birdnet_subsample <- function(
 
   # method is one of the accepted values
   method <- match.arg(method)
-  checkmate::assert_choice(method, choices = c("even_stratified", "propotional-stratified", "random", "top"))
+  checkmate::assert_choice(method, choices = c("even_stratified", "propotional_stratified", "random", "top"))
 
   # save_to_file is a logical value
   checkmate::assert_flag(save_to_file)
@@ -111,7 +111,7 @@ birdnet_subsample <- function(
     # leftover allocation by largest fractional part
     leftover <- n - sum(bin_counts$sample_n)
     if (leftover > 0) {
-      bin_counts <- bin_counts %>%
+      bin_counts <- bin_counts |>
         dplyr::arrange(dplyr::desc(frac))
       for (i in seq_len(leftover)) {
         bin_counts$sample_n[i] <- bin_counts$sample_n[i] + 1
@@ -119,7 +119,7 @@ birdnet_subsample <- function(
     }
 
     # don't oversample bins
-    bin_counts <- bin_counts %>%
+    bin_counts <- bin_counts |>
       dplyr::mutate(sample_n = pmin(sample_n, count))
 
     # sample from bins
@@ -129,7 +129,7 @@ birdnet_subsample <- function(
       if (n_bin <= 0) return(NULL)
       bin_data <- dplyr::filter(data, category == bin)
       if (nrow(bin_data) <= n_bin) bin_data else dplyr::slice_sample(bin_data, n = n_bin)
-    })) %>% dplyr::select(-category)
+    })) |> dplyr::select(-category)
   }
 
 
