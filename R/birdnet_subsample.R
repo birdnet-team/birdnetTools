@@ -90,7 +90,7 @@ birdnet_subsample <- function(
     data <- dplyr::mutate(
       data,
       category = cut(
-        !!rlang::sym(conf_col),
+        !!dplyr::sym(cols$confidence),
         breaks = seq(0.1, 1, by = 0.05),
         right = FALSE
       )
