@@ -19,10 +19,12 @@ library(birdnetTools)
 ```
 
 
-The `birdnetTools` is an R package designed to streamline the post-processing and validation of output from BirdNET, an open-source neural network developed by the [Cornell Lab of Ornithology](https://www.birds.cornell.edu/home/) and [Chemnitz University of Technology](https://www.tu-chemnitz.de/index.html.en) for detecting and identifying bird sounds. 
+The `birdnetTools` is an R package designed to streamline the post-processing and validation of output from BirdNET, an open-source neural network developed by the [Cornell Lab of Ornithology](https://www.birds.cornell.edu/home/) and [Chemnitz University of Technology](https://www.tu-chemnitz.de/index.html.en) for detecting and identifying bird sounds. The goal of `birdnetTools` is to help researchers manage, explore, and validate BirdNET results. It includes functions for filtering detections by species, confidence, and date/time; visualizing temporal patterns; and validating detections with an interactive Shiny app to support threshold-setting workflows.
 
-The goal of `birdnetTools` is to help researchers manage, explore, and validate BirdNET results, which can be derived by [BirdNET Analyzer](https://github.com/BirdNET-Team/BirdNET-Analyzer), or the [birdnetR](https://birdnet-team.github.io/birdnetR/index.html) package. It includes functions for filtering detections by species, confidence, and date/time; visualizing temporal patterns; and validating detections with an interactive Shiny app to support threshold-setting workflows.
 
+The cheatsheet below can be downloaded from [here](https://github.com/birdnet-team/birdnetTools/blob/main/man/figures/workflow.png):
+
+![](./images/workflow.png)
 
 
 ## Data Import
