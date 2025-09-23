@@ -164,7 +164,7 @@ test_that("birdnet_subsample: stratified output does not contain category column
     confidence = runif(10, 0.1, 1)
   )
 
-  result <- birdnet_subsample(df, n = 5, method = "stratified")
+  result <- birdnet_subsample(df, n = 5, method = "even_stratified")
   expect_false("category" %in% names(result))
 })
 
@@ -197,6 +197,8 @@ test_that("birdnet_subsample: handles NA in confidence column for stratified met
     confidence = c(runif(8, 0.1, 1), NA, NA)
   )
 
-  expect_error(birdnet_subsample(df, n = 5, method = "even_stratified"))
-
+  result <- birdnet_subsample(df, n = 5, method = "proportional_stratified")
+  expect_s3_class(result, "data.frame")
+  expect_true(nrow(result) > 0)
 })
+
