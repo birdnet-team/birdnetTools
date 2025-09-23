@@ -25,7 +25,7 @@ date/time; visualizing temporal patterns; and validating detections with
 an interactive Shiny app to support threshold-setting workflows.
 
 A cheatsheet showing the `birdnetTools` workflow can be found
-[here](https://github.com/birdnet-team/birdnetTools/blob/main/man/figures/workflow.png).
+[here](https://github.com/birdnet-team/birdnetTools/blob/master/man/figures/workflow.png).
 
 ## Installation
 
