@@ -40,7 +40,7 @@ The `birdnetTools` R package fills this gap by providing functions built on work
 
 
 <div style="text-align: center;">
-![Integration of BirdNET R packages. birdnetR produces species detections from audio recordings, while birdnetTools provides tools for post-processing, data cleaning, and validation. \label{fig:packages}](./fig_packages.png){width=60%}
+![Integration of BirdNET R packages. birdnetR produces species detections from audio recordings, while birdnetTools provides tools for post-processing, data cleaning, and validation. \label{fig:packages}](./fig_packages.png){width=55%}
 </div>
 
 
