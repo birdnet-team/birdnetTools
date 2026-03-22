@@ -46,9 +46,7 @@ The `birdnetTools` R package fills this gap by providing functions built on work
 
 # Software design
 
-The design of `birdnetTools` follows the natural analytical workflow used by ecologists: data import, data exploration, and detection validation. The package aims to streamline the post-processing of BirdNET outputs, which often exist in formats of Raven selection tables or CSV files. Our functions accommodate these various formats provided the core data columns are maintained.
-
-The package architecture is highly integrated, with functions designed to pass information seamlessly from one stage of the pipeline to the next. Built on the `tidyverse` ecosystem, `birdnetTools` utilizes `dplyr` for data wrangling and `ggplot2` for visualizations. We implemented an interactive Shiny interface for audio validation. This modular approach allows users to either run a complete end-to-end pipeline or use specific functions, such as `birdnet_combine()`, to integrate BirdNET data into their existing custom R scripts. Furthermore, the package prioritizes data provenance by ensuring that temporal metadata and site identifiers are preserved throughout the filtering and validation process.
+The design of `birdnetTools` follows the natural analytical workflow used by ecologists: data import, data exploration, and detection validation. The package architecture is highly integrated, with functions designed to pass information seamlessly from one stage of the pipeline to the next. While the package provides a structured end-to-end framework, its design is also modular; ecologists can incorporate individual functions, such as `birdnet_combine()`, into their existing custom R scripts to integrate BirdNET data into broader analytical pipelines.
 
 In summary, functions in `birdnetTools` fall into three categories: data import, data exploration, and detection validation (\autoref{fig:workflow}).
 
@@ -62,9 +60,9 @@ In summary, functions in `birdnetTools` fall into three categories: data import,
 
 # Research impact statement
 
-While birdnetTools is developed primarily to support the core developer's research,
+The development of `birdnetTools` was driven by the practical challenges of processing large-scale acoustic datasets during a doctoral research. Recognizing that many ecologists face hurdles when transitioning from raw machine-learning outputs to ecological modeling, this package was developed in collaboration with members of the core BirdNET team to ensure technical feasibility and analytical accuracy.
 
--   15 stars and 3 forks
+By providing a standardized, R-native framework for data cleaning and validation, `birdnetTools` fills a critical gap in the existing bioacoustic software ecosystem. It specifically empowers researchers to implement reproducible validation protocols, a fundamental requirement for high-impact ecological research, while maintaining compatibility with the R-based statistical tools.
 
 # AI usage disclosure
 
