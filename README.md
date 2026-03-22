@@ -83,7 +83,7 @@ birdnet_calc_threshold(data_sub, precision = 0.9)
 #> # A tibble: 1 × 2
 #>   common_name       threshold
 #>   <chr>                 <dbl>
-#> 1 Swainson's Thrush       0.8
+#> 1 Swainson's Thrush     0.879
 ```
 
 ## Acknowledgements
@@ -96,11 +96,7 @@ Canada (NSERC). I’m incredibly fortunate to have received this support,
 which allowed me to collaborate in person with the BirdNET team in
 Chemnitz, Germany.
 
-This has been a valuable opportunity—not only for scientific
-collaboration and networking, but also for memorable moments shared with
-colleagues and the vibrant atmosphere of life in Europe.
-
-## BirdNET funding and partners
+## Funding
 
 BirdNET is supported by Jake Holshuh (Cornell class of ’69) and The
 Arthur Vining Davis Foundations. Our work in the K. Lisa Yang Center for
@@ -116,7 +112,10 @@ project (FKZ 67KI31040E). In addition, the Deutsche Bundesstiftung
 Umwelt supports BirdNET through the project “RangerSound” (project
 39263/01).
 
+## Partners
+
 BirdNET is a joint effort of partners from academia and industry.
 Without these partnerships, this project would not have been possible.
+Thank you!
 
 ![](https://tuc.cloud/index.php/s/KSdWfX5CnSRpRgQ/download/box_logos.png)
