@@ -70,7 +70,7 @@ In summary, functions in `birdnetTools` fall into three categories: data import,
 
 # Research impact statement
 
-The development of `birdnetTools` was driven by the practical challenges of processing large-scale acoustic datasets during a doctoral research. Recognizing that many ecologists face hurdles when transitioning from raw machine-learning outputs to ecological modeling, this package was developed in collaboration with members of the core BirdNET team to ensure technical feasibility and analytical accuracy.
+The development of `birdnetTools` was driven by the practical challenges of processing large-scale acoustic datasets during a doctoral research project. Recognizing that many ecologists face hurdles when transitioning from raw machine-learning outputs to ecological modeling, this package was developed in collaboration with members of the core BirdNET team to ensure technical feasibility and analytical accuracy.
 
 By providing a standardized, R-native framework for data cleaning and validation, `birdnetTools` fills a critical gap in the existing bioacoustic software ecosystem. It specifically empowers researchers to implement reproducible validation protocols, a fundamental requirement for high-impact ecological research, while maintaining compatibility with the R-based statistical tools.
 
