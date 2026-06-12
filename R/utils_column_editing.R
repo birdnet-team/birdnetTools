@@ -102,15 +102,34 @@ birdnet_drop_datetime <- function(data) {
 
 
 
-#' Title
+#' Add site column from BirdNET output filenames
 #'
-#' @param data
-#' @param i
+#' Extracts a specific directory level from the file path column (automatically
+#' detected) to act as a site identifier, then adds a `site` column to the
+#' input data frame.
 #'
-#' @returns
-#' @export
+#' The function uses [birdnet_detect_columns] to find the column containing
+#' file paths based on common name patterns. By default, it looks at the
+#' immediate parent folder of the file.
+#'
+#' @param data A data frame containing BirdNET output.
+#' @param i An integer specifying the index of the path element to extract
+#'   when split by slashes. Defaults to `-2`, which corresponds to the immediate
+#'   parent directory of the file (e.g., extracting "Site-A" from
+#'   "path/to/Site-A/audio.wav"). Negative values count from the right-hand side.
+#'
+#' @return A data frame with an additional column:
+#' \describe{
+#'   \item{site}{The extracted directory or folder name used as the site identifier.}
+#' }
 #'
 #' @examples
+#' \dontrun{
+#' combined_data <- birdnet_combine("path/to/BirdNET/output")
+#' data_with_site <- birdnet_add_site(combined_data, i = -2)
+#' }
+#'
+#' @keywords internal
 birdnet_add_site <- function(data,
                              i = -2) {
 
