@@ -133,23 +133,20 @@ birdnet_drop_datetime <- function(data) {
 birdnet_add_site <- function(data,
                              i = -2) {
 
-
   # argument check ----------------------------------------------------------
 
-  # Detect columns
+  # detect columns
   cols <- birdnet_detect_columns(data)
 
 
-  # Ensure filepath column was actually found
+  # ensure filepath column was actually found
   if (is.null(cols$filepath) || !(cols$filepath %in% colnames(data))) {
     stop("Could not automatically detect a valid file path column in the data.")
   }
 
-
-
   # main function -----------------------------------------------------------
 
-  # Extract site safely using tidy evaluation data masking
+  # extract site safely using tidy evaluation data masking
   data_with_site <- data |>
     dplyr::mutate(
       site = stringr::str_split_i(.data[[cols$filepath]], "[/\\\\]", i = i)
