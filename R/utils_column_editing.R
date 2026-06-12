@@ -51,7 +51,7 @@ birdnet_add_datetime <- function(
 
     # parase the column name to the datetime format
     dplyr::mutate(
-      datetime = basename(data[[cols$filepath]]) |>
+      datetime = basename(.data[[cols$filepath]]) |>
         stringr::str_extract("\\d{8}.\\d{6}") |>
         lubridate::parse_date_time(
           orders = c("ymd_HMS", "ymd-HMS", "ymdHMS", "ymd HM"),
@@ -97,6 +97,49 @@ birdnet_drop_datetime <- function(data) {
 
   return(data)
 }
+
+
+
+
+
+#' Title
+#'
+#' @param data
+#' @param i
+#'
+#' @returns
+#' @export
+#'
+#' @examples
+birdnet_add_site <- function(data,
+                             i = -2) {
+
+
+  # argument check ----------------------------------------------------------
+
+  # Detect columns
+  cols <- birdnet_detect_columns(data)
+
+
+  # Ensure filepath column was actually found
+  if (is.null(cols$filepath) || !(cols$filepath %in% colnames(data))) {
+    stop("Could not automatically detect a valid file path column in the data.")
+  }
+
+
+
+  # main function -----------------------------------------------------------
+
+  # Extract site safely using tidy evaluation data masking
+  data_with_site <- data |>
+    dplyr::mutate(
+      site = stringr::str_split_i(.data[[cols$filepath]], "[/\\\\]", i = i)
+    )
+
+  return(data_with_site)
+}
+
+
 
 
 
