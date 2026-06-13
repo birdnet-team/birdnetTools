@@ -18,13 +18,24 @@
 #'   the total number of detections. Gaps in operational effort are preserved as `NA`.
 #'
 #' @export
-birdnet_detection_history <- function(detection_data, effort_data, survey_interval, i = -2) {
+birdnet_detection_history <- function(detection_data,
+                                      effort_data,
+                                      survey_interval,
+                                      i = -2) {
+
+
+# argument check ----------------------------------------------------------
+
+
+# main function -----------------------------------------------------------
+
 
   # 1. Summarize detections by site and occasion block
   detections_summarized <- detection_data |>
     birdnet_add_site(i = i) |>
     birdnet_add_datetime() |>
-    dplyr::mutate(occasion = lcl_date <- lubridate::floor_date(date, unit = survey_interval)) |>
+    dplyr::mutate(occasion = lubridate::floor_date(date,
+                                                   unit = survey_interval)) |>
     dplyr::group_by(site, occasion) |>
     dplyr::summarise(
       n_detections = dplyr::n(),
