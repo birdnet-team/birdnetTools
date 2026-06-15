@@ -11,7 +11,8 @@ birdnet_detection_history(data, effort_data, survey_interval, i = -2)
 for filepaths and prediction confidence scores.}
 
 \item{effort_data}{A data frame containing monitoring operational effort,
-requiring at least \code{site} and \code{date} columns. If an \code{n_files}
+requiring at least \code{site} and \code{date} columns, indicating the active
+time and location of each ARU device. If an \code{n_files}
 column is present, file counts will be aggregated per occasion block.}
 
 \item{survey_interval}{A character string specifying the temporal unit for

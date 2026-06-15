@@ -2,41 +2,45 @@
 #'
 #' Summarizes BirdNET detection data across specified survey intervals (occasions)
 #' and aligns them with operational effort data. Returns both a zero-filled
-#' site-by-occasion binary matrix for packages like \code{spOccupancy} and \code{unmarked},
+#' site-by-occasion binary matrix for packages like `spOccupancy` and `unmarked`,
 #' and a detailed long-format data frame summary.
 #'
 #' @details
 #' The function groups continuous temporal data into distinct survey blocks using
-#' \code{lubridate::floor_date()}. Detections are cross-referenced against your
-#' \code{effort_data}: occasions where monitoring effort occurred but no target
+#' `lubridate::floor_date()`. Detections are cross-referenced against your
+#' `effort_data`: occasions where monitoring effort occurred but no target
 #' species were detected are explicitly zero-filled. If an ARU was not operational
-#' during a specific time block, it is preserved as an \code{NA} value to ensure
+#' during a specific time block, it is preserved as an `NA` value to ensure
 #' structural integrity for missing-visit designs.
 #'
-#' Values greater than 0 in the final matrix are collapsed to \code{1} to format
+#' Values greater than 0 in the final matrix are collapsed to `1` to format
 #' the output for binary presence/absence occupancy models.
 #'
 #' @param data A data frame containing BirdNET detections, including column matches
 #'   for filepaths and prediction confidence scores.
 #' @param effort_data A data frame containing monitoring operational effort,
-#'   requiring at least \code{site} and \code{date} columns. If an \code{n_files}
-#'   column is present, file counts will be aggregated per occasion block.
+#'   requiring at least `site` and `date` columns to indicate the active
+#'   monitoring windows and locations of each ARU device. Users can generate
+#'   this via [birdnet_get_effort()], which derives effort data from a directory
+#'   of audio files by defining a site-date combination as "active" if at least
+#'   one recording exists. If an `n_files` column is present, file counts will
+#'   be aggregated per survey occasion block.
 #' @param survey_interval A character string specifying the temporal unit for
-#'   grouping survey occasions (e.g., \code{"1 day"}, \code{"1 week"}, \code{"7 days"}).
+#'   grouping survey occasions (e.g., `"1 day"`, `"1 week"`, `"7 days"`).
 #'   Passed directly to \code{\link[lubridate:floor_date]{lubridate::floor_date()}}.
 #' @param i An integer specifying the path hierarchy index for extracting site IDs.
-#'   Passed directly to \code{\link{birdnet_add_site}}. Defaults to \code{-2}.
+#'   Passed directly to \code{\link{birdnet_add_site}}. Defaults to `-2`.
 #'
-#' @return A named \code{list} containing two components:
+#' @return A named `list` containing two components:
 #' \describe{
-#'   \item{detection_history}{A numeric base R \code{matrix} where rows represent
+#'   \item{detection_history}{A numeric base R `matrix` where rows represent
 #'     unique sites (assigned as row names), columns represent chronological temporal
-#'     occasions, and cells indicate binary occupancy integers (\code{1}, \code{0},
-#'     or \code{NA} for missing effort).}
+#'     occasions, and cells indicate binary occupancy integers (`1`, `0`,
+#'     or `NA` for missing effort).}
 #'   \item{detection_summary}{A data frame in long format containing the underlying
-#'     aggregated metrics per site/occasion, including detection counts (\code{n_detections}),
-#'     maximum verification confidence (\code{max_conf}), and the file path of the
-#'     highest confidence detection (\code{max_conf_audio}).}
+#'     aggregated metrics per site/occasion, including detection counts (`n_detections`),
+#'     maximum verification confidence (`max_conf`), and the file path of the
+#'     highest confidence detection (`max_conf_audio`).}
 #' }
 #'
 #' @importFrom dplyr .data
