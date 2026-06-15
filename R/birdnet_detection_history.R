@@ -18,59 +18,83 @@
 #'   the total number of detections. Gaps in operational effort are preserved as `NA`.
 #'
 #' @export
-birdnet_detection_history <- function(detection_data,
+birdnet_detection_history <- function(data,
                                       effort_data,
                                       survey_interval,
                                       i = -2) {
 
 
-# argument check ----------------------------------------------------------
+  # argument check ----------------------------------------------------------
 
 
-# main function -----------------------------------------------------------
+  # main function -----------------------------------------------------------
 
+  cols <- birdnet_detect_columns(data)
 
   # 1. Summarize detections by site and occasion block
-  detections_summarized <- detection_data |>
+  detections_summarized <- data |>
     birdnet_add_site(i = i) |>
     birdnet_add_datetime() |>
-    dplyr::mutate(occasion = lubridate::floor_date(date,
+    dplyr::mutate(occasion = lubridate::floor_date(x = .data$date,
                                                    unit = survey_interval)) |>
-    dplyr::group_by(site, occasion) |>
+    dplyr::group_by(.data$site,
+                    .data$occasion) |>
     dplyr::summarise(n_detections = dplyr::n(),
-                     max_conf = max(confidence, na.rm = TRUE),
-                     max_conf_audio = filepath[which.max(confidence)],
+                     max_conf = max(.data[[cols$confidence]], na.rm = TRUE),
+                     max_conf_audio = .data[[cols$filepath]][which.max(.data[[cols$confidence]])],
                      .groups = "drop")
 
-  # 2. Process effort, join detections, fill zeros, and pivot wide
-  detections_zero_filled <- effort_data |>
-    dplyr::mutate(occasion = lubridate::floor_date(date,
-                                                   unit = survey_interval)) |>
-    dplyr::group_by(site, occasion) |>
-    dplyr::summarise(n_files = sum(n_files, na.rm = TRUE),
-                     .groups = "drop") |>
 
+
+  # 2. Process effort
+  baseline_effort <- effort_data |>
+    dplyr::mutate(occasion = lubridate::floor_date(x = .data$date,
+                                                   unit = survey_interval))
+
+  if ("n_files" %in% names(baseline_effort)) {
+    # if n_files exists, aggregate the total file counts per site/occasion
+    baseline_effort <- baseline_effort |>
+      dplyr::group_by(.data$site, .data$occasion) |>
+      dplyr::summarise(n_files = sum(.data$n_files, na.rm = TRUE), .groups = "drop")
+  } else {
+    # if n_files is missing, simply keep unique combinations of site and occasion
+    baseline_effort <- baseline_effort |>
+      dplyr::distinct(.data$site, .data$occasion)
+  }
+
+
+
+  # 3. join detections, fill zeros, and pivot wide
+  detections_zero_filled <- baseline_effort |>
     # left join ensures we only evaluate occasions where the devices were running
     dplyr::left_join(detections_summarized, by = c("site", "occasion")) |>
 
     # differentiate true zeros from missing effort
-    dplyr::mutate(n_detections = tidyr::replace_na(n_detections, 0),
-                  max_conf = tidyr::replace_na(max_conf, 0),
-                  max_conf_audio = tidyr::replace_na(max_conf_audio, "none"))
-
-
-  # 3. Creating matrix structure: pivot to wide format with sites as rows and occasions as columns
-
-    # Isolate matrix structure and shape wide for modeling packages (e.g., unmarked and spOccupancy)
-  detection_matrix <- detections_zero_filled |>
-    dplyr::select(site, occasion, n_detections) |>
-    # manipulate n_detections column to make it 1 if it's larger than 0, otherwise 0 (for occupancy modeling)
-    dplyr::mutate(n_detections = ifelse(n_detections > 0, 1, 0)) |>
-    tidyr::pivot_wider(
-      names_from = occasion,
-      values_from = n_detections,
-      values_fill = NA
+    dplyr::mutate(
+      n_detections = tidyr::replace_na(.data$n_detections, 0),
+      max_conf = tidyr::replace_na(.data$max_conf, 0),
+      max_conf_audio = tidyr::replace_na(.data$max_conf_audio, "none")
     )
+
+
+
+
+  # 4. Creating matrix structure: pivot to wide format with sites as rows and occasions as columns
+
+    # isolate matrix structure and shape wide for modeling packages (e.g., unmarked and spOccupancy)
+  detection_matrix_df <- detections_zero_filled |>
+    dplyr::select("site", "occasion", "n_detections") |>
+    # manipulate n_detections column to make it 1 if it's larger than 0, otherwise 0 (for occupancy modeling)
+    dplyr::mutate(n_detections = ifelse(.data$n_detections > 0, 1, 0)) |>
+    tidyr::pivot_wider(id_cols = "site",
+                       names_from = "occasion",
+                       values_from = "n_detections",
+                       values_fill = NA)
+
+  detection_matrix <- as.matrix(detection_matrix_df[, -1])
+  rownames(detection_matrix) <- detection_matrix_df$site
+
 
   return(detection_matrix)
 }
+
