@@ -52,14 +52,12 @@ birdnet_get_effort <- function(path, i = -2) {
                pattern = "\\.(wav|mp3|m4a|flac|ogg|wma)$",
                ignore.case = TRUE) |>
     # convert to tibble for processing, extract time and location
-    (\(x) data.frame(filepath = x, stringsAsFactors = FALSE))() |>
+    (\(x) dplyr::as_tibble(data.frame(filepath = x, stringsAsFactors = FALSE)))() |>
     birdnet_add_datetime() |>
     birdnet_add_site(i = i) |>
-    #dplyr::mutate(duration_mins = sapply(filepath, get_audio_duration))
 
     # keep only the relevant columns and unique rows
-    dplyr::group_by("site", "date") |>
-    dplyr::summarise(n_files = dplyr::n())
+    dplyr::summarise(n_files = dplyr::n(), .by = c("site", "date"))
 
 
   return(effort)
