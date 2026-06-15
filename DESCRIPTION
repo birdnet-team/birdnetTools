@@ -28,6 +28,7 @@ Imports:
     shinyFiles,
     shinyWidgets,
     stringr,
+    tidyr,
     tuneR
 Suggests: 
     knitr,
