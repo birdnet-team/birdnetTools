@@ -37,31 +37,35 @@ birdnet_detection_history <- function(detection_data,
     dplyr::mutate(occasion = lubridate::floor_date(date,
                                                    unit = survey_interval)) |>
     dplyr::group_by(site, occasion) |>
-    dplyr::summarise(
-      n_detections = dplyr::n(),
-      max_conf = max(confidence, na.rm = TRUE),
-      max_conf_audio = filepath[which.max(confidence)],
-      .groups = "drop"
-    )
+    dplyr::summarise(n_detections = dplyr::n(),
+                     max_conf = max(confidence, na.rm = TRUE),
+                     max_conf_audio = filepath[which.max(confidence)],
+                     .groups = "drop")
 
   # 2. Process effort, join detections, fill zeros, and pivot wide
-  detection_matrix <- effort_data |>
-    dplyr::mutate(occasion = lcl_date <- lubridate::floor_date(date, unit = survey_interval)) |>
+  detections_zero_filled <- effort_data |>
+    dplyr::mutate(occasion = lubridate::floor_date(date,
+                                                   unit = survey_interval)) |>
     dplyr::group_by(site, occasion) |>
-    dplyr::summarise(n_files = sum(n_files, na.rm = TRUE), .groups = "drop") |>
+    dplyr::summarise(n_files = sum(n_files, na.rm = TRUE),
+                     .groups = "drop") |>
 
-    # Left join ensures we only evaluate occasions where the devices were running
+    # left join ensures we only evaluate occasions where the devices were running
     dplyr::left_join(detections_summarized, by = c("site", "occasion")) |>
 
-    # Differentiate true zeros from missing effort
-    dplyr::mutate(
-      n_detections = tidyr::replace_na(n_detections, 0),
-      max_conf = tidyr::replace_na(max_conf, 0),
-      max_conf_audio = tidyr::replace_na(max_conf_audio, "none")
-    ) |>
+    # differentiate true zeros from missing effort
+    dplyr::mutate(n_detections = tidyr::replace_na(n_detections, 0),
+                  max_conf = tidyr::replace_na(max_conf, 0),
+                  max_conf_audio = tidyr::replace_na(max_conf_audio, "none"))
 
-    # Isolate matrix structure and shape wide for modeling packages (e.g., unmarked)
+
+  # 3. Creating matrix structure: pivot to wide format with sites as rows and occasions as columns
+
+    # Isolate matrix structure and shape wide for modeling packages (e.g., unmarked and spOccupancy)
+  detection_matrix <- detections_zero_filled |>
     dplyr::select(site, occasion, n_detections) |>
+    # manipulate n_detections column to make it 1 if it's larger than 0, otherwise 0 (for occupancy modeling)
+    dplyr::mutate(n_detections = ifelse(n_detections > 0, 1, 0)) |>
     tidyr::pivot_wider(
       names_from = occasion,
       values_from = n_detections,
