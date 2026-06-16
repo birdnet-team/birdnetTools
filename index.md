@@ -20,6 +20,7 @@ You can install the development version of birdnetTools from GitHub
 with:
 
 ``` r
+
 # install.packages("pak")
 pak::pak("birdnet-team/birdnetTools")
 ```
@@ -33,6 +34,7 @@ detection patterns, and calculate a species-specific threshold from
 simulated validation data.
 
 ``` r
+
 library(birdnetTools)
 
 # Load built-in dataset
@@ -55,6 +57,7 @@ birdnet_heatmap(data_filtered)
 ![](reference/figures/README-example-1.png)
 
 ``` r
+
 # Simulate validation (for demonstration only)
 set.seed(123)
 data_sub <- birdnet_subsample(data_filtered, n = 300)

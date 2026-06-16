@@ -1,6 +1,7 @@
 # Get started with birdnetTools
 
 ``` r
+
 library(birdnetTools)
 ```
 
@@ -40,6 +41,7 @@ This is especially useful when you’ve processed large batches of audio
 recordings and want to work with them collectively in R.
 
 ``` r
+
 # import multiple detection files
 birdnet_combine(path = "PATH_TO_BIDNET_OUTPUT_FOLDER")
 ```
@@ -51,6 +53,7 @@ the “combine output table” option in the BirdNET GUI, you can read it
 directly into R using the `readr` package:
 
 ``` r
+
 # Import a combined detection CSV
 library(readr)
 detections <- read_csv("PATH_TO_BIRDNET_OUTPUT_FILE.csv")
@@ -79,6 +82,7 @@ file path, start and end times of detections, species names, and
 confidence scores.
 
 ``` r
+
 # load the dataset
 data <- example_jprf_2023
 
@@ -97,6 +101,7 @@ The
 function makes it easy to apply these filters in a single step:
 
 ``` r
+
 # apply filter
 data_filtered <- birdnet_filter(data,
                                 species = "Swainson's Thrush",
@@ -130,6 +135,7 @@ attributes. This makes it easy to keep track of how the dataset was
 processed:
 
 ``` r
+
 attr(data_filtered, "filter_log")
 #> $species
 #> [1] "Swainson's Thrush"
@@ -161,6 +167,7 @@ raw or filtered data. Below is an example of the activity pattern of
 Swainson’s Thrushe across the breeding season (across 5 ARU sites).
 
 ``` r
+
 birdnet_heatmap(data_filtered)
 ```
 
@@ -182,6 +189,7 @@ column. It scans the file path for datetime patterns and extracts the
 date (year, month, day) and time (hour, minute).
 
 ``` r
+
 # add datetime information to the filtered data
 data_with_datetime <- birdnet_add_datetime(data_filtered)
 
@@ -224,6 +232,7 @@ help create a representative validation set, while `top` sampling
 targets the most confident predictions.
 
 ``` r
+
 # subsample 300 detections from the filtered data
 set.seed(123)  # for reproducibility
 data_subsampled <- birdnet_subsample(data_filtered,
@@ -238,6 +247,7 @@ your working directory by setting `save_to_file = TRUE` and specifying a
 file name:
 
 ``` r
+
 birdnet_subsample(
   data_filtered,
   n = 300,
@@ -259,6 +269,7 @@ the validation datasheet, making the validation process much more
 efficient.
 
 ``` r
+
 birdnet_launch_validation()
 ```
 
@@ -307,6 +318,7 @@ function helps identify the minimum confidence score required to achieve
 a target precision for a given species.
 
 ``` r
+
 # simulate validation as a Bernoulli trial
 data_subsampled$validation <- rbinom(
   n = nrow(data_subsampled), 
@@ -327,6 +339,7 @@ precision and probability arguments, please see the function
 documentation (`?birdnet_calc_threshold()`).
 
 ``` r
+
 birdnet_calc_threshold(data_subsampled,
                        precision = 0.9)
 #> ℹ Processing species: Swainson's Thrush
