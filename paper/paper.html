@@ -452,19 +452,21 @@ of ecologists rely on the R environment for data management, wrangling,
 and statistical analysis. <code>birdnetTools</code> provides a universal
 interface in R that functions regardless of the user’s chosen
 classification environment. Whether researchers utilize the
-BirdNET-Analyzer Python module [@kahl:2021], the <code>birdnetR</code>
-package [@günther:2025], the BirdNET GUI, or specialized software like
-Raven Pro, <code>birdnetTools</code> accepts outputs from these diverse
-platforms as standardized input for downstream post-processing in
-R.</p></li>
+BirdNET-Analyzer Python module <span class="citation">(Kahl et al.
+2021)</span>, the <code>birdnetR</code> package <span class="citation">(Günther and BirdNET Team 2025)</span>, the BirdNET
+GUI, or specialized software like Raven Pro, <code>birdnetTools</code>
+accepts outputs from these diverse platforms as standardized input for
+downstream post-processing in R.</p></li>
 <li><p><strong>Bridge Between BirdNET Outputs and Ecological
 Insights:</strong> While existing tools focus primarily on basic data
 wrangling, <code>birdnetTools</code> integrates formal, peer-reviewed
-BirdNET validation protocols (e.g., @tseng:2025; @wood:2024).
-Furthermore, the package is architected to support future expansions,
-and serve as a bridge to downstream statistical modeling, such as
-occupancy modeling via other established R packages, providing a more
-comprehensive, end-to-end pipeline for acoustic research.</p></li>
+BirdNET validation protocols (e.g., <span class="citation">Tseng,
+Hodder, and Otter (2025)</span>; <span class="citation">Wood and Kahl
+(2024)</span>). Furthermore, the package is architected to support
+future expansions, and serve as a bridge to downstream statistical
+modeling, such as occupancy modeling via other established R packages,
+providing a more comprehensive, end-to-end pipeline for acoustic
+research.</p></li>
 </ol>
 </div>
 <div id="software-design" class="section level1">
@@ -501,19 +503,25 @@ Otter (2025)</span> and the probability-based method of <span class="citation">W
 </div>
 <div id="research-impact-statement" class="section level1">
 <h1>Research impact statement</h1>
-<p>The development of <code>birdnetTools</code> was driven by the
-practical challenges of processing large-scale acoustic datasets during
-a doctoral research project. Recognizing that many ecologists face
-hurdles when transitioning from raw machine-learning outputs to
-ecological modeling, this package was developed in collaboration with
-members of the core BirdNET team to ensure technical feasibility and
-analytical accuracy.</p>
-<p>By providing a standardized, R-native framework for data cleaning and
-validation, <code>birdnetTools</code> fills a critical gap in the
-existing bioacoustic software ecosystem. It specifically empowers
-researchers to implement reproducible validation protocols, a
-fundamental requirement for high-impact ecological research, while
-maintaining compatibility with the R-based statistical tools.</p>
+<p>The software’s research utility and active community adoption are
+demonstrated across three distinct tiers of evidence:</p>
+<ul>
+<li><p><strong>Direct Research Integration:</strong>
+<code>birdnetTools</code> serves as the core computational and
+data-verification pipeline for studies investigating avian bioacoustic
+workflows, with analytical code archived publicly on GitHub (e.g., see
+the <a href="https://github.com/SunnyTseng/thesis_aru_occurrence_pattern">Analysis
+Repository</a> and <a href="https://github.com/cmwood-289/birdnet_R">Workflow
+Deployment</a>).</p></li>
+<li><p><strong>Academic Citation:</strong> The package is recognized in
+emerging literature <span class="citation">(Malerba et al. 2026)</span>
+as a key solution for streamlining post-processing validation protocols
+and reducing software bottlenecks in large-scale PAM workflows.</p></li>
+<li><p><strong>Community Traction:</strong> The open-science impact is
+supported by an active user base, reflected in 16 GitHub stars, 4 forks
+(as of June 2026), and ongoing community-led discussions within the
+repository’s issue tracker.</p></li>
+</ul>
 </div>
 <div id="ai-usage-disclosure" class="section level1">
 <h1>AI usage disclosure</h1>
@@ -562,6 +570,13 @@ GitHub. <a href="https://birdnet-team.github.io/birdnetR/">https://birdnet-team.
 Kahl, Stefan, Connor M. Wood, Maximilian Eibl, and Holger Klinck. 2021.
 <span>“BirdNET: A Deep Learning Solution for Avian Diversity
 Monitoring.”</span> <em>Ecological Informatics</em> 61. <a href="https://doi.org/10.1016/j.ecoinf.2021.101236">https://doi.org/10.1016/j.ecoinf.2021.101236</a>.
+</div>
+<div id="ref-malerba:2026" class="csl-entry">
+Malerba, Martino E., Cristian Pérez Granados, Kristian Bell, Maria M.
+Palacios, Kristen M. Bellisario, Camille Desjonquères, Alba
+Márquez-Rodríguez, et al. 2026. <span>“Overcoming Software Bottlenecks
+for Scalable Passive Acoustic Monitoring: Insights from a Global Expert
+Assessment.”</span> <em>bioRxiv</em>. <a href="https://doi.org/10.64898/2026.03.30.715176">https://doi.org/10.64898/2026.03.30.715176</a>.
 </div>
 <div id="ref-mcginn:2023" class="csl-entry">
 McGinn, Kate, Stefan Kahl, M. Zachariah Peery, Holger Klinck, and Connor

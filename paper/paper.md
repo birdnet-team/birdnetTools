@@ -50,9 +50,9 @@ We chose to develop `birdnetTools` as a standalone R package, rather than contri
 
 1.  **Official Alignment:** By developing this package in close coordination with the core BirdNET team, we ensure that the software’s functionality directly aligns with the underlying algorithm's evolution and the specific requirements of both ecologists and BirdNET developers.
 
-2.  **R Ecosystem Integration:** A significant majority of ecologists rely on the R environment for data management, wrangling, and statistical analysis. `birdnetTools` provides a universal interface in R that functions regardless of the user’s chosen classification environment. Whether researchers utilize the BirdNET-Analyzer Python module [\@kahl:2021], the `birdnetR` package [\@günther:2025], the BirdNET GUI, or specialized software like Raven Pro, `birdnetTools` accepts outputs from these diverse platforms as standardized input for downstream post-processing in R.
+2.  **R Ecosystem Integration:** A significant majority of ecologists rely on the R environment for data management, wrangling, and statistical analysis. `birdnetTools` provides a universal interface in R that functions regardless of the user’s chosen classification environment. Whether researchers utilize the BirdNET-Analyzer Python module [@kahl:2021], the `birdnetR` package [@günther:2025], the BirdNET GUI, or specialized software like Raven Pro, `birdnetTools` accepts outputs from these diverse platforms as standardized input for downstream post-processing in R.
 
-3.  **Bridge Between BirdNET Outputs and Ecological Insights:** While existing tools focus primarily on basic data wrangling, `birdnetTools` integrates formal, peer-reviewed BirdNET validation protocols (e.g., \@tseng:2025; \@wood:2024). Furthermore, the package is architected to support future expansions, and serve as a bridge to downstream statistical modeling, such as occupancy modeling via other established R packages, providing a more comprehensive, end-to-end pipeline for acoustic research.
+3.  **Bridge Between BirdNET Outputs and Ecological Insights:** While existing tools focus primarily on basic data wrangling, `birdnetTools` integrates formal, peer-reviewed BirdNET validation protocols (e.g., @tseng:2025; @wood:2024). Furthermore, the package is architected to support future expansions, and serve as a bridge to downstream statistical modeling, such as occupancy modeling via other established R packages, providing a more comprehensive, end-to-end pipeline for acoustic research.
 
 # Software design
 
@@ -74,7 +74,7 @@ The software's research utility and active community adoption are demonstrated a
 
 -   **Direct Research Integration:** `birdnetTools` serves as the core computational and data-verification pipeline for studies investigating avian bioacoustic workflows, with analytical code archived publicly on GitHub (e.g., see the [Analysis Repository](https://github.com/SunnyTseng/thesis_aru_occurrence_pattern) and [Workflow Deployment](https://github.com/cmwood-289/birdnet_R)).
 
--   **Academic Citation:** The package is recognized in emerging literature [\@malerba:2026] as a key solution for streamlining post-processing validation protocols and reducing software bottlenecks in large-scale PAM workflows.
+-   **Academic Citation:** The package is recognized in emerging literature [@malerba:2026] as a key solution for streamlining post-processing validation protocols and reducing software bottlenecks in large-scale PAM workflows.
 
 -   **Community Traction:** The open-science impact is supported by an active user base, reflected in 16 GitHub stars, 4 forks (as of June 2026), and ongoing community-led discussions within the repository's issue tracker.
 
