@@ -70,9 +70,13 @@ In summary, functions in `birdnetTools` fall into three categories: data import,
 
 # Research impact statement
 
-The development of `birdnetTools` was driven by the practical challenges of processing large-scale acoustic datasets during a doctoral research project. Recognizing that many ecologists face hurdles when transitioning from raw machine-learning outputs to ecological modeling, this package was developed in collaboration with members of the core BirdNET team to ensure technical feasibility and analytical accuracy.
+The software's research utility and active community adoption are demonstrated across three distinct tiers of evidence:
 
-By providing a standardized, R-native framework for data cleaning and validation, `birdnetTools` fills a critical gap in the existing bioacoustic software ecosystem. It specifically empowers researchers to implement reproducible validation protocols, a fundamental requirement for high-impact ecological research, while maintaining compatibility with the R-based statistical tools.
+-   **Direct Research Integration:** `birdnetTools` serves as the core computational and data-verification pipeline for studies investigating avian bioacoustic workflows, with analytical code archived publicly on GitHub (e.g., see the [Analysis Repository](https://github.com/SunnyTseng/thesis_aru_occurrence_pattern) and [Workflow Deployment](https://github.com/cmwood-289/birdnet_R)).
+
+-   **Academic Citation:** The package is recognized in emerging literature [\@malerba:2026] as a key solution for streamlining post-processing validation protocols and reducing software bottlenecks in large-scale PAM workflows.
+
+-   **Community Traction:** The open-science impact is supported by an active user base, reflected in 16 GitHub stars, 4 forks (as of June 2026), and ongoing community-led discussions within the repository's issue tracker.
 
 # AI usage disclosure
 
