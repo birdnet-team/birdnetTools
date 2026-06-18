@@ -97,10 +97,9 @@ birdnet_detection_history <- function(data,
     dplyr::left_join(detections_summarized, by = c("site", "occasion")) |>
 
     # differentiate true zeros from missing effort
-    dplyr::mutate(
-      n_detections = tidyr::replace_na(.data$n_detections, 0),
-      max_conf = tidyr::replace_na(.data$max_conf, 0),
-      max_conf_audio = tidyr::replace_na(.data$max_conf_audio, "none"))
+    dplyr::mutate(n_detections = tidyr::replace_na(.data$n_detections, 0),
+                  max_conf = tidyr::replace_na(.data$max_conf, 0),
+                  max_conf_audio = tidyr::replace_na(.data$max_conf_audio, "none"))
 
 
   # 4. Creating matrix structure: pivot to wide format with sites as rows and occasions as columns
