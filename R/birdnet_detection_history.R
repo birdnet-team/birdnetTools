@@ -1,20 +1,21 @@
-#' Generate Detection History Matrix and Summary for Occupancy Modeling
+#' Generate Detection History Matrix, Effort Matrix, and Summary for Occupancy Modeling
 #'
-#' Summarizes BirdNET detection data across specified survey intervals (occasions)
-#' and aligns them with operational effort data. Returns both a zero-filled
-#' site-by-occasion binary matrix for packages like `spOccupancy` and `unmarked`,
-#' and a detailed long-format data frame summary.
+#' Summarizes BirdNET detection data across specified survey intervals (occasions),
+#' filters sites based on minimal detection persistence thresholds, and aligns them
+#' with operational effort data. Returns a zero-filled site-by-occasion binary matrix,
+#' an identical matching matrix documenting sampling effort intensity for modeling
+#' detection probability covariates, and a detailed long-format data frame summary.
 #'
 #' @details
 #' The function groups continuous temporal data into distinct survey blocks using
 #' `lubridate::floor_date()`. Detections are cross-referenced against your
 #' `effort_data`: occasions where monitoring effort occurred but no target
 #' species were detected are explicitly zero-filled. If an ARU was not operational
-#' during a specific time block, it is preserved as an `NA` value to ensure
-#' structural integrity for missing-visit designs.
+#' during a specific time block, it is preserved as an `NA` value in the detection
+#' history to ensure structural integrity for missing-visit designs.
 #'
-#' Values greater than 0 in the final matrix are collapsed to `1` to format
-#' the output for binary presence/absence occupancy models.
+#' Values greater than 0 in the final detection matrix are collapsed to `1` to format
+#' the output for binary presence/absence occupancy models (e.g., `spOccupancy`, `unmarked`).
 #'
 #' @param data A data frame containing BirdNET detections, including column matches
 #'   for filepaths and prediction confidence scores.
@@ -30,13 +31,20 @@
 #'   Passed directly to \code{\link[lubridate:floor_date]{lubridate::floor_date()}}.
 #' @param i An integer specifying the path hierarchy index for extracting site IDs.
 #'   Passed directly to \code{\link{birdnet_add_site}}. Defaults to `-2`.
+#' @param min_unique_days An integer specifying the threshold of unique calendar days
+#'   a site must possess raw detections on to be kept. Sites with detections spanning fewer
+#'   than `min_unique_days` are dropped early from compilation. Defaults to `1`.
 #'
-#' @return A named `list` containing two components:
+#' @return A named `list` containing three components:
 #' \describe{
 #'   \item{detection_history}{A numeric base R `matrix` where rows represent
 #'     unique sites (assigned as row names), columns represent chronological temporal
 #'     occasions, and cells indicate binary occupancy integers (`1`, `0`,
 #'     or `NA` for missing effort).}
+#'   \item{effort_matrix}{A numeric base R `matrix` matching the exact dimensions and
+#'     sorting order of `detection_history`. If `n_files` was present in the effort data,
+#'     cells represent total file counts per site-occasion. Otherwise, cells contain binary
+#'     integers indicating presence (`1`) or absence (`0`) of operational effort.}
 #'   \item{detection_summary}{A data frame in long format containing the underlying
 #'     aggregated metrics per site/occasion, including detection counts (`n_detections`),
 #'     maximum verification confidence (`max_conf`), and the file path of the
@@ -48,7 +56,8 @@
 birdnet_detection_history <- function(data,
                                       effort_data,
                                       survey_interval,
-                                      i = -2) {
+                                      i = -2,
+                                      min_unique_days = 1) {
 
 
   # argument check ----------------------------------------------------------
@@ -62,10 +71,14 @@ birdnet_detection_history <- function(data,
   detections_summarized <- data |>
     birdnet_add_site(i = i) |>
     birdnet_add_datetime() |>
+    # filter to only include sites with detections from more than n days
+    dplyr::group_by(.data$site) |>
+    dplyr::filter(dplyr::n_distinct(.data$date) >= min_unique_days) |>
+    dplyr::ungroup() |>
+    # group detections into survey occasions based on the specified interval
     dplyr::mutate(occasion = lubridate::floor_date(x = .data$date,
                                                    unit = survey_interval)) |>
-    dplyr::group_by(.data$site,
-                    .data$occasion) |>
+    dplyr::group_by(.data$site, .data$occasion) |>
     dplyr::summarise(n_detections = dplyr::n(),
                      max_conf = max(.data[[cols$confidence]], na.rm = TRUE),
                      max_conf_audio = .data[[cols$filepath]][which.max(.data[[cols$confidence]])],
