@@ -77,7 +77,6 @@ birdnet_detection_history <- function(data,
   baseline_effort <- effort_data |>
     dplyr::mutate(occasion = lubridate::floor_date(x = .data$date,
                                                    unit = survey_interval))
-
   if ("n_files" %in% names(baseline_effort)) {
     # if n_files exists, aggregate the total file counts per site/occasion
     baseline_effort <- baseline_effort |>
@@ -102,6 +101,7 @@ birdnet_detection_history <- function(data,
                   max_conf_audio = tidyr::replace_na(.data$max_conf_audio, "none"))
 
 
+
   # 4. Creating matrix structure: pivot to wide format with sites as rows and occasions as columns
 
     # isolate matrix structure and shape wide for modeling packages (e.g., unmarked and spOccupancy)
@@ -110,7 +110,7 @@ birdnet_detection_history <- function(data,
     # manipulate n_detections column to make it 1 if it's larger than 0,
     # otherwise 0 (for occupancy modeling)
     dplyr::mutate(n_detections = ifelse(.data$n_detections > 0, 1, 0)) |>
-    dplyr::arrange(.data$occasion) |>
+    dplyr::arrange(.data$occasion, .data$site) |>
     tidyr::pivot_wider(id_cols = "site",
                        names_from = "occasion",
                        values_from = "n_detections",
@@ -120,7 +120,35 @@ birdnet_detection_history <- function(data,
   rownames(detection_history) <- detection_history_df$site
 
 
+
+  # 5. Create the effort matrix for detection probability purpose
+  baseline_effort <- baseline_effort |>
+    dplyr::arrange(.data$occasion, .data$site)
+
+  if ("n_files" %in% names(baseline_effort)) {
+    # if n_files exists, we can use the file counts as a measure of effort
+    wide_effort <- baseline_effort |>
+      tidyr::pivot_wider(id_cols = "site",
+                         names_from = "occasion",
+                         values_from = "n_files",
+                         values_fill = 0)
+  } else {
+    # if n_files is missing, we can only indicate presence (1) or absence (0) of effort
+    wide_effort <- baseline_effort |>
+      tidyr::pivot_wider(id_cols = "site",
+                         names_from = "occasion",
+                         values_from = "occasion",
+                         values_fn = \(x) 1,
+                         values_fill = 0)
+  }
+
+  # Strip the site column to create a clean matrix, keeping site names as rownames
+  effort_matrix <- as.matrix(wide_effort[, -1])
+  rownames(effort_matrix) <- wide_effort$site
+
+
   return(list("detection_history" = detection_history,
+              "effort_matrix" = effort_matrix,
               "detection_summary" = detections_zero_filled))
 }
 
