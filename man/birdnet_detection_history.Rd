@@ -2,9 +2,15 @@
 % Please edit documentation in R/birdnet_detection_history.R
 \name{birdnet_detection_history}
 \alias{birdnet_detection_history}
-\title{Generate Detection History Matrix and Summary for Occupancy Modeling}
+\title{Generate Detection History Matrix, Effort Matrix, and Summary for Occupancy Modeling}
 \usage{
-birdnet_detection_history(data, effort_data, survey_interval, i = -2)
+birdnet_detection_history(
+  data,
+  effort_data,
+  survey_interval,
+  i = -2,
+  min_unique_days = 1
+)
 }
 \arguments{
 \item{data}{A data frame containing BirdNET detections, including column matches
@@ -24,14 +30,22 @@ Passed directly to \code{\link[lubridate:floor_date]{lubridate::floor_date()}}.}
 
 \item{i}{An integer specifying the path hierarchy index for extracting site IDs.
 Passed directly to \code{\link{birdnet_add_site}}. Defaults to \code{-2}.}
+
+\item{min_unique_days}{An integer specifying the threshold of unique calendar days
+a site must possess raw detections on to be kept. Sites with detections spanning fewer
+than \code{min_unique_days} are dropped early from compilation. Defaults to \code{1}.}
 }
 \value{
-A named \code{list} containing two components:
+A named \code{list} containing three components:
 \describe{
 \item{detection_history}{A numeric base R \code{matrix} where rows represent
 unique sites (assigned as row names), columns represent chronological temporal
 occasions, and cells indicate binary occupancy integers (\code{1}, \code{0},
 or \code{NA} for missing effort).}
+\item{effort_matrix}{A numeric base R \code{matrix} matching the exact dimensions and
+sorting order of \code{detection_history}. If \code{n_files} was present in the effort data,
+cells represent total file counts per site-occasion. Otherwise, cells contain binary
+integers indicating presence (\code{1}) or absence (\code{0}) of operational effort.}
 \item{detection_summary}{A data frame in long format containing the underlying
 aggregated metrics per site/occasion, including detection counts (\code{n_detections}),
 maximum verification confidence (\code{max_conf}), and the file path of the
@@ -39,19 +53,20 @@ highest confidence detection (\code{max_conf_audio}).}
 }
 }
 \description{
-Summarizes BirdNET detection data across specified survey intervals (occasions)
-and aligns them with operational effort data. Returns both a zero-filled
-site-by-occasion binary matrix for packages like \code{spOccupancy} and \code{unmarked},
-and a detailed long-format data frame summary.
+Summarizes BirdNET detection data across specified survey intervals (occasions),
+filters sites based on minimal detection persistence thresholds, and aligns them
+with operational effort data. Returns a zero-filled site-by-occasion binary matrix,
+an identical matching matrix documenting sampling effort intensity for modeling
+detection probability covariates, and a detailed long-format data frame summary.
 }
 \details{
 The function groups continuous temporal data into distinct survey blocks using
 \code{lubridate::floor_date()}. Detections are cross-referenced against your
 \code{effort_data}: occasions where monitoring effort occurred but no target
 species were detected are explicitly zero-filled. If an ARU was not operational
-during a specific time block, it is preserved as an \code{NA} value to ensure
-structural integrity for missing-visit designs.
+during a specific time block, it is preserved as an \code{NA} value in the detection
+history to ensure structural integrity for missing-visit designs.
 
-Values greater than 0 in the final matrix are collapsed to \code{1} to format
-the output for binary presence/absence occupancy models.
+Values greater than 0 in the final detection matrix are collapsed to \code{1} to format
+the output for binary presence/absence occupancy models (e.g., \code{spOccupancy}, \code{unmarked}).
 }
