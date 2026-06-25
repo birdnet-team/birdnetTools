@@ -51,7 +51,7 @@ birdnet_add_datetime <- function(
 
     # parase the column name to the datetime format
     dplyr::mutate(
-      datetime = basename(data[[cols$filepath]]) |>
+      datetime = basename(.data[[cols$filepath]]) |>
         stringr::str_extract("\\d{8}.\\d{6}") |>
         lubridate::parse_date_time(
           orders = c("ymd_HMS", "ymd-HMS", "ymdHMS", "ymd HM"),
@@ -97,6 +97,65 @@ birdnet_drop_datetime <- function(data) {
 
   return(data)
 }
+
+
+
+
+
+#' Add site column from BirdNET output filenames
+#'
+#' Extracts a specific directory level from the file path column (automatically
+#' detected) to act as a site identifier, then adds a `site` column to the
+#' input data frame.
+#'
+#' The function uses [birdnet_detect_columns] to find the column containing
+#' file paths based on common name patterns. By default, it looks at the
+#' immediate parent folder of the file.
+#'
+#' @param data A data frame containing BirdNET output.
+#' @param i An integer specifying the index of the path element to extract
+#'   when split by slashes. Defaults to `-2`, which corresponds to the immediate
+#'   parent directory of the file (e.g., extracting "Site-A" from
+#'   "path/to/Site-A/audio.wav"). Negative values count from the right-hand side.
+#'
+#' @return A data frame with an additional column:
+#' \describe{
+#'   \item{site}{The extracted directory or folder name used as the site identifier.}
+#' }
+#'
+#' @examples
+#' \dontrun{
+#' combined_data <- birdnet_combine("path/to/BirdNET/output")
+#' data_with_site <- birdnet_add_site(combined_data, i = -2)
+#' }
+#'
+#' @keywords internal
+birdnet_add_site <- function(data,
+                             i = -2) {
+
+  # argument check ----------------------------------------------------------
+
+  # detect columns
+  cols <- birdnet_detect_columns(data)
+
+
+  # ensure filepath column was actually found
+  if (is.null(cols$filepath) || !(cols$filepath %in% colnames(data))) {
+    stop("Could not automatically detect a valid file path column in the data.")
+  }
+
+  # main function -----------------------------------------------------------
+
+  # extract site safely using tidy evaluation data masking
+  data_with_site <- data |>
+    dplyr::mutate(
+      site = stringr::str_split_i(.data[[cols$filepath]], "[/\\\\]", i = i)
+    )
+
+  return(data_with_site)
+}
+
+
 
 
 

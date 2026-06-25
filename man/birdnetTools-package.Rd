@@ -22,5 +22,10 @@ Useful links:
 \author{
 \strong{Maintainer}: Sunny Tseng \email{sunnyyctseng@gmail.com} (\href{https://orcid.org/0000-0002-8621-2244}{ORCID})
 
+Authors:
+\itemize{
+  \item Sunny Tseng \email{sunnyyctseng@gmail.com} (\href{https://orcid.org/0000-0002-8621-2244}{ORCID})
+}
+
 }
 \keyword{internal}

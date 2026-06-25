@@ -96,3 +96,114 @@ test_that("birdnet_detect_columns identifies correct columns or returns NA", {
   expect_true(all(vapply(detected2, function(x) is.na(x), logical(1))))
 })
 
+test_that("birdnet_add_site extracts the correct site from file paths", {
+  # Setup dummy data with standard column names that birdnet_detect_columns would find
+  # Assuming birdnet_detect_columns looks for 'filepath'
+  mock_data <- data.frame(
+    filepath = c("project/site-A/audio1.wav", "project/site-B/audio2.wav"),
+    species = c("Cardinalis cardinalis", "Cyanocitta cristata"),
+    stringsAsFactors = FALSE
+  )
+
+  # Test standard behavior (i = -2, immediate parent folder)
+  res_default <- birdnet_add_site(mock_data, i = -2)
+  expect_s3_class(res_default, "data.frame")
+  expect_true("site" %in% colnames(res_default))
+  expect_equal(res_default$site, c("site-A", "site-B"))
+
+  # Test alternative index (i = -3, grandfather folder)
+  res_parent <- birdnet_add_site(mock_data, i = -3)
+  expect_equal(res_parent$site, c("project", "project"))
+})
+
+test_that("birdnet_add_site handles both forward and backward slashes", {
+  # BirdNET users might be on Windows or Unix
+  mixed_paths <- data.frame(
+    filepath = c("windows\\style-site\\file.wav", "unix/style-site/file.wav"),
+    stringsAsFactors = FALSE
+  )
+
+  res <- birdnet_add_site(mixed_paths, i = -2)
+  expect_equal(res$site, c("style-site", "style-site"))
+})
+
+test_that("birdnet_add_site throws an error when filepath column is missing or undetectable", {
+  # Data with completely unrelated columns
+  bad_data <- data.frame(
+    id = c(1, 2),
+    confidence = c(0.8, 0.9)
+  )
+
+  # Expect an error containing our specific error message
+  expect_error(
+    birdnet_add_site(bad_data),
+    regexp = "Could not automatically detect a valid file path column"
+  )
+})
+
+test_that("birdnet_add_site handles NA values in filepath gracefully", {
+  missing_path_data <- data.frame(
+    filepath = c("project/site-A/audio1.wav", NA),
+    stringsAsFactors = FALSE
+  )
+
+  res <- birdnet_add_site(missing_path_data, i = -2)
+  expect_equal(res$site, c("site-A", NA_character_))
+})
+
+
+test_that("birdnet_add_site extracts the correct site from file paths", {
+  # Setup dummy data with standard column names that birdnet_detect_columns would find
+  # Assuming birdnet_detect_columns looks for 'filepath'
+  mock_data <- data.frame(
+    filepath = c("project/site-A/audio1.wav", "project/site-B/audio2.wav"),
+    species = c("Cardinalis cardinalis", "Cyanocitta cristata"),
+    stringsAsFactors = FALSE
+  )
+
+  # Test standard behavior (i = -2, immediate parent folder)
+  res_default <- birdnet_add_site(mock_data, i = -2)
+  expect_s3_class(res_default, "data.frame")
+  expect_true("site" %in% colnames(res_default))
+  expect_equal(res_default$site, c("site-A", "site-B"))
+
+  # Test alternative index (i = -3, grandfather folder)
+  res_parent <- birdnet_add_site(mock_data, i = -3)
+  expect_equal(res_parent$site, c("project", "project"))
+})
+
+test_that("birdnet_add_site handles both forward and backward slashes", {
+  # BirdNET users might be on Windows or Unix
+  mixed_paths <- data.frame(
+    filepath = c("windows\\style-site\\file.wav", "unix/style-site/file.wav"),
+    stringsAsFactors = FALSE
+  )
+
+  res <- birdnet_add_site(mixed_paths, i = -2)
+  expect_equal(res$site, c("style-site", "style-site"))
+})
+
+test_that("birdnet_add_site throws an error when filepath column is missing or undetectable", {
+  # Data with completely unrelated columns
+  bad_data <- data.frame(
+    id = c(1, 2),
+    confidence = c(0.8, 0.9)
+  )
+
+  # Expect an error containing our specific error message
+  expect_error(
+    birdnet_add_site(bad_data),
+    regexp = "Could not automatically detect a valid file path column"
+  )
+})
+
+test_that("birdnet_add_site handles NA values in filepath gracefully", {
+  missing_path_data <- data.frame(
+    filepath = c("project/site-A/audio1.wav", NA),
+    stringsAsFactors = FALSE
+  )
+
+  res <- birdnet_add_site(missing_path_data, i = -2)
+  expect_equal(res$site, c("site-A", NA_character_))
+})
+
