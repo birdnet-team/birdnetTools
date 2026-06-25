@@ -36,10 +36,13 @@ birdnet_get_effort <- function(path, i = -2) {
 
   # argument check ----------------------------------------------------------
 
-  # ensure the directory actually exists before processing
-  if (!dir.exists(path)) {
-    stop(paste0("The directory '", path, "' does not exist."))
-  }
+  # 1. Check path is a single, valid directory path string
+  checkmate::assert_string(path, min.chars = 1)
+  checkmate::assert_directory_exists(path, access = "r")
+
+
+  # 2. Check i is an integer
+  checkmate::assert_int(i, tol = 0)
 
 
   # main function -----------------------------------------------------------
