@@ -62,6 +62,61 @@ birdnet_detection_history <- function(data,
 
   # argument check ----------------------------------------------------------
 
+  # 1. Check data is a data frame with required columns
+  checkmate::assert_data_frame(data)
+
+  cols <- birdnet_detect_columns(data)
+  required_cols <- c("confidence", "filepath")
+  missing_cols <- required_cols[is.na(cols[required_cols])]
+
+  if (length(missing_cols) > 0) {
+    rlang::abort(
+      paste0(
+        "The input data is missing required BirdNET columns: ",
+        paste(missing_cols, collapse = ", "),
+        ". Please provide a valid BirdNET output data frame."
+      )
+    )
+  }
+
+
+  # 2. Check effort_data is a data frame with required columns
+  checkmate::assert_data_frame(effort_data)
+
+  effort_cols <- colnames(effort_data)
+  required_effort_cols <- c("site", "date")
+  missing_effort_cols <- setdiff(required_effort_cols, effort_cols)
+
+  if (length(missing_effort_cols) > 0) {
+    rlang::abort(
+      paste0(
+        "The input effort data is missing required columns: ",
+        paste(missing_effort_cols, collapse = ", "),
+        ". Please provide a valid effort data frame."
+      )
+    )
+  }
+
+  # 3. Check survey_interval is a character string following lubridate units
+  checkmate::assert_string(survey_interval, min.chars = 1)
+  if (!stringr::str_detect(survey_interval, "^\\d*\\s*(day|week|month|year|hour|minute)s?$")) {
+    rlang::abort(
+      paste0(
+        "`survey_interval` must be a valid lubridate unit string (e.g., '1 day', '2 weeks'). ",
+        "You provided: '", survey_interval, "'."
+      )
+    )
+  }
+
+  # 4. Check i is an integer
+  checkmate::assert_int(i, tol = 0)
+
+  # 5. Check min_unique_days is a positive integer
+  checkmate::assert_int(min_unique_days, lower = 1, tol = 0)
+
+
+
+
 
   # main function -----------------------------------------------------------
 
