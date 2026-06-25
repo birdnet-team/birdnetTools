@@ -16,3 +16,8 @@ Useful links:
 
 **Maintainer**: Sunny Tseng <sunnyyctseng@gmail.com>
 ([ORCID](https://orcid.org/0000-0002-8621-2244))
+
+Authors:
+
+- Sunny Tseng <sunnyyctseng@gmail.com>
+  ([ORCID](https://orcid.org/0000-0002-8621-2244))

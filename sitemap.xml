@@ -9,10 +9,12 @@
 <url><loc>https://birdnet-team.github.io/birdnetTools/news/index.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnetTools-package.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_add_datetime.html</loc></url>
+<url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_add_site.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_calc_threshold.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_clean_names.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_combine.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_detect_columns.html</loc></url>
+<url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_detection_history.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_drop_datetime.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_filter.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_filter_date_range.html</loc></url>
@@ -20,11 +22,13 @@
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_filter_species.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_filter_threshold.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_filter_year.html</loc></url>
+<url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_get_effort.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_heatmap.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_launch_validation.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_subsample.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_validation_server.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_validation_ui.html</loc></url>
+<url><loc>https://birdnet-team.github.io/birdnetTools/reference/effort_jprf_2023.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/example_jprf_2023.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/index.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/what_time.html</loc></url>

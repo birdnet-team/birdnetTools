@@ -24,7 +24,17 @@
   : Calculate species-specific confidence thresholds for BirdNET
   detections
 
+## Occupancy Modelling
+
+- [`birdnet_get_effort()`](https://birdnet-team.github.io/birdnetTools/reference/birdnet_get_effort.md)
+  : Calculate recording effort by site and date
+- [`birdnet_detection_history()`](https://birdnet-team.github.io/birdnetTools/reference/birdnet_detection_history.md)
+  : Generate Detection History Matrix, Effort Matrix, and Summary for
+  Occupancy Modeling
+
 ## Dataset
 
 - [`example_jprf_2023`](https://birdnet-team.github.io/birdnetTools/reference/example_jprf_2023.md)
   : Example BirdNET selection table from John Prince Research Forest
+- [`effort_jprf_2023`](https://birdnet-team.github.io/birdnetTools/reference/effort_jprf_2023.md)
+  : Example monitoring effort table from John Prince Research Forest
