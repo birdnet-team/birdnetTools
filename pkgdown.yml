@@ -1,9 +1,9 @@
 pandoc: 3.8.3
-pkgdown: 2.2.0
+pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   birdnetTools: birdnetTools.html
-last_built: 2026-06-25T21:52Z
+last_built: 2026-08-24T21:50Z
 urls:
   reference: https://birdnet-team.github.io/birdnetTools/reference
   article: https://birdnet-team.github.io/birdnetTools/articles
