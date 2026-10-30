@@ -199,27 +199,18 @@ birdnet_validation_server <- function(input, output, session) {
   # reactive value for audio file path ----------------------------------
 
   roots <- if (.Platform$OS.type == "windows") {
-    # list all available drives on Windows
-    ps_cmd <- paste(
-      "powershell -NoProfile -Command",
-      "\"Get-PSDrive -PSProvider FileSystem | Select-Object -ExpandProperty Root\""
-    )
+    # List all available drives on Windows by checking which drive letters
+    # (A:/ to Z:/) exist with dir.exists(), instead of shelling out to
+    # PowerShell (Get-PSDrive), so no external command is needed
+    drive_letters <- paste0(LETTERS, ":/")
+    present <- dir.exists(drive_letters)
+    drives <- drive_letters[present]
+    names(drives) <- LETTERS[present]
 
-    drives <- tryCatch(
-      system(ps_cmd, intern = TRUE, ignore.stderr = TRUE),
-      error = function(e) character()
-    )
-
-    # Clean and keep only those that look like "C:\"
-    drives <- drives[grepl("^[A-Z]:\\\\$", drives)]
-    drives <- gsub("\\\\$", "", drives)   # remove trailing backslash to match old style
-
-
-    # add drives with their names as keys
     c(Desktop = file.path(Sys.getenv("USERPROFILE"), "Desktop"),
       Documents = file.path(Sys.getenv("USERPROFILE"), "Documents"),
       Working_dir = ".",
-      setNames(drives, drives))
+      drives) # Add drives with their letters as keys
 
 
   } else {
@@ -362,16 +353,24 @@ birdnet_validation_server <- function(input, output, session) {
 
   shiny::observeEvent(input$main_table_cell_clicked, {
     info <- input$main_table_cell_clicked
-    if (is.null(info$value)) {
+    if (is.null(info$value) || !info$col %in% c(7, 8)) {
       return()
     }
 
+    # without an audio folder, dir_path() is empty and file.exists() returns
+    # logical(0), which errors inside if() and ends the session
+    if (length(dir_path()) == 0) {
+      shiny::showNotification("Please select the audio folder first.",
+                              type = "warning")
+      return()
+    }
+
+    selected_row <- rv$data_display[info$row, ]
+    filepath <- file.path(dir_path(),
+                          basename(selected_row[[rv$cols$filepath]]))
+
     # Spectrogram button column
     if (info$col == 7) {
-      selected_row <- rv$data_display[info$row, ]
-      filepath <- file.path(dir_path(),
-                            basename(selected_row[[rv$cols$filepath]]))
-
       if (file.exists(filepath)) {
         output$spectrogram <- shiny::renderPlot({
           view_spectrogram(
@@ -390,16 +389,21 @@ birdnet_validation_server <- function(input, output, session) {
 
     # Audio play button column
     if (info$col == 8) {
-      selected_row <- rv$data_display[info$row, ]
-      filepath <- file.path(dir_path(),
-                            basename(selected_row[[rv$cols$filepath]]))
-
       if (file.exists(filepath)) {
-        play_audio(
-          filepath = filepath,
-          start = selected_row[[rv$cols$start]],
-          end = selected_row[[rv$cols$end]],
-          buffer = (input$duration - 3)/2
+        # catch conversion/playback errors so they don't close the app
+        tryCatch(
+          play_audio(
+            filepath = filepath,
+            start = selected_row[[rv$cols$start]],
+            end = selected_row[[rv$cols$end]],
+            buffer = (input$duration - 3)/2
+          ),
+          error = function(e) {
+            shiny::showNotification(
+              paste("Error playing audio:", e$message),
+              type = "error"
+            )
+          }
         )
       } else {
         shiny::showNotification("Audio file not found.", type = "error")

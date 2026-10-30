@@ -110,3 +110,40 @@ test_that("shows cli messages on errors", {
 
 
 
+
+
+
+test_that("combines files where species names are numeric-only", {
+  temp_dir <- file.path(tempdir(), "numeric_names")
+  dir.create(temp_dir, showWarnings = FALSE)
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+
+  writeLines("start,end,filepath,common_name,scientific_name,confidence\n0,3,a.wav,123,456,0.9",
+             file.path(temp_dir, "numeric.csv"))
+  writeLines("start,end,filepath,common_name,scientific_name,confidence\n3,6,b.wav,robin,Turdidae,0.8",
+             file.path(temp_dir, "text.csv"))
+
+  result <- birdnet_combine(temp_dir)
+
+  expect_equal(nrow(result), 2)
+  expect_type(result$common_name, "character")
+  expect_type(result$scientific_name, "character")
+  expect_true(all(c("123", "robin") %in% result$common_name))
+  expect_type(result$start, "double")
+  expect_type(result$confidence, "double")
+})
+
+
+
+test_that("does not read rows from CombinedTable or analysis_params", {
+  temp_dir <- file.path(tempdir(), "filtered_rows")
+  dir.create(temp_dir, showWarnings = FALSE)
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+
+  header <- "start,end,filepath,common_name,scientific_name,confidence"
+  writeLines(c(header, "0,3,a.wav,robin,Turdidae,0.9"), file.path(temp_dir, "a.csv"))
+  writeLines(c(header, "0,3,a.wav,robin,Turdidae,0.9"), file.path(temp_dir, "CombinedTable.csv"))
+  writeLines("param,value\nmin_conf,0.1", file.path(temp_dir, "analysis_params.csv"))
+
+  expect_equal(nrow(birdnet_combine(temp_dir)), 1)
+})

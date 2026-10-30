@@ -77,9 +77,12 @@ birdnet_combine <- function(path,
 
   # process files one by one ------------------------------------------------
 
-  for (file in all_files) {
+  for (file in filtered_files) {
     df <- tryCatch(
-      readr::read_delim(file, show_col_types = FALSE),
+      # read all columns as character so types can't conflict across files
+      readr::read_delim(file,
+                        col_types = readr::cols(.default = readr::col_character()),
+                        show_col_types = FALSE),
       error = function(e) {
         error_files <<- c(error_files, file)
         return(NULL)
@@ -109,6 +112,15 @@ birdnet_combine <- function(path,
 
   results <- dplyr::bind_rows(dfs)
 
+  # re-guess column types on the combined data, but keep species/label
+  # columns as character (custom classifiers may use numeric-only names)
+  name_cols <- grep("name|species|label|file", names(results),
+                    ignore.case = TRUE, value = TRUE)
+  other_cols <- setdiff(names(results), name_cols)
+  results[other_cols] <- readr::type_convert(
+    results[other_cols],
+    col_types = readr::cols(.default = readr::col_guess())
+  )
 
 
   # reporting ---------------------------------------------------------------
