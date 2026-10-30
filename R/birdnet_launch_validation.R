@@ -199,27 +199,18 @@ birdnet_validation_server <- function(input, output, session) {
   # reactive value for audio file path ----------------------------------
 
   roots <- if (.Platform$OS.type == "windows") {
-    # list all available drives on Windows
-    ps_cmd <- paste(
-      "powershell -NoProfile -Command",
-      "\"Get-PSDrive -PSProvider FileSystem | Select-Object -ExpandProperty Root\""
-    )
+    # List all available drives on Windows by checking which drive letters
+    # (A:/ to Z:/) exist with dir.exists(), instead of shelling out to
+    # PowerShell (Get-PSDrive), so no external command is needed
+    drive_letters <- paste0(LETTERS, ":/")
+    present <- dir.exists(drive_letters)
+    drives <- drive_letters[present]
+    names(drives) <- LETTERS[present]
 
-    drives <- tryCatch(
-      system(ps_cmd, intern = TRUE, ignore.stderr = TRUE),
-      error = function(e) character()
-    )
-
-    # Clean and keep only those that look like "C:\"
-    drives <- drives[grepl("^[A-Z]:\\\\$", drives)]
-    drives <- gsub("\\\\$", "", drives)   # remove trailing backslash to match old style
-
-
-    # add drives with their names as keys
     c(Desktop = file.path(Sys.getenv("USERPROFILE"), "Desktop"),
       Documents = file.path(Sys.getenv("USERPROFILE"), "Documents"),
       Working_dir = ".",
-      setNames(drives, drives))
+      drives) # Add drives with their letters as keys
 
 
   } else {
