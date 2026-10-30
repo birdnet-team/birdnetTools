@@ -353,16 +353,24 @@ birdnet_validation_server <- function(input, output, session) {
 
   shiny::observeEvent(input$main_table_cell_clicked, {
     info <- input$main_table_cell_clicked
-    if (is.null(info$value)) {
+    if (is.null(info$value) || !info$col %in% c(7, 8)) {
       return()
     }
 
+    # without an audio folder, dir_path() is empty and file.exists() returns
+    # logical(0), which errors inside if() and ends the session
+    if (length(dir_path()) == 0) {
+      shiny::showNotification("Please select the audio folder first.",
+                              type = "warning")
+      return()
+    }
+
+    selected_row <- rv$data_display[info$row, ]
+    filepath <- file.path(dir_path(),
+                          basename(selected_row[[rv$cols$filepath]]))
+
     # Spectrogram button column
     if (info$col == 7) {
-      selected_row <- rv$data_display[info$row, ]
-      filepath <- file.path(dir_path(),
-                            basename(selected_row[[rv$cols$filepath]]))
-
       if (file.exists(filepath)) {
         output$spectrogram <- shiny::renderPlot({
           view_spectrogram(
@@ -381,16 +389,21 @@ birdnet_validation_server <- function(input, output, session) {
 
     # Audio play button column
     if (info$col == 8) {
-      selected_row <- rv$data_display[info$row, ]
-      filepath <- file.path(dir_path(),
-                            basename(selected_row[[rv$cols$filepath]]))
-
       if (file.exists(filepath)) {
-        play_audio(
-          filepath = filepath,
-          start = selected_row[[rv$cols$start]],
-          end = selected_row[[rv$cols$end]],
-          buffer = (input$duration - 3)/2
+        # catch conversion/playback errors so they don't close the app
+        tryCatch(
+          play_audio(
+            filepath = filepath,
+            start = selected_row[[rv$cols$start]],
+            end = selected_row[[rv$cols$end]],
+            buffer = (input$duration - 3)/2
+          ),
+          error = function(e) {
+            shiny::showNotification(
+              paste("Error playing audio:", e$message),
+              type = "error"
+            )
+          }
         )
       } else {
         shiny::showNotification("Audio file not found.", type = "error")
