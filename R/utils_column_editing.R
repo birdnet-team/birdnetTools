@@ -41,10 +41,7 @@ birdnet_add_datetime <- function(
                 "%Y%m%d_%H%M",
 
                 "%d%m%Y_%H%M%S",
-                "%d%m%Y_%H%M",
-
-                "%m%d%Y_%H%M%S",
-                "%m%d%Y_%H%M"),
+                "%m%d%Y_%H%M%S"),
     tz = "UTC") {
 
   # argument check ----------------------------------------------------------
@@ -67,6 +64,12 @@ birdnet_add_datetime <- function(
     return(data)
   }
 
+  # check if some of the datetime columns already exist
+  overlap <- intersect(new_cols, names(data))
+  if (length(overlap) > 0) {
+    cli::cli_warn("Existing column{?s} {.field {overlap}} will be overwritten.")
+  }
+
   # main function -----------------------------------------------------------
 
   # get the file name to work with (which contains the datetime)
@@ -79,7 +82,7 @@ birdnet_add_datetime <- function(
       as.POSIXct(tz = tz)
   })
 
-  datetime <- Reduce(dplyr::coalesce, parsed)
+  dt <- Reduce(dplyr::coalesce, parsed)
 
 
 
@@ -93,8 +96,8 @@ birdnet_add_datetime <- function(
 
 
   # tell the user exactly what went wrong instead of silently returning NAs
-  n_total   <- length(datetime)
-  n_failed  <- sum(is.na(datetime))
+  n_total   <- length(dt)
+  n_failed  <- sum(is.na(dt))
   n_success <- n_total - n_failed
 
   if (n_success > 0) {
@@ -105,20 +108,21 @@ birdnet_add_datetime <- function(
 
   if (n_failed > 0) {
     cli::cli_alert_warning("{n_failed} of {n_total} file name{?s} could not be parsed into a datetime.")
-    cli::cli_alert_info("Check that {.arg formats} matches your file path. Use {.fn birdnet_test_datetime} to test your formats.")
+    cli::cli_alert_info("Default {.arg formats} may not match your file names. See {.help birdnet_add_datetime} to define your own.")
   }
 
   if (n_ambiguous > 0) {
-    shown <- head(amb_rows, 5)
     cli::cli_alert_warning("{n_ambiguous} file name{?s} matched more than one format with different results. The first matching format was used.")
-    cli::cli_alert_info("Check row{?s} {shown}{if (n_ambiguous > 5) ', ...'}.")
+    shown <- head(amb_rows, 5)
+    more  <- if (n_ambiguous > 5) " (and more)" else ""
+    cli::cli_alert_info("Check row{?s} {shown}{more}.")
   }
 
 
   # mutate to add date and time components
   data_with_datetime <- data |>
     dplyr::mutate(
-      datetime = datetime,
+      datetime = dt,
       date = lubridate::date(datetime),
       year = lubridate::year(datetime),
       month = lubridate::month(datetime),
