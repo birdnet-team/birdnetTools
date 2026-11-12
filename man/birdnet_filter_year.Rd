@@ -4,7 +4,7 @@
 \alias{birdnet_filter_year}
 \title{Filter BirdNET data by year}
 \usage{
-birdnet_filter_year(data, year_arg)
+birdnet_filter_year(data, year_arg, ...)
 }
 \arguments{
 \item{data}{A data frame containing BirdNET output. If the \code{year} column is absent,

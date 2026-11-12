@@ -43,7 +43,8 @@ birdnet_filter <- function(
     year = NULL,
     min_date = NULL,
     max_date = NULL,
-    hour = NULL
+    hour = NULL,
+    ...
 ) {
 
 
@@ -145,20 +146,20 @@ birdnet_filter <- function(
 
   # filter by year
   if (!is.null(year)) {
-    data_filtered <- birdnet_filter_year(data_filtered, year)
+    data_filtered <- birdnet_filter_year(data_filtered, year, ...)
     filter_log$year <- year
   }
 
   # filter by date range
   if (!is.null(min_date) || !is.null(max_date)) {
-    data_filtered <- birdnet_filter_date_range(data_filtered, min_date, max_date)
+    data_filtered <- birdnet_filter_date_range(data_filtered, min_date, max_date, ...)
     filter_log$min_date <- min_date
     filter_log$max_date <- max_date
   }
 
   # filter by hour
   if (!is.null(hour)) {
-    data_filtered <- birdnet_filter_hour(data_filtered, hour)
+    data_filtered <- birdnet_filter_hour(data_filtered, hour, ...)
     filter_log$hour <- hour
   }
 
