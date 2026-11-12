@@ -85,7 +85,10 @@ birdnet_add_datetime <- function(
 
   # ambiguity check - if one entry gets mapped into multiple formats, warn the user
   mat <- do.call(cbind, lapply(parsed, as.numeric))
-  n_ambiguous <- sum(apply(mat, 1, \(r) length(unique(r[!is.na(r)]))) > 1)
+
+  amb <- apply(mat, 1, \(r) length(unique(r[!is.na(r)]))) > 1
+  amb_rows <- which(amb)
+  n_ambiguous <- length(amb_rows)
 
 
 
@@ -101,18 +104,14 @@ birdnet_add_datetime <- function(
   }
 
   if (n_failed > 0) {
-    cli::cli_alert_warning(
-      "{n_failed} of {n_total} file name{?s} could not be parsed into a datetime."
-    )
-    cli::cli_alert_info(
-      "Check that {.arg pattern} matches your file names and that {.arg orders} matches the extracted text."
-    )
+    cli::cli_alert_warning("{n_failed} of {n_total} file name{?s} could not be parsed into a datetime.")
+    cli::cli_alert_info("Check that {.arg formats} matches your file path. Use {.fn birdnet_test_datetime} to test your formats.")
   }
 
   if (n_ambiguous > 0) {
-    cli::cli_alert_warning(
-      "{n_ambiguous} file name{?s} matched more than one format with different results. The first matching format was used; please check them."
-    )
+    shown <- head(amb_rows, 5)
+    cli::cli_alert_warning("{n_ambiguous} file name{?s} matched more than one format with different results. The first matching format was used.")
+    cli::cli_alert_info("Check row{?s} {shown}{if (n_ambiguous > 5) ', ...'}.")
   }
 
 
