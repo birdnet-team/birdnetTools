@@ -16,7 +16,9 @@
 #'   for how ambiguous dates are handled.
 #' @param tz A character string specifying the time zone to assign when parsing datetime.
 #'   Defaults to `"UTC"`.
-#'
+#' @param quiet Logical. If `TRUE`, suppresses the status messages about how
+#'   many file names were parsed, failed, or were ambiguous. Warnings are still
+#'   shown. Defaults to `FALSE`.
 #'
 #'
 #' @details
@@ -75,13 +77,15 @@ birdnet_add_datetime <- function(
 
                 "%d%m%Y_%H%M%S",
                 "%m%d%Y_%H%M%S"),
-    tz = "UTC") {
+    tz = "UTC",
+    quiet = FALSE) {
 
   # argument check ----------------------------------------------------------
 
   checkmate::assert_data_frame(data)
   checkmate::assert_character(formats, min.len = 1, any.missing = FALSE)
   checkmate::assert_string(tz)
+  checkmate::assert_flag(quiet)
 
   cols <- birdnet_detect_columns(data)
 
@@ -133,24 +137,25 @@ birdnet_add_datetime <- function(
   n_failed  <- sum(is.na(dt))
   n_success <- n_total - n_failed
 
-  if (n_success > 0) {
-    cli::cli_alert_success(
-      "Parsed datetime for {n_success} of {n_total} file name{?s}."
-    )
-  }
+  if (!quiet) {
+    if (n_success > 0) {
+      cli::cli_alert_success(
+        "Parsed datetime for {n_success} of {n_total} file name{?s}."
+      )
+    }
 
-  if (n_failed > 0) {
-    cli::cli_alert_warning("{n_failed} of {n_total} file name{?s} could not be parsed into a datetime.")
-    cli::cli_alert_info("Default {.arg formats} may not match your file names. See {.help birdnet_add_datetime} to define your own.")
-  }
+    if (n_failed > 0) {
+      cli::cli_alert_warning("{n_failed} of {n_total} file name{?s} could not be parsed into a datetime.")
+      cli::cli_alert_info("Default {.arg formats} may not match your file names. See {.help birdnet_add_datetime} to define your own.")
+    }
 
-  if (n_ambiguous > 0) {
-    cli::cli_alert_warning("{n_ambiguous} file name{?s} matched more than one format with different results. The first matching format was used.")
-    shown <- utils::head(amb_rows, 5)
-    more  <- if (n_ambiguous > 5) " (and more)" else ""
-    cli::cli_alert_info("Check row{?s} {shown}{more}.")
+    if (n_ambiguous > 0) {
+      cli::cli_alert_warning("{n_ambiguous} file name{?s} matched more than one format with different results. The first matching format was used.")
+      shown <- utils::head(amb_rows, 5)
+      more  <- if (n_ambiguous > 5) " (and more)" else ""
+      cli::cli_alert_info("Check row{?s} {shown}{more}.")
+    }
   }
-
 
   # mutate to add date and time components
   data_with_datetime <- data |>

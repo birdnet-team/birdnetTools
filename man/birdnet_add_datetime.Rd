@@ -8,7 +8,8 @@ birdnet_add_datetime(
   data,
   formats = c("\%Y\%m\%dT\%H\%M\%S", "\%Y\%m\%d\%H\%M\%S", "\%Y\%m\%d_\%H\%M\%S",
     "\%Y\%m\%d_\%H\%M", "\%d\%m\%Y_\%H\%M\%S", "\%m\%d\%Y_\%H\%M\%S"),
-  tz = "UTC"
+  tz = "UTC",
+  quiet = FALSE
 )
 }
 \arguments{
@@ -22,6 +23,10 @@ for how ambiguous dates are handled.}
 
 \item{tz}{A character string specifying the time zone to assign when parsing datetime.
 Defaults to \code{"UTC"}.}
+
+\item{quiet}{Logical. If \code{TRUE}, suppresses the status messages about how
+many file names were parsed, failed, or were ambiguous. Warnings are still
+shown. Defaults to \code{FALSE}.}
 }
 \value{
 A data frame with additional columns:
