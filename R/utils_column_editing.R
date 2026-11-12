@@ -34,15 +34,23 @@
 #' @export
 birdnet_add_datetime <- function(
     data,
-    #col = filepath,
     tz = "UTC") {
+
   # argument check ----------------------------------------------------------
 
-  # if there is already all the columns, show the warning messages that the
-  # original datetime will be kept and no new data will be calculated
-  # if there is no column can be found to contain the path information, show error
+  checkmate::assert_data_frame(data)
+  #checkmate::assert_string(pattern)
+  #checkmate::assert_character(orders, min.len = 1)
+  checkmate::assert_string(tz)
+
+  cols <- birdnet_detect_columns(data)
+
+  if (is.na(cols$filepath)) {
+    cli::cli_abort("Can't find a column containing file names or paths.")
+  }
 
   # main function -----------------------------------------------------------
+
 
   cols <- birdnet_detect_columns(data)
 
@@ -246,8 +254,7 @@ birdnet_detect_columns <- function(data) {
 
   col_matches <- function(patterns) {
     pattern <- stringr::str_c(patterns, collapse = "|")  # create a single regex pattern
-    match <- names(data)[stringr::str_detect(names(data),
-                                             stringr::regex(pattern, ignore_case = TRUE))]
+    match <- names(data)[stringr::str_detect(names(data), stringr::regex(pattern, ignore_case = TRUE))]
     if (length(match) == 0) return(NA_character_)
     return(match[1])  # return first match
   }
