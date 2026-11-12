@@ -14,6 +14,12 @@ birdnet_add_datetime(
 \arguments{
 \item{data}{A data frame containing BirdNET output.}
 
+\item{formats}{A character vector of datetime formats, using the same codes
+as \code{\link[=strptime]{strptime()}} (see Details). Formats are tried in order, and the first
+one that successfully parses a file name is used. Defaults to common
+year-first formats, plus day-first and month-first variants. See Details
+for how ambiguous dates are handled.}
+
 \item{tz}{A character string specifying the time zone to assign when parsing datetime.
 Defaults to \code{"UTC"}.}
 }
@@ -29,6 +35,10 @@ A data frame with additional columns:
 \item{hour}{Hour of the day.}
 \item{minute}{Minute of the hour.}
 }
+
+Rows whose file names can't be parsed get \code{NA} in all of these columns.
+Existing columns with these names are overwritten, with a warning. If all of
+these columns already exist, the data is returned unchanged.
 }
 \description{
 Extracts and parses datetime information from filenames in the file path column
@@ -38,8 +48,30 @@ Extracts and parses datetime information from filenames in the file path column
 \details{
 The function uses \link{birdnet_detect_columns} to find the column
 containing file paths based on common name patterns (e.g., "file", "path").
-Filenames are expected to contain a datetime string in the format
-\code{"YYYYMMDD_HHMMSS"} or similar.
+The datetime is read from the file name only (the part after the last \code{/} or
+\verb{\\}). Several common formats are tried by default,
+and you can supply your own with \code{formats} (see Details).
+
+\strong{Defining your own formats.} If the default \code{formats} don't match your
+file names, supply a format for each pattern in your data.
+
+Supported codes:
+\itemize{
+\item \verb{\%Y}: 4-digit year (1900-2099)
+\item \verb{\%y}: 2-digit year
+\item \verb{\%m}: 2-digit month
+\item \verb{\%d}: 2-digit day
+\item \verb{\%H}, \verb{\%M}, \verb{\%S}: 2-digit hour, minute, second
+}
+
+Any other characters (such as \verb{_}, \code{-}, or \code{T}) are matched literally. For
+example, \verb{site1_2024-06-15_0530.wav} needs \code{formats = "\%Y-\%m-\%d_\%H\%M"}.
+
+\strong{Ambiguous dates.} The defaults include both day-first (\verb{\%d\%m\%Y}) and
+month-first (\verb{\%m\%d\%Y}) formats. A file name such as \verb{05062023_133500} is
+valid as both, so the format listed first (day-first) is used and a message
+lists the rows to check. If your data uses only one convention, supply that
+format on its own to avoid the ambiguity.
 }
 \examples{
 \dontrun{

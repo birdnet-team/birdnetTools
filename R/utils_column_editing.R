@@ -2,16 +2,38 @@
 #'
 #' Extracts and parses datetime information from filenames in the file path column
 #' (automatically detected), then adds several useful time-related columns
-#' (e.g., `date`, `year`, `month`, `hour`) to the input data frame.
-#'
-#' The function uses [birdnet_detect_columns] to find the column
-#' containing file paths based on common name patterns (e.g., "file", "path").
-#' Filenames are expected to contain a datetime string in the format
-#' `"YYYYMMDD_HHMMSS"` or similar.
+#' (e.g., `date`, `year`, `month`, `hour`) to the input data frame. Several common
+#' formats are tried by default, and users can supply their own with `formats`
+#' (see Details).
 #'
 #' @param data A data frame containing BirdNET output.
+#' @param formats A character vector of datetime formats, using the same codes
+#'   as [strptime()] (see Details). Formats are tried in order, and the first
+#'   one that successfully parses a file name is used. Defaults to common
+#'   year-first formats, plus day-first and month-first variants. See Details
+#'   for how ambiguous dates are handled.
 #' @param tz A character string specifying the time zone to assign when parsing datetime.
 #'   Defaults to `"UTC"`.
+#'
+#' @details
+#' **Defining your own formats.** If the default `formats` don't match your
+#' file names, supply a format for each pattern in your data.
+#'
+#' Supported codes:
+#' * `%Y`: 4-digit year (1900-2099)
+#' * `%y`: 2-digit year
+#' * `%m`: 2-digit month
+#' * `%d`: 2-digit day
+#' * `%H`, `%M`, `%S`: 2-digit hour, minute, second
+#'
+#' Any other characters (such as `_`, `-`, or `T`) are matched literally. For
+#' example, `site1_2024-06-15_0530.wav` needs `formats = "%Y-%m-%d_%H%M"`.
+#'
+#' **Ambiguous dates.** The defaults include both day-first (`%d%m%Y`) and
+#' month-first (`%m%d%Y`) formats. A file name such as `05062023_133500` is
+#' valid as both, so the format listed first (day-first) is used and a message
+#' lists the rows to check. If your data uses only one convention, supply that
+#' format on its own to avoid the ambiguity.
 #'
 #' @return A data frame with additional columns:
 #' \describe{
@@ -24,6 +46,10 @@
 #'   \item{hour}{Hour of the day.}
 #'   \item{minute}{Minute of the hour.}
 #' }
+#'
+#' Rows whose file names can't be parsed get `NA` in all of these columns.
+#' Existing columns with these names are overwritten, with a warning. If all of
+#' these columns already exist, the data is returned unchanged.
 #'
 #' @examples
 #' \dontrun{
@@ -113,7 +139,7 @@ birdnet_add_datetime <- function(
 
   if (n_ambiguous > 0) {
     cli::cli_alert_warning("{n_ambiguous} file name{?s} matched more than one format with different results. The first matching format was used.")
-    shown <- head(amb_rows, 5)
+    shown <- utils::head(amb_rows, 5)
     more  <- if (n_ambiguous > 5) " (and more)" else ""
     cli::cli_alert_info("Check row{?s} {shown}{more}.")
   }
