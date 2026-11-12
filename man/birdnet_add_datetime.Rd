@@ -43,15 +43,11 @@ these columns already exist, the data is returned unchanged.
 \description{
 Extracts and parses datetime information from filenames in the file path column
 (automatically detected), then adds several useful time-related columns
-(e.g., \code{date}, \code{year}, \code{month}, \code{hour}) to the input data frame.
+(e.g., \code{date}, \code{year}, \code{month}, \code{hour}) to the input data frame. Several common
+formats are tried by default, and users can supply their own with \code{formats}
+(see Details).
 }
 \details{
-The function uses \link{birdnet_detect_columns} to find the column
-containing file paths based on common name patterns (e.g., "file", "path").
-The datetime is read from the file name only (the part after the last \code{/} or
-\verb{\\}). Several common formats are tried by default,
-and you can supply your own with \code{formats} (see Details).
-
 \strong{Defining your own formats.} If the default \code{formats} don't match your
 file names, supply a format for each pattern in your data.
 
@@ -75,8 +71,7 @@ format on its own to avoid the ambiguity.
 }
 \examples{
 \dontrun{
-combined_data <- birdnet_combine("path/to/BirdNET/output")
-data_with_time <- birdnet_add_datetime(combined_data)
+birdnet_add_datetime(example_jprf_2023) |>
+glimpse()
 }
-
 }

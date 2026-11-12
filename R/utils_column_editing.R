@@ -6,6 +6,8 @@
 #' formats are tried by default, and users can supply their own with `formats`
 #' (see Details).
 #'
+#'
+#'
 #' @param data A data frame containing BirdNET output.
 #' @param formats A character vector of datetime formats, using the same codes
 #'   as [strptime()] (see Details). Formats are tried in order, and the first
@@ -14,6 +16,8 @@
 #'   for how ambiguous dates are handled.
 #' @param tz A character string specifying the time zone to assign when parsing datetime.
 #'   Defaults to `"UTC"`.
+#'
+#'
 #'
 #' @details
 #' **Defining your own formats.** If the default `formats` don't match your
@@ -35,6 +39,8 @@
 #' lists the rows to check. If your data uses only one convention, supply that
 #' format on its own to avoid the ambiguity.
 #'
+#'
+#'
 #' @return A data frame with additional columns:
 #' \describe{
 #'   \item{datetime}{POSIXct datetime parsed from the filename.}
@@ -51,12 +57,13 @@
 #' Existing columns with these names are overwritten, with a warning. If all of
 #' these columns already exist, the data is returned unchanged.
 #'
+#'
+#'
 #' @examples
 #' \dontrun{
-#' combined_data <- birdnet_combine("path/to/BirdNET/output")
-#' data_with_time <- birdnet_add_datetime(combined_data)
+#' birdnet_add_datetime(example_jprf_2023) |>
+#' glimpse()
 #' }
-#'
 #' @export
 birdnet_add_datetime <- function(
     data,
