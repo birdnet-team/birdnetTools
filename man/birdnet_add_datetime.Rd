@@ -4,7 +4,12 @@
 \alias{birdnet_add_datetime}
 \title{Add datetime-related columns from BirdNET output filenames}
 \usage{
-birdnet_add_datetime(data, tz = "UTC")
+birdnet_add_datetime(
+  data,
+  formats = c("\%Y\%m\%dT\%H\%M\%S", "\%Y\%m\%d\%H\%M\%S", "\%Y\%m\%d_\%H\%M\%S",
+    "\%Y\%m\%d_\%H\%M", "\%d\%m\%Y_\%H\%M\%S", "\%m\%d\%Y_\%H\%M\%S"),
+  tz = "UTC"
+)
 }
 \arguments{
 \item{data}{A data frame containing BirdNET output.}

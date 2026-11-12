@@ -34,37 +34,64 @@
 #' @export
 birdnet_add_datetime <- function(
     data,
-    pattern = "\\d{8}[_-]?\\d{6}",
-    orders = c("ymd_HMS", "ymd_HM"),
-    tz = "UTC",
-    quiet = TRUE) {
+    formats = c("%Y%m%dT%H%M%S",
+                "%Y%m%d%H%M%S",
+
+                "%Y%m%d_%H%M%S",
+                "%Y%m%d_%H%M",
+
+                "%d%m%Y_%H%M%S",
+                "%d%m%Y_%H%M",
+
+                "%m%d%Y_%H%M%S",
+                "%m%d%Y_%H%M"),
+    tz = "UTC") {
 
   # argument check ----------------------------------------------------------
 
   checkmate::assert_data_frame(data)
-  checkmate::assert_string(pattern)
-  checkmate::assert_character(orders, min.len = 1)
+  checkmate::assert_character(formats, min.len = 1, any.missing = FALSE)
   checkmate::assert_string(tz)
 
   cols <- birdnet_detect_columns(data)
 
+  # check if the required filepath column existing
   if (is.na(cols$filepath)) {
     cli::cli_abort("Can't find a column containing file names or paths.")
   }
 
+  # check if the datetime columns already exist
+  new_cols <- c("datetime", "date", "year", "month", "mday", "yday", "hour", "minute")
+  if (all(new_cols %in% names(data))) {
+    cli::cli_warn("Datetime columns already exist. Keeping the original and not recalculating.")
+    return(data)
+  }
 
   # main function -----------------------------------------------------------
 
+  # get the file name to work with (which contains the datetime)
+  fname <- stringr::str_extract(data[[cols$filepath]], "[^\\\\/]+$")
+
   # parase the column name to the datetime format
-  data_with_datetime <- data |>
-    dplyr::mutate(
-      datetime = basename(.data[[cols$filepath]]) |>
-        stringr::str_extract(pattern) |>
-        lubridate::parse_date_time(orders = orders, tz = tz, quiet = quiet))
+  parsed <- purrr::map(formats, \(f) {
+    stringr::str_extract(fname, format_to_regex(f)) |>
+      strptime(format = f, tz = tz) |>
+      as.POSIXct(tz = tz)
+  })
+
+  datetime <- Reduce(dplyr::coalesce, parsed)
+
+
+
+  # ambiguity check - if one entry gets mapped into multiple formats, warn the user
+  mat <- do.call(cbind, lapply(parsed, as.numeric))
+  n_ambiguous <- sum(apply(mat, 1, \(r) length(unique(r[!is.na(r)]))) > 1)
+
+
 
   # tell the user exactly what went wrong instead of silently returning NAs
-  n_total   <- nrow(data_with_datetime)
-  n_failed  <- sum(is.na(data_with_datetime$datetime))
+  n_total   <- length(datetime)
+  n_failed  <- sum(is.na(datetime))
   n_success <- n_total - n_failed
 
   if (n_success > 0) {
@@ -82,9 +109,17 @@ birdnet_add_datetime <- function(
     )
   }
 
+  if (n_ambiguous > 0) {
+    cli::cli_alert_warning(
+      "{n_ambiguous} file name{?s} matched more than one format with different results. The first matching format was used; please check them."
+    )
+  }
+
+
   # mutate to add date and time components
-  data_with_datetime_additional <- data_with_datetime |>
+  data_with_datetime <- data |>
     dplyr::mutate(
+      datetime = datetime,
       date = lubridate::date(datetime),
       year = lubridate::year(datetime),
       month = lubridate::month(datetime),
@@ -93,7 +128,7 @@ birdnet_add_datetime <- function(
       hour = lubridate::hour(datetime),
       minute = lubridate::minute(datetime))
 
-  return(data_with_datetime_additional)
+  return(data_with_datetime)
 }
 
 
