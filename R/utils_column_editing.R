@@ -34,13 +34,16 @@
 #' @export
 birdnet_add_datetime <- function(
     data,
-    tz = "UTC") {
+    pattern = "\\d{8}[_-]?\\d{6}",
+    orders = c("ymd_HMS", "ymd_HM"),
+    tz = "UTC",
+    quiet = TRUE) {
 
   # argument check ----------------------------------------------------------
 
   checkmate::assert_data_frame(data)
-  #checkmate::assert_string(pattern)
-  #checkmate::assert_character(orders, min.len = 1)
+  checkmate::assert_string(pattern)
+  checkmate::assert_character(orders, min.len = 1)
   checkmate::assert_string(tz)
 
   cols <- birdnet_detect_columns(data)
@@ -49,23 +52,38 @@ birdnet_add_datetime <- function(
     cli::cli_abort("Can't find a column containing file names or paths.")
   }
 
+
   # main function -----------------------------------------------------------
 
-
-  cols <- birdnet_detect_columns(data)
-
-
+  # parase the column name to the datetime format
   data_with_datetime <- data |>
-
-    # parase the column name to the datetime format
     dplyr::mutate(
       datetime = basename(.data[[cols$filepath]]) |>
-        stringr::str_extract("\\d{8}.\\d{6}") |>
-        lubridate::parse_date_time(
-          orders = c("ymd_HMS", "ymd-HMS", "ymdHMS", "ymd HM"),
-          tz = tz)) |>
+        stringr::str_extract(pattern) |>
+        lubridate::parse_date_time(orders = orders, tz = tz, quiet = quiet))
 
-    # mutate to add date and time components
+  # tell the user exactly what went wrong instead of silently returning NAs
+  n_total   <- nrow(data_with_datetime)
+  n_failed  <- sum(is.na(data_with_datetime$datetime))
+  n_success <- n_total - n_failed
+
+  if (n_success > 0) {
+    cli::cli_alert_success(
+      "Parsed datetime for {n_success} of {n_total} file name{?s}."
+    )
+  }
+
+  if (n_failed > 0) {
+    cli::cli_alert_warning(
+      "{n_failed} of {n_total} file name{?s} could not be parsed into a datetime."
+    )
+    cli::cli_alert_info(
+      "Check that {.arg pattern} matches your file names and that {.arg orders} matches the extracted text."
+    )
+  }
+
+  # mutate to add date and time components
+  data_with_datetime_additional <- data_with_datetime |>
     dplyr::mutate(
       date = lubridate::date(datetime),
       year = lubridate::year(datetime),
@@ -73,10 +91,9 @@ birdnet_add_datetime <- function(
       mday = lubridate::mday(datetime),
       yday = lubridate::yday(datetime),
       hour = lubridate::hour(datetime),
-      minute = lubridate::minute(datetime)
-    )
+      minute = lubridate::minute(datetime))
 
-  return(data_with_datetime)
+  return(data_with_datetime_additional)
 }
 
 
