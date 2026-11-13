@@ -97,14 +97,14 @@ birdnet_add_datetime <- function(
   # check if the datetime columns already exist
   new_cols <- c("datetime", "date", "year", "month", "mday", "yday", "hour", "minute")
   if (all(new_cols %in% names(data))) {
-    cli::cli_warn("Datetime columns already exist. Keeping the original and not recalculating.")
+    cli::cli_alert_success("Datetime columns already exist. Keeping the original and not recalculating.")
     return(data)
   }
 
   # check if some of the datetime columns already exist
   overlap <- intersect(new_cols, names(data))
   if (length(overlap) > 0) {
-    cli::cli_warn("Existing column{?s} {.field {overlap}} will be overwritten.")
+    cli::cli_alert_warning("Existing column{?s} {.field {overlap}} will be overwritten.")
   }
 
   # main function -----------------------------------------------------------

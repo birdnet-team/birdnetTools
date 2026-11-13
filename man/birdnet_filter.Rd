@@ -11,8 +11,7 @@ birdnet_filter(
   year = NULL,
   min_date = NULL,
   max_date = NULL,
-  hour = NULL,
-  ...
+  hour = NULL
 )
 }
 \arguments{

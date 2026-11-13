@@ -4,7 +4,7 @@
 \alias{birdnet_filter_hour}
 \title{Filter BirdNET data by hour of day}
 \usage{
-birdnet_filter_hour(data, hour_arg, ...)
+birdnet_filter_hour(data, hour_arg)
 }
 \arguments{
 \item{data}{A data frame containing BirdNET output. If the \code{hour} column is not present,

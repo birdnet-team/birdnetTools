@@ -4,7 +4,7 @@
 \alias{birdnet_filter_date_range}
 \title{Filter BirdNET data by date range}
 \usage{
-birdnet_filter_date_range(data, min_date = NULL, max_date = NULL, ...)
+birdnet_filter_date_range(data, min_date = NULL, max_date = NULL)
 }
 \arguments{
 \item{data}{A data frame containing BirdNET output. If the \code{date} column is not present,
