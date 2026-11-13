@@ -207,3 +207,170 @@ test_that("birdnet_add_site handles NA values in filepath gracefully", {
   expect_equal(res$site, c("site-A", NA_character_))
 })
 
+
+
+# helpers
+make_df <- function(paths) data.frame(filepath = paths, stringsAsFactors = FALSE)
+utc <- function(x) as.POSIXct(x, tz = "UTC")
+
+# basics ------------------------------------------------------------------
+
+test_that("birdnet_add_datetime adds all datetime columns with correct types", {
+  res <- birdnet_add_datetime(make_df("some/path/20230401_123045.wav"), quiet = TRUE)
+
+  expect_true(all(c("datetime", "date", "year", "month", "mday", "yday", "hour", "minute") %in% names(res)))
+  expect_s3_class(res$datetime, "POSIXct")
+  expect_s3_class(res$date, "Date")
+  expect_equal(res$year, 2023)
+  expect_equal(res$month, 4)
+  expect_equal(res$mday, 1)
+  expect_equal(res$yday, 91)
+  expect_equal(res$hour, 12)
+  expect_equal(res$minute, 30)
+})
+
+test_that("default formats parse the common year-first file names", {
+  paths <- c(
+    "a/00014530_20230518T133500.WAV",  # digit prefix must be ignored
+    "a/20230518133500.WAV",
+    "a/20230518_133500.WAV",
+    "a/20230518_1335.WAV"
+  )
+  res <- birdnet_add_datetime(make_df(paths), quiet = TRUE)
+  expect_equal(res$datetime, rep(utc("2023-05-18 13:35:00"), 4))
+})
+
+test_that("Windows-style paths work on any OS", {
+  res <- birdnet_add_datetime(
+    make_df("E:\\Audio\\2023_passerine\\14_18\\20230518_133500.WAV"),
+    quiet = TRUE
+  )
+  expect_equal(res$datetime, utc("2023-05-18 13:35:00"))
+})
+
+test_that("NA file paths give NA datetimes without error", {
+  res <- birdnet_add_datetime(make_df(c("a/20230518_133500.WAV", NA)), quiet = TRUE)
+  expect_false(is.na(res$datetime[1]))
+  expect_true(is.na(res$datetime[2]))
+})
+
+test_that("zero-row data frame doesn't error", {
+  expect_error(res <- birdnet_add_datetime(make_df(character(0)), quiet = TRUE), NA)
+  expect_equal(nrow(res), 0)
+})
+
+# time zone ---------------------------------------------------------------
+
+test_that("tz sets the time zone and keeps the wall-clock time", {
+  df <- make_df("a/20230401_123045.wav")
+  res_utc <- birdnet_add_datetime(df, tz = "UTC", quiet = TRUE)
+  res_van <- birdnet_add_datetime(df, tz = "America/Vancouver", quiet = TRUE)
+
+  expect_equal(attr(res_van$datetime, "tzone"), "America/Vancouver")
+  expect_equal(hour(res_van$datetime), 12)
+  # 12:30 PDT (UTC-7 in April) is 7 hours later than 12:30 UTC
+  expect_equal(as.numeric(difftime(res_van$datetime, res_utc$datetime, units = "hours")), 7)
+})
+
+# custom formats ----------------------------------------------------------
+
+test_that("custom formats work, including literal separators", {
+  df <- make_df(c("site1_2024-06-15_0530.wav", "site1_2024-06-16_0545.wav"))
+  res <- birdnet_add_datetime(df, formats = "%Y-%m-%d_%H%M", quiet = TRUE)
+  expect_equal(res$datetime, utc(c("2024-06-15 05:30:00", "2024-06-16 05:45:00")))
+})
+
+test_that("a hyphen between date and time works with a custom format", {
+  res <- birdnet_add_datetime(
+    make_df("some/path/20230502-124530.wav"),
+    formats = "%Y%m%d-%H%M%S",
+    quiet = TRUE
+  )
+  expect_equal(res$datetime, utc("2023-05-02 12:45:30"))
+})
+
+test_that("several custom formats can be mixed in one dataset", {
+  df <- make_df(c("a/20230518_133500.WAV", "a/site1_2024-06-15_0530.wav"))
+  res <- birdnet_add_datetime(df, formats = c("%Y%m%d_%H%M%S", "%Y-%m-%d_%H%M"), quiet = TRUE)
+  expect_equal(res$datetime, utc(c("2023-05-18 13:35:00", "2024-06-15 05:30:00")))
+})
+
+# day-first / month-first --------------------------------------------------
+
+test_that("unambiguous day-first and month-first names resolve correctly", {
+  paths <- c("a/05182023_133500.WAV", "a/18052023_133500.WAV")
+  msgs <- testthat::capture_messages(res <- birdnet_add_datetime(make_df(paths)))
+
+  expect_equal(res$datetime, rep(utc("2023-05-18 13:35:00"), 2))
+  expect_false(any(grepl("more than one format", msgs)))
+})
+
+test_that("names readable as both day-first and month-first are flagged", {
+  df <- make_df(c("a/20230518_133500.WAV", "a/05062023_133500.WAV"))
+  expect_message(res <- birdnet_add_datetime(df), "more than one format")
+
+  expect_equal(res$datetime[1], utc("2023-05-18 13:35:00"))
+  # the first listed format (day-first) wins
+  expect_equal(res$datetime[2], utc("2023-06-05 13:35:00"))
+})
+
+test_that("the ambiguity message points to the affected rows", {
+  df <- make_df(c("a/20230518_133500.WAV", "a/05062023_133500.WAV"))
+  expect_message(birdnet_add_datetime(df), "Check row")
+})
+
+test_that("year-first names from 2001-2012 are not flagged as ambiguous", {
+  msgs <- testthat::capture_messages(
+    res <- birdnet_add_datetime(make_df("a/20100518_133500.WAV"))
+  )
+  expect_equal(res$datetime, utc("2010-05-18 13:35:00"))
+  expect_false(any(grepl("more than one format", msgs)))
+})
+
+# messages ----------------------------------------------------------------
+
+test_that("reports how many file names were parsed", {
+  expect_message(
+    birdnet_add_datetime(make_df("a/20230518_133500.WAV")),
+    "Parsed datetime for 1 of 1"
+  )
+})
+
+test_that("unparseable file names give NA and a message", {
+  df <- make_df(c("a/20230518_133500.WAV", "a/not_a_date.WAV"))
+  expect_message(res <- birdnet_add_datetime(df), "could not be parsed")
+
+  expect_false(is.na(res$datetime[1]))
+  expect_true(is.na(res$datetime[2]))
+  expect_true(is.na(res$year[2]))
+})
+
+test_that("quiet = TRUE suppresses the status messages", {
+  expect_silent(birdnet_add_datetime(make_df("a/20230518_133500.WAV"), quiet = TRUE))
+})
+
+# existing columns --------------------------------------------------------
+
+test_that("returns data unchanged, with a warning, if all datetime columns exist", {
+  once <- birdnet_add_datetime(make_df("a/20230518_133500.WAV"), quiet = TRUE)
+  expect_message(twice <- birdnet_add_datetime(once), "already exist")
+  expect_identical(twice, once)
+})
+
+test_that("warns when overwriting some existing datetime columns", {
+  df <- make_df("a/20230518_133500.WAV")
+  df$year <- 1999
+  expect_message(res <- birdnet_add_datetime(df, quiet = TRUE), "overwritten")
+  expect_equal(res$year, 2023)
+})
+
+# errors ------------------------------------------------------------------
+
+test_that("birdnet_add_datetime errors clearly on bad input", {
+  expect_error(birdnet_add_datetime(data.frame(x = 1)), "Can't find a column")
+  expect_error(birdnet_add_datetime("not a data frame"))
+  expect_error(birdnet_add_datetime(make_df("a"), formats = 1))
+  expect_error(birdnet_add_datetime(make_df("a"), formats = character(0)))
+  expect_error(birdnet_add_datetime(make_df("a"), tz = c("UTC", "UTC")))
+})
+

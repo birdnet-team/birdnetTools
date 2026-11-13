@@ -151,9 +151,7 @@ birdnet_add_datetime <- function(
 
     if (n_ambiguous > 0) {
       cli::cli_alert_warning("{n_ambiguous} file name{?s} matched more than one format with different results. The first matching format was used.")
-      shown <- utils::head(amb_rows, 5)
-      more  <- if (n_ambiguous > 5) " (and more)" else ""
-      cli::cli_alert_info("Check row{?s} {shown}{more}.")
+      cli::cli_alert_info("Check row{?s} {amb_rows}.")
     }
   }
 
