@@ -114,7 +114,8 @@ Chemnitz, Germany.
 The occupancy modelling part of development is further supported by an
 [R Consortium](https://r-consortium.org/) Infrastructure Steering
 Committee (ISC) grant (grant number 25-ISC-2-03), for the project
-“birdnetTools 2.0: Linking BirdNET outputs to occupancy modeling in R”.
+“[birdnetTools 2.0: Linking BirdNET outputs to occupancy modeling in
+R](https://r-consortium.org/all-projects/2025-group-2.html#birdnettools-20-linking-birdnet-outputs-to-occupancy-modeling-in-r)”.
 
 ## BirdNET funding
 
