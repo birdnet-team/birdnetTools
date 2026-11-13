@@ -96,7 +96,7 @@ features, and submit pull requests.
   [SUPPORT.md](.github/SUPPORT.md).
 - **Bug reports and feature requests:** open an
   [issue](https://github.com/birdnet-team/birdnetTools/issues) and use
-  the template provided.
+  the [template](.github/ISSUE_TEMPLATE/issue_template.md) provided.
 - **Code of conduct:** please note that this project is released with a
   [Contributor Code of Conduct](.github/CODE_OF_CONDUCT.md). By
   contributing to this project, you agree to abide by its terms.

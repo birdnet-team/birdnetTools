@@ -77,7 +77,7 @@ birdnet_calc_threshold(data_sub, precision = 0.9)
 Contributions are welcome. Please see the [contributing guidelines](.github/CONTRIBUTING.md) for how to report bugs, suggest features, and submit pull requests.
 
 - **Questions or help using the package:** see [SUPPORT.md](.github/SUPPORT.md).
-- **Bug reports and feature requests:** open an [issue](https://github.com/birdnet-team/birdnetTools/issues) and use the template provided.
+- **Bug reports and feature requests:** open an [issue](https://github.com/birdnet-team/birdnetTools/issues) and use the [template](.github/ISSUE_TEMPLATE/issue_template.md) provided.
 - **Code of conduct:** please note that this project is released with a [Contributor Code of Conduct](.github/CODE_OF_CONDUCT.md). By contributing to this project, you agree to abide by its terms.
 
 
