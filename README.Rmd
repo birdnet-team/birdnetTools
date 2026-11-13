@@ -72,6 +72,15 @@ data_sub$validation <- rbinom(nrow(data_sub), 1,
 birdnet_calc_threshold(data_sub, precision = 0.9)
 ```
 
+## Contributing and support
+
+Contributions are welcome. Please see the [contributing guidelines](.github/CONTRIBUTING.md) for how to report bugs, suggest features, and submit pull requests.
+
+- **Questions or help using the package:** see [SUPPORT.md](.github/SUPPORT.md).
+- **Bug reports and feature requests:** open an [issue](https://github.com/birdnet-team/birdnetTools/issues) and use the template provided.
+- **Code of conduct:** please note that this project is released with a [Contributor Code of Conduct](.github/CODE_OF_CONDUCT.md). By contributing to this project, you agree to abide by its terms.
+
+
 ## Acknowledgements
 
 The development of `birdnetTools` is part of a visiting scholar program supported by the [Michael Smith Foreign Study Supplements](https://www.nserc-crsng.gc.ca/Students-Etudiants/PG-CS/CGSForeignStudy-BESCEtudeEtranger_eng.asp), funded by the Natural Sciences and Engineering Research Council of Canada (NSERC). I’m incredibly fortunate to have received this support, which allowed me to collaborate in person with the BirdNET team in Chemnitz, Germany.

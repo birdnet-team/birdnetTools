@@ -65,7 +65,7 @@ data_filtered <- birdnet_filter(data,
 birdnet_heatmap(data_filtered)
 ```
 
-<img src="man/figures/README-example-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-example-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ``` r
 # Simulate validation (for demonstration only)
@@ -85,6 +85,21 @@ birdnet_calc_threshold(data_sub, precision = 0.9)
 #>   <chr>                 <dbl>
 #> 1 Swainson's Thrush     0.879
 ```
+
+## Contributing and support
+
+Contributions are welcome. Please see the [contributing
+guidelines](.github/CONTRIBUTING.md) for how to report bugs, suggest
+features, and submit pull requests.
+
+- **Questions or help using the package:** see
+  [SUPPORT.md](.github/SUPPORT.md).
+- **Bug reports and feature requests:** open an
+  [issue](https://github.com/birdnet-team/birdnetTools/issues) and use
+  the template provided.
+- **Code of conduct:** please note that this project is released with a
+  [Contributor Code of Conduct](.github/CODE_OF_CONDUCT.md). By
+  contributing to this project, you agree to abide by its terms.
 
 ## Acknowledgements
 
