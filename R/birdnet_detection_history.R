@@ -125,7 +125,7 @@ birdnet_detection_history <- function(data,
   # 1. Summarize detections by site and occasion block
   detections_summarized <- data |>
     birdnet_add_site(i = i) |>
-    birdnet_add_datetime() |>
+    birdnet_add_datetime(quiet = TRUE) |>
     # filter to only include sites with detections from more than n days
     dplyr::group_by(.data$site) |>
     dplyr::filter(dplyr::n_distinct(.data$date) >= min_unique_days) |>
