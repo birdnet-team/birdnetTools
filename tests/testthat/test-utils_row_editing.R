@@ -38,7 +38,7 @@ test_that("birdnet_filter_threshold() works for species-specific thresholds", {
 
 test_that("birdnet_filter_year() works with and without year column", {
   df <- data.frame(
-    filepath = c("20230501 050000", "20240601 060000")
+    filepath = c("20230501_050000", "20240601_060000")
   )
 
   out <- birdnet_filter_year(df, year_arg = 2024)
@@ -62,3 +62,4 @@ test_that("birdnet_filter_hour() filters by hour correctly", {
   out <- birdnet_filter_hour(df, hour_arg = 5)
   expect_equal(nrow(out), 1)
 })
+

@@ -87,11 +87,11 @@ birdnet_filter_threshold <- function(data, threshold_arg) {
 #'
 #' @seealso [birdnet_add_datetime], [birdnet_drop_datetime]
 #' @keywords internal
-birdnet_filter_year <- function(data, year_arg, ...) {
+birdnet_filter_year <- function(data, year_arg) {
 
   # add datetime info if 'year' column is missing
   if (!"year" %in% colnames(data)) {
-    data <- birdnet_add_datetime(data, ...)
+    data <- birdnet_add_datetime(data, quiet = TRUE)
     has_datetime <- TRUE
   } else {
     has_datetime <- FALSE
@@ -129,12 +129,11 @@ birdnet_filter_year <- function(data, year_arg, ...) {
 #' @keywords internal
 birdnet_filter_date_range <- function(data,
                                       min_date = NULL,
-                                      max_date = NULL,
-                                      ...) {
+                                      max_date = NULL) {
 
   # add datetime info if 'date' column is missing
   if (!"date" %in% colnames(data)) {
-    data <- birdnet_add_datetime(data, ...)
+    data <- birdnet_add_datetime(data, quiet = TRUE)
     has_datetime <- TRUE
   } else {
     has_datetime <- FALSE
@@ -177,11 +176,11 @@ birdnet_filter_date_range <- function(data,
 #'
 #' @seealso [birdnet_add_datetime], [birdnet_drop_datetime]
 #' @keywords internal
-birdnet_filter_hour <- function(data, hour_arg, ...) {
+birdnet_filter_hour <- function(data, hour_arg) {
 
   # add datetime info if 'hour' column is missing
   if (!"hour" %in% colnames(data)) {
-    data <- birdnet_add_datetime(data, ...)
+    data <- birdnet_add_datetime(data, quiet = TRUE)
     has_datetime <- TRUE
   } else {
     has_datetime <- FALSE
