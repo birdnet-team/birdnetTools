@@ -101,7 +101,7 @@ features, and submit pull requests.
   [Contributor Code of Conduct](.github/CODE_OF_CONDUCT.md). By
   contributing to this project, you agree to abide by its terms.
 
-## Acknowledgements
+## `birdnetTools` funding
 
 The development of `birdnetTools` is part of a visiting scholar program
 supported by the [Michael Smith Foreign Study
@@ -111,7 +111,12 @@ Canada (NSERC). I’m incredibly fortunate to have received this support,
 which allowed me to collaborate in person with the BirdNET team in
 Chemnitz, Germany.
 
-## Funding
+The occupancy modelling part of development is further supported by an
+[R Consortium](https://r-consortium.org/) Infrastructure Steering
+Committee (ISC) grant (grant number 25-ISC-2-03), for the project
+“birdnetTools 2.0: Linking BirdNET outputs to occupancy modeling in R”.
+
+## BirdNET funding
 
 BirdNET is supported by Jake Holshuh (Cornell class of ’69) and The
 Arthur Vining Davis Foundations. Our work in the K. Lisa Yang Center for
