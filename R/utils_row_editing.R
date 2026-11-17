@@ -91,7 +91,7 @@ birdnet_filter_year <- function(data, year_arg) {
 
   # add datetime info if 'year' column is missing
   if (!"year" %in% colnames(data)) {
-    data <- birdnet_add_datetime(data)
+    data <- birdnet_add_datetime(data, quiet = TRUE)
     has_datetime <- TRUE
   } else {
     has_datetime <- FALSE
@@ -133,7 +133,7 @@ birdnet_filter_date_range <- function(data,
 
   # add datetime info if 'date' column is missing
   if (!"date" %in% colnames(data)) {
-    data <- birdnet_add_datetime(data)
+    data <- birdnet_add_datetime(data, quiet = TRUE)
     has_datetime <- TRUE
   } else {
     has_datetime <- FALSE
@@ -180,7 +180,7 @@ birdnet_filter_hour <- function(data, hour_arg) {
 
   # add datetime info if 'hour' column is missing
   if (!"hour" %in% colnames(data)) {
-    data <- birdnet_add_datetime(data)
+    data <- birdnet_add_datetime(data, quiet = TRUE)
     has_datetime <- TRUE
   } else {
     has_datetime <- FALSE

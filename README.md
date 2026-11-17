@@ -65,7 +65,7 @@ data_filtered <- birdnet_filter(data,
 birdnet_heatmap(data_filtered)
 ```
 
-<img src="man/figures/README-example-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-example-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ``` r
 # Simulate validation (for demonstration only)
@@ -86,7 +86,37 @@ birdnet_calc_threshold(data_sub, precision = 0.9)
 #> 1 Swainson's Thrush     0.879
 ```
 
-## Acknowledgements
+## The BirdNET ecosystem
+
+`birdnetTools` is part of a set of related [BirdNET
+projects](https://github.com/birdnet-team):
+
+- **[BirdNET-Analyzer](https://github.com/birdnet-team/BirdNET-Analyzer)**
+  — the upstream desktop/CLI application for custom classifier training
+  and advanced BirdNET features.
+- **[birdnetR](https://github.com/birdnet-team/birdnetR)** — a wrapper
+  for the birdnet Python package for automated bird sound ID.
+
+## Contributing to this package
+
+We welcome contributions to this guide.
+
+- For small changes, please open a [pull
+  request](https://github.com/birdnet-team/birdnetTools).
+
+- To suggest larger changes, open an
+  [issue](https://github.com/birdnet-team/birdnetTools/issues), using
+  the [template](.github/ISSUE_TEMPLATE/issue_template.md) provided
+  (optional). We may invite you to create the changes or implement them
+  on your behalf.
+
+Please see the [contributing guidelines](.github/CONTRIBUTING.md) for
+how to report bugs, suggest features, and submit pull requests. Please
+note that this project is released with a [Contributor Code of
+Conduct](.github/CODE_OF_CONDUCT.md). By contributing to this project,
+you agree to abide by its terms.
+
+## `birdnetTools` funding
 
 The development of `birdnetTools` is part of a visiting scholar program
 supported by the [Michael Smith Foreign Study
@@ -96,7 +126,13 @@ Canada (NSERC). I’m incredibly fortunate to have received this support,
 which allowed me to collaborate in person with the BirdNET team in
 Chemnitz, Germany.
 
-## Funding
+The occupancy modelling part of development is further supported by an
+[R Consortium](https://r-consortium.org/) Infrastructure Steering
+Committee (ISC) grant (grant number 25-ISC-2-03), for the project
+“[birdnetTools 2.0: Linking BirdNET outputs to occupancy modeling in
+R](https://r-consortium.org/all-projects/2025-group-2.html#birdnettools-20-linking-birdnet-outputs-to-occupancy-modeling-in-r)”.
+
+## BirdNET funding
 
 BirdNET is supported by Jake Holshuh (Cornell class of ’69) and The
 Arthur Vining Davis Foundations. Our work in the K. Lisa Yang Center for

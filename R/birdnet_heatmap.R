@@ -99,7 +99,7 @@ birdnet_heatmap <- function(
   # main function -----------------------------------------------------------
   # add datetime
   data_with_time <- data |>
-    birdnet_add_datetime()
+    birdnet_add_datetime(quiet = TRUE)
 
 
   # filter data based on date and hour range

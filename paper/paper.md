@@ -80,7 +80,7 @@ The software's research utility and active community adoption are demonstrated a
 
 # AI usage disclosure
 
-AI tools, specifically ChatGPT (v5.3) and Gemini (v3), were used for the editorial correction of this manuscript and the associated function documentation. All AI-edited content was reviewed and verified by the authors, who take full responsibility for the final text.
+AI tools were used in the preparation of this work. ChatGPT (v5.3) and Gemini (v3) were used for the editorial correction of this manuscript and the associated function documentation. Claude Code (Anthropic; Claude Opus 5.5) was used to assist in developing the package's test suite. All AI-assisted content was reviewed, edited, and verified by the authors, who take full responsibility for the final text and code.
 
 # Acknowledgements
 

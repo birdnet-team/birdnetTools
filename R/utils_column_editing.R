@@ -2,16 +2,46 @@
 #'
 #' Extracts and parses datetime information from filenames in the file path column
 #' (automatically detected), then adds several useful time-related columns
-#' (e.g., `date`, `year`, `month`, `hour`) to the input data frame.
+#' (e.g., `date`, `year`, `month`, `hour`) to the input data frame. Several common
+#' formats are tried by default, and users can supply their own with `formats`
+#' (see Details).
 #'
-#' The function uses [birdnet_detect_columns] to find the column
-#' containing file paths based on common name patterns (e.g., "file", "path").
-#' Filenames are expected to contain a datetime string in the format
-#' `"YYYYMMDD_HHMMSS"` or similar.
+#'
 #'
 #' @param data A data frame containing BirdNET output.
+#' @param formats A character vector of datetime formats, using the same codes
+#'   as [strptime()] (see Details). Formats are tried in order, and the first
+#'   one that successfully parses a file name is used. Defaults to common
+#'   year-first formats, plus day-first and month-first variants. See Details
+#'   for how ambiguous dates are handled.
 #' @param tz A character string specifying the time zone to assign when parsing datetime.
 #'   Defaults to `"UTC"`.
+#' @param quiet Logical. If `TRUE`, suppresses the status messages about how
+#'   many file names were parsed, failed, or were ambiguous. Warnings are still
+#'   shown. Defaults to `FALSE`.
+#'
+#'
+#' @details
+#' **Defining your own formats.** If the default `formats` don't match your
+#' file names, supply a format for each pattern in your data.
+#'
+#' Supported codes:
+#' * `%Y`: 4-digit year (1900-2099)
+#' * `%y`: 2-digit year
+#' * `%m`: 2-digit month
+#' * `%d`: 2-digit day
+#' * `%H`, `%M`, `%S`: 2-digit hour, minute, second
+#'
+#' Any other characters (such as `_`, `-`, or `T`) are matched literally. For
+#' example, `site1_2024-06-15_0530.wav` needs `formats = "%Y-%m-%d_%H%M"`.
+#'
+#' **Ambiguous dates.** The defaults include both day-first (`%d%m%Y`) and
+#' month-first (`%m%d%Y`) formats. A file name such as `05062023_133500` is
+#' valid as both, so the format listed first (day-first) is used and a message
+#' lists the rows to check. If your data uses only one convention, supply that
+#' format on its own to avoid the ambiguity.
+#'
+#'
 #'
 #' @return A data frame with additional columns:
 #' \describe{
@@ -25,48 +55,117 @@
 #'   \item{minute}{Minute of the hour.}
 #' }
 #'
+#' Rows whose file names can't be parsed get `NA` in all of these columns.
+#' Existing columns with these names are overwritten, with a warning. If all of
+#' these columns already exist, the data is returned unchanged.
+#'
+#'
+#'
 #' @examples
 #' \dontrun{
-#' combined_data <- birdnet_combine("path/to/BirdNET/output")
-#' data_with_time <- birdnet_add_datetime(combined_data)
+#' birdnet_add_datetime(example_jprf_2023) |>
+#' glimpse()
 #' }
-#'
 #' @export
 birdnet_add_datetime <- function(
     data,
-    #col = filepath,
-    tz = "UTC") {
+    formats = c("%Y%m%dT%H%M%S",
+                "%Y%m%d%H%M%S",
+
+                "%Y%m%d_%H%M%S",
+                "%Y%m%d_%H%M",
+
+                "%d%m%Y_%H%M%S",
+                "%m%d%Y_%H%M%S"),
+    tz = "UTC",
+    quiet = FALSE) {
+
   # argument check ----------------------------------------------------------
 
-  # if there is already all the columns, show the warning messages that the
-  # original datetime will be kept and no new data will be calculated
-  # if there is no column can be found to contain the path information, show error
-
-  # main function -----------------------------------------------------------
+  checkmate::assert_data_frame(data)
+  checkmate::assert_character(formats, min.len = 1, any.missing = FALSE)
+  checkmate::assert_string(tz)
+  checkmate::assert_flag(quiet)
 
   cols <- birdnet_detect_columns(data)
 
+  # check if the required filepath column existing
+  if (is.na(cols$filepath)) {
+    cli::cli_abort("Can't find a column containing file names or paths.")
+  }
 
+  # check if the datetime columns already exist
+  new_cols <- c("datetime", "date", "year", "month", "mday", "yday", "hour", "minute")
+  if (all(new_cols %in% names(data))) {
+    cli::cli_alert_success("Datetime columns already exist. Keeping the original and not recalculating.")
+    return(data)
+  }
+
+  # check if some of the datetime columns already exist
+  overlap <- intersect(new_cols, names(data))
+  if (length(overlap) > 0) {
+    cli::cli_alert_warning("Existing column{?s} {.field {overlap}} will be overwritten.")
+  }
+
+  # main function -----------------------------------------------------------
+
+  # get the file name to work with (which contains the datetime)
+  fname <- stringr::str_extract(data[[cols$filepath]], "[^\\\\/]+$")
+
+  # parase the column name to the datetime format
+  parsed <- purrr::map(formats, \(f) {
+    stringr::str_extract(fname, format_to_regex(f)) |>
+      strptime(format = f, tz = tz) |>
+      as.POSIXct(tz = tz)
+  })
+
+  dt <- Reduce(dplyr::coalesce, parsed)
+
+
+
+  # ambiguity check - if one entry gets mapped into multiple formats, warn the user
+  mat <- do.call(cbind, lapply(parsed, as.numeric))
+
+  amb <- apply(mat, 1, \(r) length(unique(r[!is.na(r)]))) > 1
+  amb_rows <- which(amb)
+  n_ambiguous <- length(amb_rows)
+
+
+
+  # tell the user exactly what went wrong instead of silently returning NAs
+  n_total   <- length(dt)
+  n_failed  <- sum(is.na(dt))
+  n_success <- n_total - n_failed
+
+  if (!quiet) {
+    if (n_success > 0) {
+      cli::cli_alert_success(
+        "Parsed datetime for {n_success} of {n_total} file name{?s}."
+      )
+    }
+
+    if (n_failed > 0) {
+      cli::cli_alert_warning("{n_failed} of {n_total} file name{?s} could not be parsed into a datetime.")
+      cli::cli_alert_info("Default {.arg formats} may not match your file names. See {.help birdnet_add_datetime} to define your own.")
+    }
+
+    if (n_ambiguous > 0) {
+      cli::cli_alert_warning("{n_ambiguous} file name{?s} matched more than one format with different results. The first matching format was used.")
+      cli::cli_alert_info("Check row{cli::qty(n_ambiguous)}{?s} {amb_rows}.")
+    }
+  }
+
+  # mutate to add date and time components
   data_with_datetime <- data |>
-
-    # parase the column name to the datetime format
     dplyr::mutate(
-      datetime = basename(.data[[cols$filepath]]) |>
-        stringr::str_extract("\\d{8}.\\d{6}") |>
-        lubridate::parse_date_time(
-          orders = c("ymd_HMS", "ymd-HMS", "ymdHMS", "ymd HM"),
-          tz = tz)) |>
-
-    # mutate to add date and time components
-    dplyr::mutate(
+      datetime = dt,
       date = lubridate::date(datetime),
       year = lubridate::year(datetime),
       month = lubridate::month(datetime),
       mday = lubridate::mday(datetime),
       yday = lubridate::yday(datetime),
       hour = lubridate::hour(datetime),
-      minute = lubridate::minute(datetime)
-    )
+      minute = lubridate::minute(datetime))
 
   return(data_with_datetime)
 }
@@ -246,8 +345,7 @@ birdnet_detect_columns <- function(data) {
 
   col_matches <- function(patterns) {
     pattern <- stringr::str_c(patterns, collapse = "|")  # create a single regex pattern
-    match <- names(data)[stringr::str_detect(names(data),
-                                             stringr::regex(pattern, ignore_case = TRUE))]
+    match <- names(data)[stringr::str_detect(names(data), stringr::regex(pattern, ignore_case = TRUE))]
     if (length(match) == 0) return(NA_character_)
     return(match[1])  # return first match
   }
