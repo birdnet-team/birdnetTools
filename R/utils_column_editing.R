@@ -205,51 +205,102 @@ birdnet_drop_datetime <- function(data) {
 #'
 #' Extracts a specific directory level from the file path column (automatically
 #' detected) to act as a site identifier, then adds a `site` column to the
-#' input data frame.
-#'
-#' The function uses [birdnet_detect_columns] to find the column containing
-#' file paths based on common name patterns. By default, it looks at the
-#' immediate parent folder of the file.
+#' input data frame. By default the whole directory name is used, but `formats`
+#' lets you keep only part of it, such as the letters or the digits (see
+#' Details).
 #'
 #' @param data A data frame containing BirdNET output.
 #' @param i An integer specifying the index of the path element to extract
 #'   when split by slashes. Defaults to `-2`, which corresponds to the immediate
 #'   parent directory of the file (e.g., extracting "Site-A" from
 #'   "path/to/Site-A/audio.wav"). Negative values count from the right-hand side.
+#' @param formats A character vector of regular expressions (as used by
+#'   [stringr::str_extract()]) that describe which part of the extracted
+#'   directory name to keep as the site. Expressions are tried in order, and the
+#'   first one that matches is used. Defaults to `".*"`, which keeps the whole
+#'   directory name. See Details.
+#' @param quiet Logical. If `TRUE`, suppresses the status messages about how
+#'   many file names were successfully matched to a site or could not be
+#'   matched. Defaults to `FALSE`
+#'
 #'
 #' @return A data frame with an additional column:
 #' \describe{
-#'   \item{site}{The extracted directory or folder name used as the site identifier.}
+#'   \item{site}{The extracted directory or folder name (or the part of it
+#'   matched by `formats`) used as the site identifier.}
 #' }
+#'
+#'
+#' @details
+#' **Keeping only part of the name.** If your folder names combine several
+#' pieces of information, supply a regular expression that matches only the
+#' part you want. For a folder named `Pine05`:
+#' * `".*"` (default): `"Pine05"` (the whole name)
+#' * `"^[A-Za-z]+"`: `"Pine"` (the letters at the start only)
+#' * `"[0-9]+"`: `"05"` (the digits only)
+#'
 #'
 #' @examples
 #' \dontrun{
 #' combined_data <- birdnet_combine("path/to/BirdNET/output")
 #' data_with_site <- birdnet_add_site(combined_data, i = -2)
+#'
+#' # keep only the letters of the folder name (e.g. "Pine05" becomes "Pine")
+#' birdnet_add_site(combined_data, formats = "^[A-Za-z]+")
+#'
+#' # keep only the digits (e.g. "Pine05" becomes "05")
+#' birdnet_add_site(combined_data, formats = "[0-9]+")
 #' }
 #'
-#' @keywords internal
+#' @export
 birdnet_add_site <- function(data,
-                             i = -2) {
+                             i = -2,
+                             formats = ".*",
+                             quiet = FALSE) {
 
   # argument check ----------------------------------------------------------
+
+  checkmate::assert_data_frame(data)
+  checkmate::assert_integerish(i, len = 1, any.missing = FALSE)
+  checkmate::assert_character(formats, min.len = 1, any.missing = FALSE)
+  checkmate::assert_flag(quiet)
 
   # detect columns
   cols <- birdnet_detect_columns(data)
 
 
-  # ensure filepath column was actually found
-  if (is.null(cols$filepath) || !(cols$filepath %in% colnames(data))) {
-    stop("Could not automatically detect a valid file path column in the data.")
+  # check if the required filepath column existing
+  if (is.na(cols$filepath)) {
+    cli::cli_abort("Can't find a column containing file names or paths.")
   }
 
   # main function -----------------------------------------------------------
 
-  # extract site safely using tidy evaluation data masking
+  # get the section of long string that include the site info
+  site_raw <- stringr::str_split_i(data[[cols$filepath]], "[/\\\\]", i = i)
+
+  # extract the component that matches the provided formats
+  extracted <- purrr::map(formats, \(f) stringr::str_extract(site_raw, f))
+  site_extracted <- Reduce(dplyr::coalesce, extracted)
+
+  n_total   <- length(site_extracted)
+  n_failed  <- sum(is.na(site_extracted))
+  n_success <- n_total - n_failed
+
+  if (!quiet) {
+    if (n_success > 0) {
+      cli::cli_alert_success("Extracted site info from {n_success} of {n_total} file name{?s}.")
+    }
+
+    if (n_failed > 0) {
+      cli::cli_alert_warning("{n_failed} of {n_total} file name{?s} could not be matched to a site.")
+      cli::cli_alert_info("Check {.arg i} and {.arg formats}. See {.help birdnet_add_site} for examples.")
+    }
+  }
+
+  # mutate the site name to the original dataframe
   data_with_site <- data |>
-    dplyr::mutate(
-      site = stringr::str_split_i(.data[[cols$filepath]], "[/\\\\]", i = i)
-    )
+    dplyr::mutate(site = site_extracted)
 
   return(data_with_site)
 }
