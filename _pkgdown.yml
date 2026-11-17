@@ -16,9 +16,10 @@ reference:
 
   - title: "Exploring and Preparing Data"
     contents:
+      - birdnet_add_datetime
+      - birdnet_add_site
       - birdnet_filter
       - birdnet_heatmap
-      - birdnet_add_datetime
 
   - title: "Validating and Getting Threshold"
     contents:
@@ -31,14 +32,14 @@ reference:
       - birdnet_get_effort
       - birdnet_detection_history
 
-  # - title: "Helper Functions"
+  # - title: "Internal Helper Functions"
   #   contents:
   #     - birdnet_filter_species
   #     - birdnet_filter_threshold
   #     - birdnet_filter_year
   #     - birdnet_filter_date_range
   #     - birdnet_filter_hour
-  #     - birdnet_add_site
+  #     - format_to_regex
 
   - title: "Dataset"
     contents:
