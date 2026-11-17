@@ -86,20 +86,35 @@ birdnet_calc_threshold(data_sub, precision = 0.9)
 #> 1 Swainson's Thrush     0.879
 ```
 
-## Contributing and support
+## The BirdNET ecosystem
 
-Contributions are welcome. Please see the [contributing
-guidelines](.github/CONTRIBUTING.md) for how to report bugs, suggest
-features, and submit pull requests.
+`birdnetTools` is part of a set of related [BirdNET
+projects](https://github.com/birdnet-team):
 
-- **Questions or help using the package:** see
-  [SUPPORT.md](.github/SUPPORT.md).
-- **Bug reports and feature requests:** open an
-  [issue](https://github.com/birdnet-team/birdnetTools/issues) and use
-  the [template](.github/ISSUE_TEMPLATE/issue_template.md) provided.
-- **Code of conduct:** please note that this project is released with a
-  [Contributor Code of Conduct](.github/CODE_OF_CONDUCT.md). By
-  contributing to this project, you agree to abide by its terms.
+- **[BirdNET-Analyzer](https://github.com/birdnet-team/BirdNET-Analyzer)**
+  — the upstream desktop/CLI application for custom classifier training
+  and advanced BirdNET features.
+- **[birdnetR](https://github.com/birdnet-team/birdnetR)** — a wrapper
+  for the birdnet Python package for automated bird sound ID.
+
+## Contributing to this package
+
+We welcome contributions to this guide.
+
+- For small changes, please open a [pull
+  request](https://github.com/birdnet-team/birdnetTools).
+
+- To suggest larger changes, open an
+  [issue](https://github.com/birdnet-team/birdnetTools/issues), using
+  the [template](.github/ISSUE_TEMPLATE/issue_template.md) provided
+  (optional). We may invite you to create the changes or implement them
+  on your behalf.
+
+Please see the [contributing guidelines](.github/CONTRIBUTING.md) for
+how to report bugs, suggest features, and submit pull requests. Please
+note that this project is released with a [Contributor Code of
+Conduct](.github/CODE_OF_CONDUCT.md). By contributing to this project,
+you agree to abide by its terms.
 
 ## `birdnetTools` funding
 
