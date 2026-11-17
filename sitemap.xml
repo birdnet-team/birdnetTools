@@ -1,7 +1,10 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://birdnet-team.github.io/birdnetTools/404.html</loc></url>
+<url><loc>https://birdnet-team.github.io/birdnetTools/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>https://birdnet-team.github.io/birdnetTools/CONTRIBUTING.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/LICENSE-text.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/LICENSE.html</loc></url>
+<url><loc>https://birdnet-team.github.io/birdnetTools/SUPPORT.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/articles/birdnetTools.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/articles/index.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/authors.html</loc></url>
@@ -30,6 +33,7 @@
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/birdnet_validation_ui.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/effort_jprf_2023.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/example_jprf_2023.html</loc></url>
+<url><loc>https://birdnet-team.github.io/birdnetTools/reference/format_to_regex.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/index.html</loc></url>
 <url><loc>https://birdnet-team.github.io/birdnetTools/reference/what_time.html</loc></url>
 </urlset>

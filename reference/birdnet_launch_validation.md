@@ -31,7 +31,7 @@ This function launches a user-friendly Shiny app that allows you to:
 Audio playback and spectrogram generation now support multiple audio
 formats (e.g., WAV, MP3, FLAC, OGG) through the av package. Internally,
 all files are converted to temporary WAV files with
-[`av::av_audio_convert()`](https://docs.ropensci.org/av//reference/encoding.html)
+[`av::av_audio_convert()`](https://docs.ropensci.org/av/reference/encoding.html)
 before being read by
 [`tuneR::readWave()`](https://rdrr.io/pkg/tuneR/man/readWave.html),
 ensuring compatibility without quality loss. File names are displayed

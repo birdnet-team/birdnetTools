@@ -192,6 +192,7 @@ date (year, month, day) and time (hour, minute).
 
 # add datetime information to the filtered data
 data_with_datetime <- birdnet_add_datetime(data_filtered)
+#> ✔ Parsed datetime for 44552 of 44552 file names.
 
 # show which new columns were added
 new_columns <- setdiff(colnames(data_with_datetime), colnames(data_filtered))
