@@ -100,84 +100,57 @@ birdnet_subsample <- function(data,
 
   # check if the required columns are present
   cols <- birdnet_detect_columns(data)
-  total_rows <- nrow(data)
+  conf <- cols$confidence
+  n_take <- min(n, nrow(data))
 
-  if (total_rows <= n) {
-    sampled_data <- data
+  run <- function() {
 
-  } else if (method == "random") {
-    sampled_data <- dplyr::slice_sample(data, n = n,
-                                        replace = FALSE)
-
-  } else if (method == "top") {
-    sampled_data <- dplyr::slice_max(data, order_by = !!dplyr::sym(cols$confidence),
-                                     n = n, with_ties = FALSE)
-
-  } else if (method == "even_stratified") {
-    # assign bins
-    data <- data |> dplyr::mutate(category = cut(!!dplyr::sym(cols$confidence),
-                                                 breaks = seq(0.1, 1, by = 0.05),
-                                                 right = FALSE))
-    n_bins <- length(unique(data$category))
-    n_per_bin <- floor(n / n_bins)
-
-    # sample from each bin evenly
-    sampled_data <- dplyr::bind_rows(lapply(unique(data$category), function(bin) {
-      bin_data <- dplyr::filter(data, category == bin)
-      if (nrow(bin_data) <= n_per_bin) {
-        # take all if not enough rows
-        bin_data
-      } else {
-        dplyr::slice_sample(bin_data, n = n_per_bin)
-      }
-    })) |>
-      dplyr::select(-category)
-
-
-  } else if (method == "proportional_stratified") {
-    # assign bins
-    data <- data |> dplyr::mutate(category = cut(!!dplyr::sym(cols$confidence),
-                                                 breaks = seq(0.1, 1, by = 0.05),
-                                                 right = FALSE))
-
-    # count per bin
-    bin_counts <- data |>
-      dplyr::group_by(category) |>
-      dplyr::summarise(count = dplyr::n(), .groups = "drop")
-
-    # proportional allocation
-    bin_counts <- bin_counts |>
-      dplyr::mutate(prop_sample = n * count / sum(count),
-                    sample_n = floor(prop_sample),
-                    frac = prop_sample - sample_n)
-
-    # leftover allocation by largest fractional part
-    leftover <- n - sum(bin_counts$sample_n)
-    if (leftover > 0) {
-      bin_counts <- bin_counts |>
-        dplyr::arrange(dplyr::desc(frac))
-      for (i in seq_len(leftover)) {
-        bin_counts$sample_n[i] <- bin_counts$sample_n[i] + 1
-      }
+    if (method == "random") {
+      return(dplyr::slice_sample(data, n = n_take))
     }
 
-    # don't oversample bins
-    bin_counts <- bin_counts |>
-      dplyr::mutate(sample_n = pmin(sample_n, count))
+    if (method == "top") {
+      return(dplyr::slice_max(data, order_by = .data[[conf]],
+                              n = n_take, with_ties = FALSE))
+    }
 
-    # sample from bins
-    sampled_data <- dplyr::bind_rows(lapply(seq_len(nrow(bin_counts)), function(i) {
-      bin <- bin_counts$category[i]
-      n_bin <- bin_counts$sample_n[i]
-      if (n_bin <= 0) return(NULL)
-      bin_data <- dplyr::filter(data, category == bin)
-      if (nrow(bin_data) <= n_bin) bin_data else dplyr::slice_sample(bin_data, n = n_bin)
-    })) |> dplyr::select(-category)
+    # stratified methods: bins cover 0-1 so no confidence value becomes NA
+    breaks <- unique(c(seq(0, 1, by = bin_width), 1))
+    bins <- split(
+      seq_len(nrow(data)),
+      cut(data[[conf]], breaks = breaks, include.lowest = TRUE),
+      drop = TRUE
+    )
+    counts <- lengths(bins)
+
+    alloc <- if (method == "even_stratified") {
+      allocate_even(counts, n)
+    } else {
+      allocate_proportional(counts, n)
+    }
+
+    rows <- unlist(
+      Map(function(idx, k) idx[sample.int(length(idx), k)], bins, alloc),
+      use.names = FALSE
+    )
+    data[rows, , drop = FALSE]
   }
 
+  # a seed makes the sample reproducible without touching the user's RNG state
+  sampled_data <- if (is.null(seed)) run() else withr::with_seed(seed, run())
 
-  # optional write to CSV
-  if (save_to_file) {
+  # tell the user what they got ----------------------------------------------
+
+  cli::cli_alert_success("Returned {nrow(sampled_data)} detection{?s}.")
+
+  if (nrow(data) <= n) {
+    cli::cli_alert_info(
+      "`data` has {nrow(data)} detection{?s}, which is not more than {.arg n}, so all were kept."
+    )
+  }
+
+  # optional write to CSV (as before) ----------------------------------------
+  if (save_to_file || !is.null(file)) {
     file_to_write <- if (is.null(file)) "subsampled_data.csv" else file
     readr::write_csv(sampled_data, file_to_write)
   }
