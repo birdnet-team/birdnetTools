@@ -8,8 +8,11 @@ birdnet_subsample(
   data,
   n,
   method = c("even_stratified", "proportional_stratified", "random", "top"),
+  bin_width = 0.05,
+  seed = NULL,
   save_to_file = FALSE,
-  file = NULL
+  file = NULL,
+  quiet = FALSE
 )
 }
 \arguments{
@@ -30,11 +33,21 @@ proportion to the number of detections in each bin.}
 }
 Defaults to \code{"even_stratified"}.}
 
+\item{bin_width}{Numeric. Width of the confidence score bins used by the
+stratified methods. Defaults to \code{0.05}.}
+
+\item{seed}{Integer or \code{NULL}. If given, the subsample is reproducible. The
+random number generator state of your session is left unchanged.}
+
 \item{save_to_file}{Logical. If \code{TRUE}, saves the output to a CSV file.
 Defaults to \code{FALSE}. Automatically set to \code{TRUE} if \code{file} is provided.}
 
 \item{file}{Character or \code{NULL}. File path to save the output CSV.
-If \code{NULL} and \code{save_to_file = TRUE}, saves as \code{"subsampled_data.csv"} in the working directory.
+If \code{NULL} and \code{save_to_file = TRUE}, saves as \code{"subsampled_data.csv"} in the working directory.}
+
+\item{quiet}{Logical. If \code{TRUE}, suppresses the status messages about how
+many detections were returned and whether all of them were kept because
+\code{data} had no more than \code{n} rows. Defaults to \code{FALSE}.
 
 #' @details
 \strong{Choosing a method.}
@@ -51,12 +64,6 @@ biased for estimating precision.
 \strong{Several species.} Sampling is not done per species. To subsample each
 species separately, apply the function to each species in turn (see
 Examples).}
-
-\item{bin_width}{Numeric. Width of the confidence score bins used by the
-stratified methods. Defaults to \code{0.05}.}
-
-\item{seed}{Integer or \code{NULL}. If given, the subsample is reproducible. The
-random number generator state of your session is left unchanged.}
 }
 \value{
 A data frame containing the subsampled observations.

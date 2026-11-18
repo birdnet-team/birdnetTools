@@ -29,6 +29,9 @@
 #'   Defaults to `FALSE`. Automatically set to `TRUE` if `file` is provided.
 #' @param file Character or `NULL`. File path to save the output CSV.
 #'   If `NULL` and `save_to_file = TRUE`, saves as `"subsampled_data.csv"` in the working directory.
+#' @param quiet Logical. If `TRUE`, suppresses the status messages about how
+#'   many detections were returned and whether all of them were kept because
+#'   `data` had no more than `n` rows. Defaults to `FALSE`.
 #'
 #'#' @details
 #' **Choosing a method.**
@@ -69,7 +72,8 @@ birdnet_subsample <- function(data,
                               bin_width = 0.05,
                               seed = NULL,
                               save_to_file = FALSE,
-                              file = NULL) {
+                              file = NULL,
+                              quiet = FALSE) {
 
 
   # argument check ----------------------------------------------------------
@@ -141,18 +145,21 @@ birdnet_subsample <- function(data,
 
   # tell the user what they got ----------------------------------------------
 
-  cli::cli_alert_success("Returned {nrow(sampled_data)} detection{?s}.")
+  if (!quiet) {
 
-  if (nrow(data) <= n) {
-    cli::cli_alert_info(
-      "`data` has {nrow(data)} detection{?s}, which is not more than {.arg n}, so all were kept."
-    )
+    cli::cli_alert_success("Returned {nrow(sampled_data)} detection{?s}.")
+
+    if (nrow(data) <= n) {
+      cli::cli_alert_info(
+        "`data` has {nrow(data)} detection{?s}, which is not more than {.arg n}, so all were kept."
+      )
+    }
   }
 
   # optional write to CSV (as before) ----------------------------------------
   if (save_to_file || !is.null(file)) {
     file_to_write <- if (is.null(file)) "subsampled_data.csv" else file
-    readr::write_csv(sampled_data, file_to_write)
+    readr::write_csv(sampled_data, file_to_write, progress = FALSE)
   }
 
   return(sampled_data)

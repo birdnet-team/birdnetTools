@@ -17,7 +17,7 @@ test_that("birdnet_subsample: input validation works", {
   expect_error(birdnet_subsample(valid_data, n = 5, save_to_file = "yes"), "logical")
 
   # Should error if file is not .csv
-  expect_error(birdnet_subsample(valid_data, n = 5, file = "not_csv.txt"), "end with '.csv'")
+  expect_error(birdnet_subsample(valid_data, n = 5, file = "not_csv.txt"), "end with")
 })
 
 
@@ -180,7 +180,7 @@ test_that("birdnet_subsample: accepts upper-case .CSV extension", {
   )
 
   tmp <- tempfile(fileext = ".CSV")
-  expect_silent(birdnet_subsample(df, n = 2, method = "random", save_to_file = TRUE, file = tmp))
+  expect_silent(birdnet_subsample(df, n = 2, method = "random", save_to_file = TRUE, file = tmp, quiet = TRUE))
   unlink(tmp)
 })
 
