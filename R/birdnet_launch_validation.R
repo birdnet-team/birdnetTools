@@ -1,8 +1,8 @@
 #' User interface for BirdNET audio validation platform
 #'
 #' Constructs the user interface layout for the BirdNET audio validation platform
-#' within the `birdnetTools` package. This UI includes inputs for file upload,
-#' audio folder selection, spectrogram settings, and outputs for data display
+#' within the `birdnetTools` package. This UI includes inputs for choosing a
+#' validation folder and table, spectrogram settings, and outputs for data display
 #' and spectrogram plotting.
 #'
 #' @param request Internal parameter for `{shiny}` applications. Typically not set by the user.
@@ -16,11 +16,6 @@
 #' @seealso [birdnet_validation_server], [birdnet_launch_validation]
 #'
 #' @keywords internal
-#' @importFrom bslib page_sidebar sidebar card
-#' @importFrom shiny fileInput p verbatimTextOutput downloadButton actionButton
-#' @importFrom shinyWidgets numericRangeInput
-#' @importFrom shinyFiles shinyDirButton
-#' @importFrom DT DTOutput
 birdnet_validation_ui <- function(request) {
   bslib::page_sidebar(
 
@@ -125,22 +120,13 @@ birdnet_validation_ui <- function(request) {
 #' @return Called for its side effects within a `shinyApp` context.
 #'
 #' @details This internal server function powers the interactive audio validation
-#' interface. Users can import a CSV of BirdNET detections, link to local audio
-#' directories, view spectrograms, and manually validate detections through a
+#' interface. Users select a folder containing audio clips and a table of detections,
+#' view spectrograms, and manually validate detections through a
 #' Shiny DataTable interface.
 #'
 #' @seealso [birdnet_validation_ui], [birdnet_launch_validation]
 #'
 #' @keywords internal
-#' @importFrom shiny observeEvent reactive reactiveValues renderText renderPlot downloadHandler showNotification
-#' @importFrom shinyFiles shinyDirChoose parseDirPath
-#' @importFrom DT renderDT datatable
-#' @importFrom tuneR readWave play setWavPlayer
-#' @importFrom seewave spectro
-#' @importFrom praise praise
-#' @importFrom readr read_csv write_csv
-#' @importFrom dplyr mutate select
-#' @importFrom av av_audio_convert
 birdnet_validation_server <- function(input, output, session) {
 
   # Helper functions --------------------------------------------------------
@@ -471,22 +457,19 @@ birdnet_validation_server <- function(input, output, session) {
 #' Starts an interactive Shiny application for manually validating BirdNET detections
 #' using audio clips and spectrograms.This tool is designed to support manual review of BirdNET results.
 #'
-#' @details This function launches a user-friendly Shiny app that allows you to:
-#' \itemize{
-#'   \item Import a CSV file of BirdNET detections (selection table format),
-#'   \item Select the directory containing your audio files,
-#'   \item View and validate each detection using spectrograms and audio playback,
-#'   \item Edit validation results interactively and save the updated table.
+#' @details This function launches a Shiny app for validating detections one by
+#' one. The recommended workflow is:
+#' \enumerate{
+#'   \item Subsample detections with [birdnet_subsample()],
+#'   \item Cut audio clips with [birdnet_extract_clips()],
+#'   \item Launch this app and select the folder that contains the clips and the table.
+#' }
+#' In the app you can view the spectrogram and play the audio of each detection,
+#' and edit its validation. Changes are saved to the table in the folder after
+#' every edit, so you can stop and resume at any time.
 #' }
 #'
 #' @return A `shiny.appobj` that runs the BirdNET audio validation platform in a web browser.
-#'
-#' @details Audio playback and spectrogram generation now support multiple audio formats
-#' (e.g., WAV, MP3, FLAC, OGG) through the \pkg{av} package. Internally, all
-#' files are converted to temporary WAV files with \code{av::av_audio_convert()}
-#' before being read by \code{tuneR::readWave()}, ensuring compatibility without
-#' quality loss. File names are displayed without their extensions using base R
-#' functions.
 #'
 #' @examples
 #' \dontrun{
