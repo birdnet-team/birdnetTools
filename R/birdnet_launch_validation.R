@@ -237,6 +237,18 @@ birdnet_validation_server <- function(input, output, session) {
   })
 
 
+  # list the audio files in the folder (and subfolders) once per folder
+  audio_index <- shiny::reactive({
+    shiny::req(length(dir_path()) > 0)
+
+    audio_extensions <- "\\.(wav|mp3|flac|ogg|m4a|aac|wma)$"
+    files <- list.files(dir_path(), pattern = audio_extensions, recursive = TRUE,
+                        full.names = TRUE, ignore.case = TRUE)
+
+    data.frame(path = files, name = basename(files), stringsAsFactors = FALSE)
+  })
+
+
   # when a folder is selected, list the tables (CSV files) in it
   shiny::observeEvent(dir_path(), {
     shiny::req(length(dir_path()) > 0)
@@ -249,10 +261,10 @@ birdnet_validation_server <- function(input, output, session) {
     }
   })
 
+
+
   # reactive value for the dataframe ------------------------------------
-
   rv <- shiny::reactiveValues()
-
 
   # if importing file, create data_editable and data_display reactive values
   shiny::observeEvent(list(dir_path(), input$table_file), {
@@ -311,7 +323,6 @@ birdnet_validation_server <- function(input, output, session) {
 
 
   # Render DT table ----------------------------------------------------
-
   output$main_table <- DT::renderDT(
     {
       # ensure the file has been uploaded before trying to render
@@ -345,8 +356,8 @@ birdnet_validation_server <- function(input, output, session) {
   })
 
 
-  # Button observers -----------------------------------------------------
 
+  # Button observers -----------------------------------------------------
   output$save_file <- downloadHandler(
     filename = function() {
       paste0("validated.csv")
@@ -361,8 +372,8 @@ birdnet_validation_server <- function(input, output, session) {
   })
 
 
-  # Spectrogram on button click -----------------------------------------
 
+  # Spectrogram on button click -----------------------------------------
   shiny::observeEvent(input$main_table_cell_clicked, {
     info <- input$main_table_cell_clicked
     if (is.null(info$value) || !info$col %in% c(7, 8)) {
