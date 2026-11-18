@@ -166,3 +166,41 @@ allocate_proportional <- function(counts, n) {
 
   return(as.integer(alloc))
 }
+
+
+# Number of trailing path components shared by two paths
+shared_suffix_length <- function(a, b) {
+  split_rev <- function(p) rev(strsplit(gsub("\\\\", "/", p), "/")[[1]])
+  a <- split_rev(a)
+  b <- split_rev(b)
+  n <- min(length(a), length(b))
+  k <- 0
+  while (k < n && a[k + 1] == b[k + 1]) k <- k + 1
+  k
+}
+
+
+# Find the audio file for one detection:
+# 1. the original path, if it still exists
+# 2. a file with the same name in the indexed audio folder (subfolders included)
+# 3. if several files share the name, the best match of the parent folders
+resolve_audio_path <- function(original, index) {
+
+  if (!is.na(original) && file.exists(original)) {
+    return(original)
+  }
+
+  if (is.na(original) || is.null(index) || nrow(index) == 0) {
+    return(NA_character_)
+  }
+
+  # file name of the original path, whichever slash style it uses
+  original_name <- stringr::str_extract(original, "[^\\\\/]+$")
+
+  hits <- index$path[index$name == original_name]
+  if (length(hits) == 0) return(NA_character_)
+  if (length(hits) == 1) return(hits)
+
+  scores <- vapply(hits, shared_suffix_length, numeric(1), b = original)
+  hits[which.max(scores)]
+}
