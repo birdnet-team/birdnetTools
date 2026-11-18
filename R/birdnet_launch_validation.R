@@ -145,47 +145,43 @@ birdnet_validation_server <- function(input, output, session) {
 
   # Helper functions --------------------------------------------------------
 
-  # the function to play audio
-  play_audio <- function(filepath, start, end, buffer) {
-
-    # check the OS system
-    if (Sys.info()["sysname"] == "Darwin") {
-      tuneR::setWavPlayer("afplay")
-    }
+  # read the part of a file around a detection (times are relative to this file)
+  read_segment <- function(filepath, start, end, buffer) {
 
     # convert any audio format to a temporary WAV file
     tmp_wav <- tempfile(fileext = ".wav")
     av::av_audio_convert(filepath, tmp_wav)
 
-    # read the file
-    song <- tuneR::readWave(tmp_wav,
-                            from = max(0, start - buffer),
-                            to = end + buffer,
-                            units = "seconds")
-    # play audio
-    tuneR::play(song)
+    # do not read past the end of the file
+    header <- tuneR::readWave(tmp_wav, header = TRUE)
+    file_end <- header$samples / header$sample.rate
+
+    tuneR::readWave(tmp_wav,
+                    from = max(0, start - buffer),
+                    to = min(file_end, end + buffer),
+                    units = "seconds")
+  }
+
+
+
+  # the function to play audio
+  play_audio <- function(filepath, start, end, buffer) {
+    if (Sys.info()["sysname"] == "Darwin") {
+      tuneR::setWavPlayer("afplay")
+    }
+    tuneR::play(read_segment(filepath, start, end, buffer))
   }
 
 
 
   # the function to view spectrogram
   view_spectrogram <- function(filepath, flim, wl, start, end, buffer) {
+    song <- read_segment(filepath, start, end, buffer)
 
-    # convert any audio format to a temporary WAV file
-    tmp_wav <- tempfile(fileext = ".wav")
-    av::av_audio_convert(filepath, tmp_wav)
-
-    # read the file
-    song <- tuneR::readWave(tmp_wav,
-                            from = max(0, start - buffer),
-                            to = end + buffer,
-                            units = "seconds")
-
-    # show the spectrogram
     seewave::spectro(song,
-      f = song@samp.rate, flim = flim, ovlp = 50,
-      collevels = seq(-40, 0, 1), wl = wl, scale = FALSE,
-      main = tools::file_path_sans_ext(basename(filepath))
+                     f = song@samp.rate, flim = flim, ovlp = 50,
+                     collevels = seq(-40, 0, 1), wl = wl, scale = FALSE,
+                     main = tools::file_path_sans_ext(basename(filepath))
     )
   }
 
