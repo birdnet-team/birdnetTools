@@ -25,54 +25,41 @@ birdnet_validation_ui <- function(request) {
   bslib::page_sidebar(
 
     # add title
-    title = "birdnetTools / Audio Validation platform",
+    title = "birdnetTools - Audio Validation Platform",
 
     # side bar setting
     sidebar_width = 350,
 
     # add side bar
     sidebar = bslib::sidebar(
+
       bslib::card(
         "File import",
-
-        # input: import_file
-        shiny::fileInput(
-          inputId = "import_file",
-          label = "Selection table",
-          multiple = FALSE,
-          accept = c(
-            "text/csv",
-            "text/comma-separated-values,text/plain",
-            ".csv"
-          ),
-          width = "100%"
-        ),
-
         # button: dir
-        shiny::p("Audio folder"),
+        shiny::p("Validation folder"),
         shinyFiles::shinyDirButton(
           id = "dir",
           label = "Select",
-          title = "Select the species recording folder"
+          title = "Select the folder with the audio clips and the table"
         ),
 
         # output: dir
         shiny::verbatimTextOutput(
           outputId = "dir",
           placeholder = TRUE
-        )
-      ), bslib::card(
-        "Actions",
+        ),
 
-        # button: save_file
-        shiny::downloadButton("save_file", "Save"),
+        # input: table_file (filled in by the server once a folder is chosen)
+        shiny::selectInput(
+          inputId = "table_file",
+          "Table",
+          choices = NULL,
+          width = "100%")
 
-        # button: praise_me
-        shiny::actionButton("praise_me", "Praise me")
+
+
       ), bslib::card(
         "Settings",
-
-
         # input: duration
         shiny::numericInput(
           inputId = "duration",
@@ -95,6 +82,13 @@ birdnet_validation_ui <- function(request) {
           label = "Window length:",
           value = 512
         )
+
+
+
+      ), bslib::card(
+        "Actions",
+        # button: praise_me
+        shiny::actionButton("praise_me", "Praise me")
       )
     ),
 
