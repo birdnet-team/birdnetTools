@@ -344,11 +344,19 @@ birdnet_validation_server <- function(input, output, session) {
 
   # when the table is clicked to change values
   observeEvent(input$main_table_cell_edit, {
-    # get the edit information
     info <- input$main_table_cell_edit
-
-    # update the value in the reactive dataframe
     rv$data_editable$validation[info$row] <- info$value
+
+    # save the change straight back to the table in the folder
+    tryCatch(
+      {
+        readr::write_csv(rv$data_editable, rv$csv_path, progress = FALSE)
+        shiny::showNotification("Saved", duration = 1)
+      },
+      error = function(e) {
+        shiny::showNotification(paste("Could not save:", e$message), type = "error")
+      }
+    )
   })
 
 
@@ -384,9 +392,33 @@ birdnet_validation_server <- function(input, output, session) {
       return()
     }
 
-    selected_row <- rv$data_display[info$row, ]
-    filepath <- file.path(dir_path(),
-                          basename(selected_row[[rv$cols$filepath]]))
+
+
+    # the full row (the display table has no clip columns)
+    row <- rv$data_editable[info$row, ]
+
+    if (rv$has_clip) {
+      # the clip starts at clip_start in the original recording, so the detection
+      # sits at (start - clip_start) seconds inside the clip
+      if (is.na(row$clip_file)) {
+        shiny::showNotification("No clip was created for this detection.",
+                                type = "warning")
+        return()
+      }
+      original <- file.path(dir_path(), row$clip_file)
+      offset <- row$clip_start
+    } else {
+      # a table without clips: look for the original recording in the folder
+      original <- row[[rv$cols$filepath]]
+      offset <- 0
+    }
+
+    filepath <- resolve_audio_path(original, audio_index())
+    start <- row[[rv$cols$start]] - offset
+    end <- row[[rv$cols$end]] - offset
+
+
+
 
     # Spectrogram button column
     if (info$col == 7) {
@@ -396,8 +428,8 @@ birdnet_validation_server <- function(input, output, session) {
             filepath = filepath,
             flim = input$flim,
             wl = input$wl,
-            start = selected_row[[rv$cols$start]],
-            end = selected_row[[rv$cols$end]],
+            start = start,
+            end = end,
             buffer = (input$duration - 3)/2
           )
         })
@@ -413,8 +445,8 @@ birdnet_validation_server <- function(input, output, session) {
         tryCatch(
           play_audio(
             filepath = filepath,
-            start = selected_row[[rv$cols$start]],
-            end = selected_row[[rv$cols$end]],
+            start = start,
+            end = end,
             buffer = (input$duration - 3)/2
           ),
           error = function(e) {
