@@ -141,8 +141,8 @@ birdnet_validation_ui <- function(request) {
 #' @importFrom readr read_csv write_csv
 #' @importFrom dplyr mutate select
 #' @importFrom av av_audio_convert
-
 birdnet_validation_server <- function(input, output, session) {
+
   # Helper functions --------------------------------------------------------
 
   # the function to play audio
@@ -190,7 +190,7 @@ birdnet_validation_server <- function(input, output, session) {
   }
 
 
-  # reactive value for audio file path ----------------------------------
+  # reactive value for validation folder path ----------------------------------
 
   roots <- if (.Platform$OS.type == "windows") {
     # List all available drives on Windows by checking which drive letters
@@ -237,18 +237,32 @@ birdnet_validation_server <- function(input, output, session) {
   })
 
 
+  # when a folder is selected, list the tables (CSV files) in it
+  shiny::observeEvent(dir_path(), {
+    shiny::req(length(dir_path()) > 0)
+
+    tables <- list.files(dir_path(), pattern = "\\.csv$", ignore.case = TRUE)
+    shiny::updateSelectInput(session, "table_file", choices = tables)
+
+    if (length(tables) == 0) {
+      shiny::showNotification("No CSV table found in this folder.", type = "warning")
+    }
+  })
+
   # reactive value for the dataframe ------------------------------------
 
   rv <- shiny::reactiveValues()
 
 
   # if importing file, create data_editable and data_display reactive values
-  shiny::observeEvent(input$import_file, {
-    # read in the csv file and clean names based on the path input
-    tryCatch(
-      {
-        rv$data_editable <- input$import_file$datapath |>
-          readr::read_csv(show_col_types = FALSE)
+  shiny::observeEvent(list(dir_path(), input$table_file), {
+    shiny::req(length(dir_path()) > 0, input$table_file)
+    csv_path <- file.path(dir_path(), input$table_file)
+    shiny::req(file.exists(csv_path))
+
+    tryCatch({
+      rv$data_editable <- csv_path |>
+        readr::read_csv(show_col_types = FALSE)
 
         # check if the data frame has the validation column already
         if (!"validation" %in% names(rv$data_editable)) {
@@ -265,6 +279,10 @@ birdnet_validation_server <- function(input, output, session) {
     )
 
     rv$cols <- birdnet_detect_columns(rv$data_editable)
+
+    # remember where the table lives, and whether it came from birdnet_extract_clips()
+    rv$csv_path <- csv_path
+    rv$has_clip <- all(c("clip_file", "clip_start") %in% names(rv$data_editable))
 
 
     if (is.na(rv$cols$filepath)) {
