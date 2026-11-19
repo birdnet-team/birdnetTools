@@ -2,7 +2,7 @@
 #'
 #' Constructs the user interface layout for the BirdNET audio validation platform
 #' within the `birdnetTools` package. This UI includes inputs for choosing a
-#' validation folder and table, spectrogram settings, and outputs for data display
+#' validation folder, spectrogram settings, and outputs for data display
 #' and spectrogram plotting.
 #'
 #' @param request Internal parameter for `{shiny}` applications. Typically not set by the user.
@@ -198,7 +198,7 @@ birdnet_validation_server <- function(input, output, session) {
       Desktop = "~/Desktop",
       Documents = "~/Documents",
       Working_dir = ".",
-      setNames(external_drives, basename(external_drives))
+      stats::setNames(external_drives, basename(external_drives))
     )
   }
 
@@ -348,15 +348,6 @@ birdnet_validation_server <- function(input, output, session) {
 
 
   # Button observers -----------------------------------------------------
-  output$save_file <- downloadHandler(
-    filename = function() {
-      paste0("validated.csv")
-    },
-    content = function(file) {
-      readr::write_csv(rv$data_editable, file)
-    }
-  )
-
   shiny::observeEvent(input$praise_me, {
     shiny::showNotification(praise::praise(), type = "message")
   })
@@ -455,7 +446,7 @@ birdnet_validation_server <- function(input, output, session) {
 #' Launch the BirdNET audio validation app
 #'
 #' Starts an interactive Shiny application for manually validating BirdNET detections
-#' using audio clips and spectrograms.This tool is designed to support manual review of BirdNET results.
+#' using audio clips and spectrograms. This tool is designed to support manual review of BirdNET results.
 #'
 #' @details This function launches a Shiny app for validating detections one by
 #' one. The recommended workflow is:
@@ -467,7 +458,7 @@ birdnet_validation_server <- function(input, output, session) {
 #' In the app you can view the spectrogram and play the audio of each detection,
 #' and edit its validation. Changes are saved to the table in the folder after
 #' every edit, so you can stop and resume at any time.
-#' }
+#'
 #'
 #' @return A `shiny.appobj` that runs the BirdNET audio validation platform in a web browser.
 #'
