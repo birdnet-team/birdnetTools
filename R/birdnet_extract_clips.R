@@ -114,6 +114,21 @@ birdnet_extract_clips <- function(data,
   }
 
 
+  # where the table is saved: next to the clips unless the user says otherwise
+  table_file <- if (is.null(file)) {
+    file.path(output_dir, "detections_clips.csv")
+  } else {
+    file
+  }
+
+  # do not replace a table that may already hold validation results
+  if (file.exists(table_file) && !overwrite) {
+    cli::cli_abort(c(
+      "{.path {table_file}} already exists.",
+      "i" = "Use {.code overwrite = TRUE} to replace it, or choose a different {.arg file}."
+    ))
+  }
+
   # helpers used only in this function --------------------------------------
 
   # audio formats to look for in audio_dir
@@ -219,8 +234,12 @@ birdnet_extract_clips <- function(data,
   data$clip_end   <- out_end
 
 
-  # tell the user what happened ---------------------------------------------
+  # save the table (next to the clips by default)
+  dir.create(dirname(table_file), recursive = TRUE, showWarnings = FALSE)
+  readr::write_csv(data, table_file, progress = FALSE)
 
+
+  # tell the user what happened ---------------------------------------------
   n_ok      <- sum(status == "ok")
   n_missing <- sum(status == "not_found")
   n_error   <- sum(status == "error")
@@ -246,12 +265,10 @@ birdnet_extract_clips <- function(data,
         "{n_error} clip{?s} could not be written. Their {.field clip_file} is {.val NA}."
       )
     }
+
+    cli::cli_alert_success("Saved the table to {.path {table_file}}.")
   }
 
-  # optional write to CSV
-  if (!is.null(file)) {
-    readr::write_csv(data, file, progress = FALSE)
-  }
 
   return(data)
 }
