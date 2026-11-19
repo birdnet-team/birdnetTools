@@ -15,7 +15,7 @@ A Shiny UI definition built with \code{bslib::page_sidebar()}.
 \description{
 Constructs the user interface layout for the BirdNET audio validation platform
 within the \code{birdnetTools} package. This UI includes inputs for choosing a
-validation folder and table, spectrogram settings, and outputs for data display
+validation folder, spectrogram settings, and outputs for data display
 and spectrogram plotting.
 }
 \details{

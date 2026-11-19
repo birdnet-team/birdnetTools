@@ -11,10 +11,19 @@ A \code{shiny.appobj} that runs the BirdNET audio validation platform in a web b
 }
 \description{
 Starts an interactive Shiny application for manually validating BirdNET detections
-using audio clips and spectrograms.This tool is designed to support manual review of BirdNET results.
+using audio clips and spectrograms. This tool is designed to support manual review of BirdNET results.
 }
 \details{
-
+This function launches a Shiny app for validating detections one by
+one. The recommended workflow is:
+\enumerate{
+\item Subsample detections with \code{\link[=birdnet_subsample]{birdnet_subsample()}},
+\item Cut audio clips with \code{\link[=birdnet_extract_clips]{birdnet_extract_clips()}},
+\item Launch this app and select the folder that contains the clips and the table.
+}
+In the app you can view the spectrogram and play the audio of each detection,
+and edit its validation. Changes are saved to the table in the folder after
+every edit, so you can stop and resume at any time.
 }
 \examples{
 \dontrun{
