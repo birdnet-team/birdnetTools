@@ -24,6 +24,7 @@ reference:
   - title: "Validating and Getting Threshold"
     contents:
       - birdnet_subsample
+      - birdnet_extract_clips
       - birdnet_launch_validation
       - birdnet_calc_threshold
 

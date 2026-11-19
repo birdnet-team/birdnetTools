@@ -11,23 +11,19 @@ A \code{shiny.appobj} that runs the BirdNET audio validation platform in a web b
 }
 \description{
 Starts an interactive Shiny application for manually validating BirdNET detections
-using audio clips and spectrograms.This tool is designed to support manual review of BirdNET results.
+using audio clips and spectrograms. This tool is designed to support manual review of BirdNET results.
 }
 \details{
-This function launches a user-friendly Shiny app that allows you to:
-\itemize{
-\item Import a CSV file of BirdNET detections (selection table format),
-\item Select the directory containing your audio files,
-\item View and validate each detection using spectrograms and audio playback,
-\item Edit validation results interactively and save the updated table.
+This function launches a Shiny app for validating detections one by
+one. The recommended workflow is:
+\enumerate{
+\item Subsample detections with \code{\link[=birdnet_subsample]{birdnet_subsample()}},
+\item Cut audio clips with \code{\link[=birdnet_extract_clips]{birdnet_extract_clips()}},
+\item Launch this app and select the folder that contains the clips and the table.
 }
-
-Audio playback and spectrogram generation now support multiple audio formats
-(e.g., WAV, MP3, FLAC, OGG) through the \pkg{av} package. Internally, all
-files are converted to temporary WAV files with \code{av::av_audio_convert()}
-before being read by \code{tuneR::readWave()}, ensuring compatibility without
-quality loss. File names are displayed without their extensions using base R
-functions.
+In the app you can view the spectrogram and play the audio of each detection,
+and edit its validation. Changes are saved to the table in the folder after
+every edit, so you can stop and resume at any time.
 }
 \examples{
 \dontrun{
