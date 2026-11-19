@@ -5,6 +5,10 @@
 #' needing the original recordings. Each clip runs from the start of the
 #' detection to its end, plus a buffer before and after.
 #'
+#' The detection table, with the clip columns added (see Value), is saved as a
+#' CSV file in the same folder, so the folder holds everything needed to
+#' validate the detections.
+#'
 #' **File names.** Clips are saved in the same audio format as the original
 #' recording (e.g. WAV stays WAV, MP3 stays MP3) and are named
 #' `<ID>_<recording name>_<start>_<end>_<species common name>_<confidence>.<extension>`,
@@ -41,9 +45,12 @@
 #'   stored paths only.
 #' @param buffer Numeric. Seconds added before the start and after the end of
 #'   each detection. Defaults to `3`.
-#' @param file Character or `NULL`. If given, the returned table is also saved
-#'   to this path as a CSV file (must end in `.csv`). Saving it in `output_dir`
-#'   keeps the table and the clips together. Defaults to `NULL`.
+#' @param file Character or `NULL`. Where to save the table as a CSV file (must
+#'   end in `.csv`). Defaults to `NULL`, which saves it as `detections_clips.csv`
+#'   in `output_dir`, next to the clips.
+#' @param overwrite Logical. If `FALSE`, the function stops before extracting
+#'   anything when the table file already exists, so that a table you have
+#'   already validated is not replaced by accident. Defaults to `FALSE`.
 #' @param quiet Logical. If `TRUE`, suppresses the status messages about how
 #'   many clips were extracted or could not be created. Defaults to `FALSE`.
 #'
@@ -65,6 +72,7 @@
 #'   audio_dir = "path/to/recordings",
 #'   buffer = 3
 #' )
+#' # "validation_audio" now holds the clips and detections_clips.csv
 #' }
 #'
 #' @seealso [birdnet_subsample()], [birdnet_launch_validation()]
@@ -74,6 +82,7 @@ birdnet_extract_clips <- function(data,
                                   audio_dir = NULL,
                                   buffer = 3,
                                   file = NULL,
+                                  overwrite = FALSE,
                                   quiet = FALSE) {
 
   # argument check ----------------------------------------------------------
@@ -83,6 +92,7 @@ birdnet_extract_clips <- function(data,
   checkmate::assert_string(audio_dir, null.ok = TRUE)
   if (!is.null(audio_dir)) checkmate::assert_directory_exists(audio_dir)
   checkmate::assert_number(buffer, lower = 0)
+  checkmate::assert_flag(overwrite)
   checkmate::assert_flag(quiet)
 
   if (!is.null(file)) {
