@@ -89,7 +89,7 @@ projects](https://github.com/birdnet-team):
 
 ## Contributing to this package
 
-We welcome contributions to this guide.
+We welcome contributions to `birdnetTools` R package.
 
 - For small changes, please open a [pull
   request](https://github.com/birdnet-team/birdnetTools).
