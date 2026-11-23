@@ -19,7 +19,8 @@
 #' @return A tibble with two columns:
 #' \describe{
 #'   \item{common_name}{Species common name.}
-#'   \item{threshold}{The calculated confidence threshold for that species.}
+#'   \item{threshold}{The calculated confidence threshold for that species, or
+#'   `NA` if the target cannot be reached.}
 #' }
 #'
 #' @details
@@ -34,7 +35,9 @@
 #' the inverse logit of the target predicted probability from the regression model.
 #'
 #' All thresholds are clamped to fall between the minimum observed confidence in `validated_data`
-#' and 1.
+#' and 1. If the target cannot be reached for a species (for example, if the model
+#' predicts a precision below the target at every confidence score), its
+#' threshold is `NA` and a message says so.
 #'
 #' @export
 #' @references
@@ -111,9 +114,6 @@ birdnet_calc_threshold <- function(
     dplyr::distinct(common_name) |>
     dplyr::pull(common_name)
 
-  pb <- cli::cli_progress_bar("Calculating thresholds",
-                              total = length(species_list))
-
   results <- purrr::map_dfr(species_list, function(species_ind) {
     cli::cli_alert_info("Processing species: {.field {species_ind}}")
 
@@ -139,15 +139,34 @@ birdnet_calc_threshold <- function(
       t_target <- precision2threshold(threshold_table, precision)
 
     } else {
-      t_target <- (log(probability / (1 - probability)) - coef(model)[1]) / coef(model)[2]
+      t_target <- unname(
+        (log(probability / (1 - probability)) - coef(model)[1]) / coef(model)[2]
+      )
     }
+
+
+    # the target cannot be reached for this species
+    if (is.na(t_target)) {
+      if (!is.null(precision)) {
+        cli::cli_alert_warning(
+          "Could not calculate a threshold for {.val {species_ind}}: no confidence score reaches a predicted precision of {.val {precision}}."
+        )
+      } else {
+        cli::cli_alert_warning(
+          "Could not calculate a threshold for {.val {species_ind}} at a predicted probability of {.val {probability}}."
+        )
+      }
+
+      return(dplyr::tibble(common_name = species_ind, threshold = NA_real_))
+    }
+
 
     # Clamp to observed range
     min_conf <- min(validated_data$confidence, na.rm = TRUE)
     if (t_target < min_conf || t_target > 1) {
       t_target <- max(min_conf, min(t_target, 1))
       cli::cli_alert_warning(
-        "Calculated threshold for {.val {species_ind}} is outside [0, 1] range and has been clamped."
+        "Calculated threshold for {.val {species_ind}} is outside the observed range of confidence scores ({.val {min_conf}} to 1) and has been clamped."
       )
     }
 
