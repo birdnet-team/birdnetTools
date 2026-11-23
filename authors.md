@@ -11,13 +11,13 @@ Source:
 [`DESCRIPTION`](https://github.com/birdnet-team/birdnetTools/blob/master/DESCRIPTION)
 
 Tseng S (2026). *birdnetTools: R package for working with BirdNET
-output*. R package version 0.1.0,
+output*. R package version 0.1.1,
 <https://birdnet-team.github.io/birdnetTools/>.
 
     @Manual{,
       title = {birdnetTools: R package for working with BirdNET output},
       author = {Sunny Tseng},
       year = {2026},
-      note = {R package version 0.1.0},
+      note = {R package version 0.1.1},
       url = {https://birdnet-team.github.io/birdnetTools/},
     }

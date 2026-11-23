@@ -7,7 +7,7 @@ while the probability-based method is adapted from Wood and Kahl (2024)."><meta 
 precision or a target predicted probability from a logistic regression model.
 The function returns one threshold per species.
 The precision-based approach follows Tseng et al. (2025),
-while the probability-based method is adapted from Wood and Kahl (2024)."><meta property="og:image" content="https://birdnet-team.github.io/birdnetTools/logo.png"></head><body>
+while the probability-based method is adapted from Wood and Kahl (2024)."><meta property="og:image" content="https://birdnet-team.github.io/birdnetTools/logo.svg"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -15,7 +15,7 @@ while the probability-based method is adapted from Wood and Kahl (2024)."><meta 
 
     <a class="navbar-brand me-2" href="../index.html">birdnetTools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,7 +36,7 @@ while the probability-based method is adapted from Wood and Kahl (2024)."><meta 
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Calculate species-specific confidence thresholds for BirdNET detections</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>Calculate species-specific confidence thresholds for BirdNET detections</h1>
       <small class="dont-index">Source: <a href="https://github.com/birdnet-team/birdnetTools/blob/master/R/birdnet_calc_threshold.R" class="external-link"><code>R/birdnet_calc_threshold.R</code></a></small>
       <div class="d-none name"><code>birdnet_calc_threshold.Rd</code></div>
     </div>
@@ -90,7 +90,8 @@ that achieves the desired precision.</p></dd>
 <dd><p>Species common name.</p></dd>
 
 <dt>threshold</dt>
-<dd><p>The calculated confidence threshold for that species.</p></dd>
+<dd><p>The calculated confidence threshold for that species, or
+<code>NA</code> if the target cannot be reached.</p></dd>
 
 
 </dl></div>
@@ -104,7 +105,9 @@ or exceeds the target precision.</p>
 <p>When using the probability method, the function calculates the confidence threshold corresponding to
 the inverse logit of the target predicted probability from the regression model.</p>
 <p>All thresholds are clamped to fall between the minimum observed confidence in <code>validated_data</code>
-and 1.</p>
+and 1. If the target cannot be reached for a species (for example, if the model
+predicts a precision below the target at every confidence score), its
+threshold is <code>NA</code> and a message says so.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>

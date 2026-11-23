@@ -24,7 +24,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">birdnetTools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +54,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Get started with birdnetTools</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>Get started with birdnetTools</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/birdnet-team/birdnetTools/blob/master/vignettes/birdnetTools.Rmd" class="external-link"><code>vignettes/birdnetTools.Rmd</code></a></small>
@@ -76,7 +76,9 @@ by species, confidence, and date/time; visualizing temporal patterns;
 and validating detections with an interactive Shiny app to support
 threshold-setting workflows.</p>
 <p>The cheatsheet below can be downloaded from <a href="https://github.com/birdnet-team/birdnetTools/blob/master/man/figures/workflow.png" class="external-link">here</a>:</p>
-<p><img src="images/workflow.png"></p>
+<div class="float">
+<img src="images/workflow.png" alt="Cheatsheet of birdnetTools package."><div class="figcaption">Cheatsheet of birdnetTools package.</div>
+</div>
 <div class="section level2">
 <h2 id="data-import">Data Import<a class="anchor" aria-label="anchor" href="#data-import"></a>
 </h2>
@@ -261,7 +263,7 @@ month, day) and time (hour, minute).</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="validating-detections-getting-thresholds">Validating Detections &amp; Getting Thresholds<a class="anchor" aria-label="anchor" href="#validating-detections-getting-thresholds"></a>
+<h2 id="validating-detections">Validating Detections<a class="anchor" aria-label="anchor" href="#validating-detections"></a>
 </h2>
 <p>Each BirdNET detection includes a “confidence” score, but this score
 does not reflect true probability and varies in meaning across species.
@@ -275,6 +277,21 @@ detections is reviewed by human experts to classify them as true or
 false positives. For further context on interpreting confidence scores,
 see <a href="https://link.springer.com/article/10.1007/s10336-024-02144-5" class="external-link">Wood
 and Kahl 2024</a>.</p>
+<p>The workflow has four steps:</p>
+<ol style="list-style-type: decimal">
+<li>
+<strong>Subsample</strong> the detections to validate with
+<code><a href="../reference/birdnet_subsample.html">birdnet_subsample()</a></code>.</li>
+<li>
+<strong>Extract</strong> a short audio clip for each of them into
+one folder with <code><a href="../reference/birdnet_extract_clips.html">birdnet_extract_clips()</a></code>.</li>
+<li>
+<strong>Validate</strong> the clips in a Shiny app launched by
+<code><a href="../reference/birdnet_launch_validation.html">birdnet_launch_validation()</a></code>.</li>
+<li>
+<strong>Calculate</strong> a species-specific threshold with
+<code><a href="../reference/birdnet_calc_threshold.html">birdnet_calc_threshold()</a></code>.</li>
+</ol>
 <div class="section level3">
 <h3 id="get-a-validation-set-by-subsampling">1. Get a validation set by subsampling<a class="anchor" aria-label="anchor" href="#get-a-validation-set-by-subsampling"></a>
 </h3>
@@ -282,26 +299,35 @@ and Kahl 2024</a>.</p>
 detections in <code>data_filtered</code>, which contains Swainson’s
 Thrush detections filtered at a 0.2 confidence threshold. First, we will
 need to subsample a portion for manual review. The
-<code><a href="../reference/birdnet_subsample.html">birdnet_subsample()</a></code> function supports four sampling
-methods: <code>propotional_stratified</code> (propotional across
-confidence scores), <code>even_stratified</code> (evenly across
-confidence scores), <code>random</code> (selection based on confidence
-score distribution), and <code>top</code> (highest confidence
-detections). The <code>even_stratified</code>,
-<code>propotional_stratified</code>, and <code>random</code> approaches
-help create a representative validation set, while <code>top</code>
-sampling targets the most confident predictions.</p>
+<code><a href="../reference/birdnet_subsample.html">birdnet_subsample()</a></code> function draws <code>n</code>
+detections in total from the data you give it, using one of four
+methods:</p>
+<ul>
+<li>
+<code>even_stratified</code> (the default): samples evenly across
+confidence score bins, so detections from the whole range of confidence
+scores are covered.</li>
+<li>
+<code>proportional_stratified</code>: samples across confidence
+score bins in proportion to how many detections each bin contains.</li>
+<li>
+<code>random</code>: a simple random sample.</li>
+<li>
+<code>top</code>: the detections with the highest confidence.</li>
+</ul>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># subsample 300 detections from the filtered data</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>  <span class="co"># for reproducibility</span></span>
 <span><span class="va">data_subsampled</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/birdnet_subsample.html">birdnet_subsample</a></span><span class="op">(</span><span class="va">data_filtered</span>,</span>
-<span>                                     n <span class="op">=</span> <span class="fl">300</span><span class="op">)</span></span>
+<span>                                     n <span class="op">=</span> <span class="fl">300</span>,</span>
+<span>                                     seed <span class="op">=</span> <span class="fl">123</span><span class="op">)</span> <span class="co"># for reproducibility</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Returned 300 detections.</span></span>
 <span></span>
 <span><span class="co"># view function documentation</span></span>
 <span><span class="op">?</span><span class="fu"><a href="../reference/birdnet_subsample.html">birdnet_subsample</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>Optionally, you can save the subsampled detections as a
-<code>.csv</code> file in your working directory by setting
-<code>save_to_file = TRUE</code> and specifying a file name:</p>
+<p>Optionally, you can also save the subsampled detections as a
+<code>.csv</code> file by setting <code>save_to_file = TRUE</code> and
+specifying a file name. This is not needed for the next step, which
+saves the table together with the clips.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/birdnet_subsample.html">birdnet_subsample</a></span><span class="op">(</span></span>
 <span>  <span class="va">data_filtered</span>,</span>
@@ -311,61 +337,109 @@ sampling targets the most confident predictions.</p>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="validation-using-shinyapp">2. Validation using shinyApp<a class="anchor" aria-label="anchor" href="#validation-using-shinyapp"></a>
+<h3 id="extract-the-audio-clips">2. Extract the audio clips<a class="anchor" aria-label="anchor" href="#extract-the-audio-clips"></a>
+</h3>
+<p>Validating detections directly from the full recordings means
+locating each file and finding the right timestamp. A validation set is
+only a small part of the full data set (for example, 300 three-second
+segments out of terabytes of audio), so it is easier to cut those
+segments into a folder of their own first. The clips open instantly in
+the app, the folder can be zipped and sent to a collaborator or archived
+with a paper without the original recordings, and the app never has to
+deal with file paths that went stale when drives changed.</p>
+<p>The <code><a href="../reference/birdnet_extract_clips.html">birdnet_extract_clips()</a></code> function takes the
+subsampled detections and cuts one clip for each of them:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/birdnet_extract_clips.html">birdnet_extract_clips</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">data_subsampled</span>,</span>
+<span>  output_dir <span class="op">=</span> <span class="st">"path/to/validation_folder"</span>, <span class="co"># where the clips and the table are saved</span></span>
+<span>  audio_dir <span class="op">=</span> <span class="st">"path/to/recordings"</span>,         <span class="co"># where the original recordings are</span></span>
+<span>  buffer <span class="op">=</span> <span class="fl">3</span>                                <span class="co"># seconds added before and after each detection</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#&gt; ✔ Extracted 300 of 300 clips to path/to/validation_folder.</span></span>
+<span><span class="co">#&gt; ✔ Saved the table to path/to/validation_folder/detections_clips.csv.</span></span></code></pre></div>
+<p>Replace the two paths with your own folders. The validation folder
+then looks like this (the exact file names will differ):</p>
+<pre><code>validation_folder/
+├── detections_clips.csv
+├── 001_20230611_054000_45_48_Swainson_s_Thrush_0.715.WAV
+├── 002_20230611_032500_15_18_Swainson_s_Thrush_0.575.WAV
+└── ...</code></pre>
+</div>
+<div class="section level3">
+<h3 id="validation-using-shinyapp">3. Validation using shinyApp<a class="anchor" aria-label="anchor" href="#validation-using-shinyapp"></a>
 </h3>
 <p>Manually validating detections, by locating audio files, finding
 timestamps, and listening to clips, can be slow and tedious. The
 <code><a href="../reference/birdnet_launch_validation.html">birdnet_launch_validation()</a></code> function streamlines this
-process by launching a Shiny app that displays subsampled detections
-alongside their spectrograms and corresponding audio clips. With an
-interactive interface, users can quickly review each detection by
-listening to audio or viewing spectrograms and edit the validation
-datasheet, making the validation process much more efficient.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+process by launching a Shiny app that displays the detections alongside
+their spectrograms and corresponding audio clips. With an interactive
+interface, users can quickly review each detection by listening to audio
+or viewing spectrograms and edit the validation datasheet, making the
+validation process much more efficient.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/birdnet_launch_validation.html">birdnet_launch_validation</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>After running the code above, a Shiny interface will launch. This app
-requires two inputs:</p>
+<p>After running the code above, a Shiny interface will launch. The app
+needs just one input, the validation folder created in step 2.</p>
+<ol style="list-style-type: decimal">
+<li>
+<p>Click <strong>Select</strong> under “Validation folder”.</p>
+<div class="float">
+<img src="images/shinyapp_select_folder.png" alt="Screenshot of the ShinyApp validation platform, step 1."><div class="figcaption">Screenshot of the ShinyApp validation platform,
+step 1.</div>
+</div>
+</li>
+<li><p>Navigate to the validation folder.</p></li>
+<li>
+<p>Select the folder and click <strong>Select</strong>. The app will
+read the table and display it in the top panel.</p>
+<div class="float">
+<img src="images/shinyapp_table.png" alt="Screenshot of the ShinyApp validation platform, step 2 and 3."><div class="figcaption">Screenshot of the ShinyApp validation platform,
+step 2 and 3.</div>
+</div>
+<p>If the folder contains more than one <code>.csv</code> table, choose
+the one to validate from the <strong>Table</strong> dropdown. The table
+is then displayed in the top panel.</p>
+<div class="float">
+<img src="images/shinyapp_hints.png" alt="Screenshot of the ShinyApp validation platform."><div class="figcaption">Screenshot of the ShinyApp validation
+platform.</div>
+</div>
+</li>
+<li><p>Click <strong>Spectrogram</strong> to show the spectrogram of a
+detection below the table.</p></li>
+<li><p>Click <strong>Audio</strong> to play the clip.</p></li>
+<li>
+<p>Double-click the <code>U</code> (Unknown, the default value) cell
+in the <code>validation</code> column. Enter <code>1</code> for a true
+positive or <code>0</code> for a false positive. Your edits are saved
+automatically to the table in the validation folder.</p>
+<div class="float">
+<img src="images/shinyapp_main.png" alt="Screenshot of the ShinyApp validation platform, step 4 to 6."><div class="figcaption">Screenshot of the ShinyApp validation platform,
+step 4 to 6.</div>
+</div>
+</li>
+</ol>
+<p><strong>Other hints:</strong></p>
 <ul>
-<li><p>Detection file (.csv) – A file containing the BirdNET predictions
-selected for validation.</p></li>
-<li><p>Audio folder path – The directory where your corresponding audio
-clips are stored.</p></li>
+<li><p>You can close the app at any time and pick up where you left off
+by selecting the same folder and table again. If you want to keep an
+unvalidated copy of the table, make one before you start.</p></li>
+<li><p>The <strong>Settings</strong> panel lets you change what is
+shown: the duration of the window around each detection (it can’t be
+longer than the clip), the frequency range, and the window length of the
+spectrogram.</p></li>
+<li><p>And if you’re getting tired, try the <strong>Praise me</strong>
+button for a quick boost of motivation. 🌟</p></li>
 </ul>
-<table class="table">
-<colgroup>
-<col width="50%">
-<col width="50%">
-</colgroup>
-<thead><tr class="header">
-<th>Select meta data</th>
-<th>Select recording folder</th>
-</tr></thead>
-<tbody><tr class="odd">
-<td><img src="images/input_csv.png"></td>
-<td><img src="images/input_file.png"></td>
-</tr></tbody>
-</table>
-<p>Once loaded:</p>
-<ul>
-<li><p>The top panel will display the table of detections. Clicking
-“Spectrogram” will show the corresponding visual signal below; clicking
-“Audio” will play the relevant clip.</p></li>
-<li><p>To validate, double-click the <code>U</code> (Unknown) cell in
-the <code>validation</code> column. Enter <code>1</code> for a true
-positive or <code>0</code> for a false positive. Your input will update
-the original <code>.csv</code> file.</p></li>
-<li><p>When finished, click “Save” to export your results. A new file
-will be created with <code>_validation</code> appended to the original
-name. If you only complete part of the validation, this file can later
-be reloaded to resume the process.</p></li>
-<li><p>The “Settings” tab lets you tweak spectrogram display options.
-And if you’re getting tired, try the “Praise me” button for a quick
-boost of motivation. 🌟</p></li>
-</ul>
-<p><img src="images/shinyapp_main.png"></p>
+<blockquote>
+<p>Note: You can also put a validation folder together yourself. It
+needs a table (<code>.csv</code>) and the audio. The app looks for each
+recording by the file name in its <code>filepath</code> column.</p>
+</blockquote>
 </div>
 <div class="section level3">
-<h3 id="get-threshold">3. Get threshold<a class="anchor" aria-label="anchor" href="#get-threshold"></a>
+<h3 id="get-threshold">4. Get threshold<a class="anchor" aria-label="anchor" href="#get-threshold"></a>
 </h3>
 <p>Once a set of BirdNET detections has been validated (i.e., manually
 labeled as true or false positives), you can calculate a
@@ -373,8 +447,18 @@ species-specific confidence threshold that meets a desired level of
 precision. The <code><a href="../reference/birdnet_calc_threshold.html">birdnet_calc_threshold()</a></code> function helps
 identify the minimum confidence score required to achieve a target
 precision for a given species.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<p>The validated table is the <code>detections_clips.csv</code> file in
+your validation folder, which now has the <code>validation</code> column
+filled in. Read it back into R, making sure that no <code>U</code> is
+left in the <code>validation</code> column:</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">data_validated</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="st">"path/to/validation_folder/detections_clips.csv"</span><span class="op">)</span></span></code></pre></div>
+<p>To demonstrate the next step without a real validation, we simulate
+one by treating each detection as a Bernoulli trial, where the
+probability of a true positive equals the confidence score:</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># simulate validation as a Bernoulli trial</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">data_subsampled</span><span class="op">$</span><span class="va">validation</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span></span>
 <span>  n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">data_subsampled</span><span class="op">)</span>, </span>
 <span>  size <span class="op">=</span> <span class="fl">1</span>, </span>
@@ -390,7 +474,7 @@ minimum confidence score needed to achieve the specified precision or
 probability level. For more details on the difference between the
 precision and probability arguments, please see the function
 documentation (<code>?birdnet_calc_threshold()</code>).</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/birdnet_calc_threshold.html">birdnet_calc_threshold</a></span><span class="op">(</span><span class="va">data_subsampled</span>,</span>
 <span>                       precision <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Processing species: <span style="color: #00BB00;">Swainson's Thrush</span></span></span>
@@ -398,7 +482,7 @@ documentation (<code>?birdnet_calc_threshold()</code>).</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 2</span></span></span>
 <span><span class="co">#&gt;   common_name       threshold</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Swainson's Thrush     0.879</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Swainson's Thrush     0.919</span></span></code></pre></div>
 <blockquote>
 <p>Note: To demonstrate this function, we use a simulated validation
 dataset included in the package. This dataset mimics what a real

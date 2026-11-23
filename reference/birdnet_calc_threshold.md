@@ -53,7 +53,8 @@ A tibble with two columns:
 
 - threshold:
 
-  The calculated confidence threshold for that species.
+  The calculated confidence threshold for that species, or `NA` if the
+  target cannot be reached.
 
 ## Details
 
@@ -70,7 +71,10 @@ confidence threshold corresponding to the inverse logit of the target
 predicted probability from the regression model.
 
 All thresholds are clamped to fall between the minimum observed
-confidence in `validated_data` and 1.
+confidence in `validated_data` and 1. If the target cannot be reached
+for a species (for example, if the model predicts a precision below the
+target at every confidence score), its threshold is `NA` and a message
+says so.
 
 ## References
 

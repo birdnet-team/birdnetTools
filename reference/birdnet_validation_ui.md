@@ -2,8 +2,8 @@
 
 Constructs the user interface layout for the BirdNET audio validation
 platform within the `birdnetTools` package. This UI includes inputs for
-file upload, audio folder selection, spectrogram settings, and outputs
-for data display and spectrogram plotting.
+choosing a validation folder, spectrogram settings, and outputs for data
+display and spectrogram plotting.
 
 ## Usage
 

@@ -1,7 +1,7 @@
 # Launch the BirdNET audio validation app
 
 Starts an interactive Shiny application for manually validating BirdNET
-detections using audio clips and spectrograms.This tool is designed to
+detections using audio clips and spectrograms. This tool is designed to
 support manual review of BirdNET results.
 
 ## Usage
@@ -17,25 +17,21 @@ web browser.
 
 ## Details
 
-This function launches a user-friendly Shiny app that allows you to:
+This function launches a Shiny app for validating detections one by one.
+The recommended workflow is:
 
-- Import a CSV file of BirdNET detections (selection table format),
+1.  Subsample detections with
+    [`birdnet_subsample()`](https://birdnet-team.github.io/birdnetTools/reference/birdnet_subsample.md),
 
-- Select the directory containing your audio files,
+2.  Cut audio clips with
+    [`birdnet_extract_clips()`](https://birdnet-team.github.io/birdnetTools/reference/birdnet_extract_clips.md),
 
-- View and validate each detection using spectrograms and audio
-  playback,
+3.  Launch this app and select the folder that contains the clips and
+    the table.
 
-- Edit validation results interactively and save the updated table.
-
-Audio playback and spectrogram generation now support multiple audio
-formats (e.g., WAV, MP3, FLAC, OGG) through the av package. Internally,
-all files are converted to temporary WAV files with
-[`av::av_audio_convert()`](https://docs.ropensci.org/av/reference/encoding.html)
-before being read by
-[`tuneR::readWave()`](https://rdrr.io/pkg/tuneR/man/readWave.html),
-ensuring compatibility without quality loss. File names are displayed
-without their extensions using base R functions.
+In the app you can view the spectrogram and play the audio of each
+detection, and edit its validation. Changes are saved to the table in
+the folder after every edit, so you can stop and resume at any time.
 
 ## See also
 
