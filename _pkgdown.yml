@@ -14,14 +14,14 @@ reference:
     contents:
       - birdnet_combine
 
-  - title: "Exploring and Preparing Data"
+  - title: "Data Exploration"
     contents:
       - birdnet_add_datetime
       - birdnet_add_site
       - birdnet_filter
       - birdnet_heatmap
 
-  - title: "Validating and Getting Threshold"
+  - title: "Detection Validation"
     contents:
       - birdnet_subsample
       - birdnet_extract_clips
