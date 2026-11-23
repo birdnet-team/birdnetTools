@@ -1,8 +1,8 @@
 #' User interface for BirdNET audio validation platform
 #'
 #' Constructs the user interface layout for the BirdNET audio validation platform
-#' within the `birdnetTools` package. This UI includes inputs for file upload,
-#' audio folder selection, spectrogram settings, and outputs for data display
+#' within the `birdnetTools` package. This UI includes inputs for choosing a
+#' validation folder, spectrogram settings, and outputs for data display
 #' and spectrogram plotting.
 #'
 #' @param request Internal parameter for `{shiny}` applications. Typically not set by the user.
@@ -16,63 +16,45 @@
 #' @seealso [birdnet_validation_server], [birdnet_launch_validation]
 #'
 #' @keywords internal
-#' @importFrom bslib page_sidebar sidebar card
-#' @importFrom shiny fileInput p verbatimTextOutput downloadButton actionButton
-#' @importFrom shinyWidgets numericRangeInput
-#' @importFrom shinyFiles shinyDirButton
-#' @importFrom DT DTOutput
 birdnet_validation_ui <- function(request) {
   bslib::page_sidebar(
 
     # add title
-    title = "birdnetTools / Audio Validation platform",
+    title = "birdnetTools - Audio Validation Platform",
 
     # side bar setting
     sidebar_width = 350,
 
     # add side bar
     sidebar = bslib::sidebar(
+
       bslib::card(
         "File import",
-
-        # input: import_file
-        shiny::fileInput(
-          inputId = "import_file",
-          label = "Selection table",
-          multiple = FALSE,
-          accept = c(
-            "text/csv",
-            "text/comma-separated-values,text/plain",
-            ".csv"
-          ),
-          width = "100%"
-        ),
-
         # button: dir
-        shiny::p("Audio folder"),
+        shiny::p("Validation folder"),
         shinyFiles::shinyDirButton(
           id = "dir",
           label = "Select",
-          title = "Select the species recording folder"
+          title = "Select the folder with the audio clips and the table"
         ),
 
         # output: dir
         shiny::verbatimTextOutput(
           outputId = "dir",
           placeholder = TRUE
-        )
-      ), bslib::card(
-        "Actions",
+        ),
 
-        # button: save_file
-        shiny::downloadButton("save_file", "Save"),
+        # input: table_file (filled in by the server once a folder is chosen)
+        shiny::selectInput(
+          inputId = "table_file",
+          "Table",
+          choices = NULL,
+          width = "100%")
 
-        # button: praise_me
-        shiny::actionButton("praise_me", "Praise me")
+
+
       ), bslib::card(
         "Settings",
-
-
         # input: duration
         shiny::numericInput(
           inputId = "duration",
@@ -95,6 +77,13 @@ birdnet_validation_ui <- function(request) {
           label = "Window length:",
           value = 512
         )
+
+
+
+      ), bslib::card(
+        "Actions",
+        # button: praise_me
+        shiny::actionButton("praise_me", "Praise me")
       )
     ),
 
@@ -131,72 +120,59 @@ birdnet_validation_ui <- function(request) {
 #' @return Called for its side effects within a `shinyApp` context.
 #'
 #' @details This internal server function powers the interactive audio validation
-#' interface. Users can import a CSV of BirdNET detections, link to local audio
-#' directories, view spectrograms, and manually validate detections through a
+#' interface. Users select a folder containing audio clips and a table of detections,
+#' view spectrograms, and manually validate detections through a
 #' Shiny DataTable interface.
 #'
 #' @seealso [birdnet_validation_ui], [birdnet_launch_validation]
 #'
 #' @keywords internal
-#' @importFrom shiny observeEvent reactive reactiveValues renderText renderPlot downloadHandler showNotification
-#' @importFrom shinyFiles shinyDirChoose parseDirPath
-#' @importFrom DT renderDT datatable
-#' @importFrom tuneR readWave play setWavPlayer
-#' @importFrom seewave spectro
-#' @importFrom praise praise
-#' @importFrom readr read_csv write_csv
-#' @importFrom dplyr mutate select
-#' @importFrom av av_audio_convert
-
 birdnet_validation_server <- function(input, output, session) {
+
   # Helper functions --------------------------------------------------------
 
-  # the function to play audio
-  play_audio <- function(filepath, start, end, buffer) {
-
-    # check the OS system
-    if (Sys.info()["sysname"] == "Darwin") {
-      tuneR::setWavPlayer("afplay")
-    }
+  # read the part of a file around a detection (times are relative to this file)
+  read_segment <- function(filepath, start, end, buffer) {
 
     # convert any audio format to a temporary WAV file
     tmp_wav <- tempfile(fileext = ".wav")
     av::av_audio_convert(filepath, tmp_wav)
 
-    # read the file
-    song <- tuneR::readWave(tmp_wav,
-                            from = max(0, start - buffer),
-                            to = end + buffer,
-                            units = "seconds")
-    # play audio
-    tuneR::play(song)
+    # do not read past the end of the file
+    header <- tuneR::readWave(tmp_wav, header = TRUE)
+    file_end <- header$samples / header$sample.rate
+
+    tuneR::readWave(tmp_wav,
+                    from = max(0, start - buffer),
+                    to = min(file_end, end + buffer),
+                    units = "seconds")
+  }
+
+
+
+  # the function to play audio
+  play_audio <- function(filepath, start, end, buffer) {
+    if (Sys.info()["sysname"] == "Darwin") {
+      tuneR::setWavPlayer("afplay")
+    }
+    tuneR::play(read_segment(filepath, start, end, buffer))
   }
 
 
 
   # the function to view spectrogram
   view_spectrogram <- function(filepath, flim, wl, start, end, buffer) {
+    song <- read_segment(filepath, start, end, buffer)
 
-    # convert any audio format to a temporary WAV file
-    tmp_wav <- tempfile(fileext = ".wav")
-    av::av_audio_convert(filepath, tmp_wav)
-
-    # read the file
-    song <- tuneR::readWave(tmp_wav,
-                            from = max(0, start - buffer),
-                            to = end + buffer,
-                            units = "seconds")
-
-    # show the spectrogram
     seewave::spectro(song,
-      f = song@samp.rate, flim = flim, ovlp = 50,
-      collevels = seq(-40, 0, 1), wl = wl, scale = FALSE,
-      main = tools::file_path_sans_ext(basename(filepath))
+                     f = song@samp.rate, flim = flim, ovlp = 50,
+                     collevels = seq(-40, 0, 1), wl = wl, scale = FALSE,
+                     main = tools::file_path_sans_ext(basename(filepath))
     )
   }
 
 
-  # reactive value for audio file path ----------------------------------
+  # reactive value for validation folder path ----------------------------------
 
   roots <- if (.Platform$OS.type == "windows") {
     # List all available drives on Windows by checking which drive letters
@@ -222,7 +198,7 @@ birdnet_validation_server <- function(input, output, session) {
       Desktop = "~/Desktop",
       Documents = "~/Documents",
       Working_dir = ".",
-      setNames(external_drives, basename(external_drives))
+      stats::setNames(external_drives, basename(external_drives))
     )
   }
 
@@ -243,18 +219,44 @@ birdnet_validation_server <- function(input, output, session) {
   })
 
 
-  # reactive value for the dataframe ------------------------------------
+  # list the audio files in the folder (and subfolders) once per folder
+  audio_index <- shiny::reactive({
+    shiny::req(length(dir_path()) > 0)
 
+    audio_extensions <- "\\.(wav|mp3|flac|ogg|m4a|aac|wma)$"
+    files <- list.files(dir_path(), pattern = audio_extensions, recursive = TRUE,
+                        full.names = TRUE, ignore.case = TRUE)
+
+    data.frame(path = files, name = basename(files), stringsAsFactors = FALSE)
+  })
+
+
+  # when a folder is selected, list the tables (CSV files) in it
+  shiny::observeEvent(dir_path(), {
+    shiny::req(length(dir_path()) > 0)
+
+    tables <- list.files(dir_path(), pattern = "\\.csv$", ignore.case = TRUE)
+    shiny::updateSelectInput(session, "table_file", choices = tables)
+
+    if (length(tables) == 0) {
+      shiny::showNotification("No CSV table found in this folder.", type = "warning")
+    }
+  })
+
+
+
+  # reactive value for the dataframe ------------------------------------
   rv <- shiny::reactiveValues()
 
-
   # if importing file, create data_editable and data_display reactive values
-  shiny::observeEvent(input$import_file, {
-    # read in the csv file and clean names based on the path input
-    tryCatch(
-      {
-        rv$data_editable <- input$import_file$datapath |>
-          readr::read_csv(show_col_types = FALSE)
+  shiny::observeEvent(list(dir_path(), input$table_file), {
+    shiny::req(length(dir_path()) > 0, input$table_file)
+    csv_path <- file.path(dir_path(), input$table_file)
+    shiny::req(file.exists(csv_path))
+
+    tryCatch({
+      rv$data_editable <- csv_path |>
+        readr::read_csv(show_col_types = FALSE)
 
         # check if the data frame has the validation column already
         if (!"validation" %in% names(rv$data_editable)) {
@@ -271,6 +273,10 @@ birdnet_validation_server <- function(input, output, session) {
     )
 
     rv$cols <- birdnet_detect_columns(rv$data_editable)
+
+    # remember where the table lives, and whether it came from birdnet_extract_clips()
+    rv$csv_path <- csv_path
+    rv$has_clip <- all(c("clip_file", "clip_start") %in% names(rv$data_editable))
 
 
     if (is.na(rv$cols$filepath)) {
@@ -299,7 +305,6 @@ birdnet_validation_server <- function(input, output, session) {
 
 
   # Render DT table ----------------------------------------------------
-
   output$main_table <- DT::renderDT(
     {
       # ensure the file has been uploaded before trying to render
@@ -325,32 +330,31 @@ birdnet_validation_server <- function(input, output, session) {
 
   # when the table is clicked to change values
   observeEvent(input$main_table_cell_edit, {
-    # get the edit information
     info <- input$main_table_cell_edit
-
-    # update the value in the reactive dataframe
     rv$data_editable$validation[info$row] <- info$value
+
+    # save the change straight back to the table in the folder
+    tryCatch(
+      {
+        readr::write_csv(rv$data_editable, rv$csv_path, progress = FALSE)
+        shiny::showNotification("Saved", duration = 1)
+      },
+      error = function(e) {
+        shiny::showNotification(paste("Could not save:", e$message), type = "error")
+      }
+    )
   })
 
 
+
   # Button observers -----------------------------------------------------
-
-  output$save_file <- downloadHandler(
-    filename = function() {
-      paste0("validated.csv")
-    },
-    content = function(file) {
-      readr::write_csv(rv$data_editable, file)
-    }
-  )
-
   shiny::observeEvent(input$praise_me, {
     shiny::showNotification(praise::praise(), type = "message")
   })
 
 
-  # Spectrogram on button click -----------------------------------------
 
+  # Spectrogram on button click -----------------------------------------
   shiny::observeEvent(input$main_table_cell_clicked, {
     info <- input$main_table_cell_clicked
     if (is.null(info$value) || !info$col %in% c(7, 8)) {
@@ -365,9 +369,33 @@ birdnet_validation_server <- function(input, output, session) {
       return()
     }
 
-    selected_row <- rv$data_display[info$row, ]
-    filepath <- file.path(dir_path(),
-                          basename(selected_row[[rv$cols$filepath]]))
+
+
+    # the full row (the display table has no clip columns)
+    row <- rv$data_editable[info$row, ]
+
+    if (rv$has_clip) {
+      # the clip starts at clip_start in the original recording, so the detection
+      # sits at (start - clip_start) seconds inside the clip
+      if (is.na(row$clip_file)) {
+        shiny::showNotification("No clip was created for this detection.",
+                                type = "warning")
+        return()
+      }
+      original <- file.path(dir_path(), row$clip_file)
+      offset <- row$clip_start
+    } else {
+      # a table without clips: look for the original recording in the folder
+      original <- row[[rv$cols$filepath]]
+      offset <- 0
+    }
+
+    filepath <- resolve_audio_path(original, audio_index())
+    start <- row[[rv$cols$start]] - offset
+    end <- row[[rv$cols$end]] - offset
+
+
+
 
     # Spectrogram button column
     if (info$col == 7) {
@@ -377,8 +405,8 @@ birdnet_validation_server <- function(input, output, session) {
             filepath = filepath,
             flim = input$flim,
             wl = input$wl,
-            start = selected_row[[rv$cols$start]],
-            end = selected_row[[rv$cols$end]],
+            start = start,
+            end = end,
             buffer = (input$duration - 3)/2
           )
         })
@@ -394,8 +422,8 @@ birdnet_validation_server <- function(input, output, session) {
         tryCatch(
           play_audio(
             filepath = filepath,
-            start = selected_row[[rv$cols$start]],
-            end = selected_row[[rv$cols$end]],
+            start = start,
+            end = end,
             buffer = (input$duration - 3)/2
           ),
           error = function(e) {
@@ -418,24 +446,21 @@ birdnet_validation_server <- function(input, output, session) {
 #' Launch the BirdNET audio validation app
 #'
 #' Starts an interactive Shiny application for manually validating BirdNET detections
-#' using audio clips and spectrograms.This tool is designed to support manual review of BirdNET results.
+#' using audio clips and spectrograms. This tool is designed to support manual review of BirdNET results.
 #'
-#' @details This function launches a user-friendly Shiny app that allows you to:
-#' \itemize{
-#'   \item Import a CSV file of BirdNET detections (selection table format),
-#'   \item Select the directory containing your audio files,
-#'   \item View and validate each detection using spectrograms and audio playback,
-#'   \item Edit validation results interactively and save the updated table.
+#' @details This function launches a Shiny app for validating detections one by
+#' one. The recommended workflow is:
+#' \enumerate{
+#'   \item Subsample detections with [birdnet_subsample()],
+#'   \item Cut audio clips with [birdnet_extract_clips()],
+#'   \item Launch this app and select the folder that contains the clips and the table.
 #' }
+#' In the app you can view the spectrogram and play the audio of each detection,
+#' and edit its validation. Changes are saved to the table in the folder after
+#' every edit, so you can stop and resume at any time.
+#'
 #'
 #' @return A `shiny.appobj` that runs the BirdNET audio validation platform in a web browser.
-#'
-#' @details Audio playback and spectrogram generation now support multiple audio formats
-#' (e.g., WAV, MP3, FLAC, OGG) through the \pkg{av} package. Internally, all
-#' files are converted to temporary WAV files with \code{av::av_audio_convert()}
-#' before being read by \code{tuneR::readWave()}, ensuring compatibility without
-#' quality loss. File names are displayed without their extensions using base R
-#' functions.
 #'
 #' @examples
 #' \dontrun{

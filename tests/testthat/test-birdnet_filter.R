@@ -17,7 +17,7 @@ test_that("data must be a tibble with required columns", {
 
   # Missing required column
   invalid_data <- valid_data |>
-    select(-common_name)
+    dplyr::select(-common_name)
   expect_error(birdnet_filter(invalid_data, species = "Yellow-rumped Warbler"))
 })
 

@@ -29,7 +29,8 @@ that achieves the desired precision.}
 A tibble with two columns:
 \describe{
 \item{common_name}{Species common name.}
-\item{threshold}{The calculated confidence threshold for that species.}
+\item{threshold}{The calculated confidence threshold for that species, or
+\code{NA} if the target cannot be reached.}
 }
 }
 \description{
@@ -51,7 +52,9 @@ When using the probability method, the function calculates the confidence thresh
 the inverse logit of the target predicted probability from the regression model.
 
 All thresholds are clamped to fall between the minimum observed confidence in \code{validated_data}
-and 1.
+and 1. If the target cannot be reached for a species (for example, if the model
+predicts a precision below the target at every confidence score), its
+threshold is \code{NA} and a message says so.
 }
 \references{
 Tseng, S., Hodder, D. P., & Otter, K. A. (2025). Setting BirdNET confidence thresholds: Species-specific vs. universal approaches. \emph{Journal of Ornithology}. https://doi.org/10.1007/s10336-025-02260-w

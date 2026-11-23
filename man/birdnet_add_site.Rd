@@ -4,7 +4,7 @@
 \alias{birdnet_add_site}
 \title{Add site column from BirdNET output filenames}
 \usage{
-birdnet_add_site(data, i = -2)
+birdnet_add_site(data, i = -2, formats = ".*", quiet = FALSE)
 }
 \arguments{
 \item{data}{A data frame containing BirdNET output.}
@@ -13,28 +13,51 @@ birdnet_add_site(data, i = -2)
 when split by slashes. Defaults to \code{-2}, which corresponds to the immediate
 parent directory of the file (e.g., extracting "Site-A" from
 "path/to/Site-A/audio.wav"). Negative values count from the right-hand side.}
+
+\item{formats}{A character vector of regular expressions (as used by
+\code{\link[stringr:str_extract]{stringr::str_extract()}}) that describe which part of the extracted
+directory name to keep as the site. Expressions are tried in order, and the
+first one that matches is used. Defaults to \code{".*"}, which keeps the whole
+directory name. See Details.}
+
+\item{quiet}{Logical. If \code{TRUE}, suppresses the status messages about how
+many file names were successfully matched to a site or could not be
+matched. Defaults to \code{FALSE}}
 }
 \value{
 A data frame with an additional column:
 \describe{
-\item{site}{The extracted directory or folder name used as the site identifier.}
+\item{site}{The extracted directory or folder name (or the part of it
+matched by \code{formats}) used as the site identifier.}
 }
 }
 \description{
 Extracts a specific directory level from the file path column (automatically
 detected) to act as a site identifier, then adds a \code{site} column to the
-input data frame.
+input data frame. By default the whole directory name is used, but \code{formats}
+lets you keep only part of it, such as the letters or the digits (see
+Details).
 }
 \details{
-The function uses \link{birdnet_detect_columns} to find the column containing
-file paths based on common name patterns. By default, it looks at the
-immediate parent folder of the file.
+\strong{Keeping only part of the name.} If your folder names combine several
+pieces of information, supply a regular expression that matches only the
+part you want. For a folder named \code{Pine05}:
+\itemize{
+\item \code{".*"} (default): \code{"Pine05"} (the whole name)
+\item \code{"^[A-Za-z]+"}: \code{"Pine"} (the letters at the start only)
+\item \code{"[0-9]+"}: \code{"05"} (the digits only)
+}
 }
 \examples{
 \dontrun{
 combined_data <- birdnet_combine("path/to/BirdNET/output")
 data_with_site <- birdnet_add_site(combined_data, i = -2)
+
+# keep only the letters of the folder name (e.g. "Pine05" becomes "Pine")
+birdnet_add_site(combined_data, formats = "^[A-Za-z]+")
+
+# keep only the digits (e.g. "Pine05" becomes "05")
+birdnet_add_site(combined_data, formats = "[0-9]+")
 }
 
 }
-\keyword{internal}

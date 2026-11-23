@@ -2,7 +2,7 @@
 title: "Get started with birdnetTools"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{birdnetTools}
+  %\VignetteIndexEntry{Get started with birdnetTools}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -24,7 +24,7 @@ The `birdnetTools` is an R package designed to streamline the post-processing an
 
 The cheatsheet below can be downloaded from [here](https://github.com/birdnet-team/birdnetTools/blob/master/man/figures/workflow.png):
 
-![](./images/workflow.png)
+![Cheatsheet of birdnetTools package.](./images/workflow.png)
 
 
 ## Data Import
@@ -164,29 +164,41 @@ new_columns
 
 
 
-## Validating Detections & Getting Thresholds
+## Validating Detections
 
 Each BirdNET detection includes a "confidence" score, but this score does not reflect true probability and varies in meaning across species. For example, BirdNET may detect one species reliably even at low confidence, while another may still yield false positives at high confidence. To improve reliability, it’s recommended to use species-specific thresholds. This section follows the methods outlined in [Tseng et al. 2025](https://link.springer.com/article/10.1007/s10336-025-02260-w), which require a validation process where a subset of detections is reviewed by human experts to classify them as true or false positives. For further context on interpreting confidence scores, see [Wood and Kahl 2024](https://link.springer.com/article/10.1007/s10336-024-02144-5).
+
+The workflow has four steps:
+
+1. **Subsample** the detections to validate with `birdnet_subsample()`.
+2. **Extract** a short audio clip for each of them into one folder with `birdnet_extract_clips()`.
+3. **Validate** the clips in a Shiny app launched by `birdnet_launch_validation()`.
+4. **Calculate** a species-specific threshold with `birdnet_calc_threshold()`.
 
 
 
 ### 1. Get a validation set by subsampling
 
-To get the species-specific threshold, we will need to validate detections in `data_filtered`, which contains Swainson’s Thrush detections filtered at a 0.2 confidence threshold. First, we will need to subsample a portion for manual review. The `birdnet_subsample()` function supports four sampling methods: `propotional_stratified` (propotional across confidence scores), `even_stratified` (evenly across confidence scores), `random` (selection based on confidence score distribution), and `top` (highest confidence detections). The `even_stratified`, `propotional_stratified`, and `random` approaches help create a representative validation set, while `top` sampling targets the most confident predictions.
+To get the species-specific threshold, we will need to validate detections in `data_filtered`, which contains Swainson’s Thrush detections filtered at a 0.2 confidence threshold. First, we will need to subsample a portion for manual review. The `birdnet_subsample()` function draws `n` detections in total from the data you give it, using one of four methods:
 
+- `even_stratified` (the default): samples evenly across confidence score bins, so detections from the whole range of confidence scores are covered.
+- `proportional_stratified`: samples across confidence score bins in proportion to how many detections each bin contains.
+- `random`: a simple random sample.
+- `top`: the detections with the highest confidence.
 
 ```{r}
 # subsample 300 detections from the filtered data
-set.seed(123)  # for reproducibility
 data_subsampled <- birdnet_subsample(data_filtered,
-                                     n = 300)
+                                     n = 300,
+                                     seed = 123) # for reproducibility
 
 # view function documentation
 ?birdnet_subsample()
 ```
 
 
-Optionally, you can save the subsampled detections as a `.csv` file in your working directory by setting `save_to_file = TRUE` and specifying a file name:
+Optionally, you can also save the subsampled detections as a `.csv` file by setting `save_to_file = TRUE` and specifying a file name. This is not needed for the next step, which saves the table together with the clips.
+
 
 ```{r eval=FALSE}
 birdnet_subsample(
@@ -198,47 +210,94 @@ birdnet_subsample(
 ```
 
 
-### 2. Validation using shinyApp
+### 2. Extract the audio clips
 
-Manually validating detections, by locating audio files, finding timestamps, and listening to clips, can be slow and tedious. The `birdnet_launch_validation()` function streamlines this process by launching a Shiny app that displays subsampled detections alongside their spectrograms and corresponding audio clips. With an interactive interface, users can quickly review each detection by listening to audio or viewing spectrograms and edit the validation datasheet, making the validation process much more efficient.
+Validating detections directly from the full recordings means locating each file and finding the right timestamp. A validation set is only a small part of the full data set (for example, 300 three-second segments out of terabytes of audio), so it is easier to cut those segments into a folder of their own first. The clips open instantly in the app, the folder can be zipped and sent to a collaborator or archived with a paper without the original recordings, and the app never has to deal with file paths that went stale when drives changed.
+
+The `birdnet_extract_clips()` function takes the subsampled detections and cuts one clip for each of them:
+
+```{r eval=FALSE}
+birdnet_extract_clips(
+  data = data_subsampled,
+  output_dir = "path/to/validation_folder", # where the clips and the table are saved
+  audio_dir = "path/to/recordings",         # where the original recordings are
+  buffer = 3                                # seconds added before and after each detection
+)
+
+#> ✔ Extracted 300 of 300 clips to path/to/validation_folder.
+#> ✔ Saved the table to path/to/validation_folder/detections_clips.csv.
+```
+
+
+Replace the two paths with your own folders. The validation folder then looks like this (the exact file names will differ):
+
+```
+validation_folder/
+├── detections_clips.csv
+├── 001_20230611_054000_45_48_Swainson_s_Thrush_0.715.WAV
+├── 002_20230611_032500_15_18_Swainson_s_Thrush_0.575.WAV
+└── ...
+```
+
+### 3. Validation using shinyApp
+
+Manually validating detections, by locating audio files, finding timestamps, and listening to clips, can be slow and tedious. The `birdnet_launch_validation()` function streamlines this process by launching a Shiny app that displays the detections alongside their spectrograms and corresponding audio clips. With an interactive interface, users can quickly review each detection by listening to audio or viewing spectrograms and edit the validation datasheet, making the validation process much more efficient.
 
 ```{r eval=FALSE}
 birdnet_launch_validation()
 ```
 
-After running the code above, a Shiny interface will launch. This app requires two inputs:
+After running the code above, a Shiny interface will launch. The app needs just one input, the validation folder created in step 2.
 
-- Detection file (.csv) – A file containing the BirdNET predictions selected for validation.
+1. Click **Select** under "Validation folder".
 
-- Audio folder path – The directory where your corresponding audio clips are stored.
+    ![Screenshot of the ShinyApp validation platform, step 1.](./images/shinyapp_select_folder.png)
 
-| Select meta data                     | Select recording folder              |
-|--------------------------------------|--------------------------------------|
-| ![](images/input_csv.png) | ![](images/input_file.png) |
+2. Navigate to the validation folder.
 
-Once loaded:
+3. Select the folder and click **Select**. The app will read the table and display it in the top panel.
 
-- The top panel will display the table of detections. Clicking “Spectrogram” will show the corresponding visual signal below; clicking “Audio” will play the relevant clip.
+    ![Screenshot of the ShinyApp validation platform, step 2 and 3.](./images/shinyapp_table.png)
 
-- To validate, double-click the `U` (Unknown) cell in the `validation` column. Enter `1` for a true positive or `0` for a false positive. Your input will update the original `.csv` file.
+    If the folder contains more than one `.csv` table, choose the one to validate from the **Table** dropdown. The table is then displayed in the top panel.
 
-- When finished, click “Save” to export your results. A new file will be created with `_validation` appended to the original name. If you only complete part of the validation, this file can later be reloaded to resume the process.
+    ![Screenshot of the ShinyApp validation platform.](./images/shinyapp_hints.png)
 
-- The “Settings” tab lets you tweak spectrogram display options. And if you're getting tired, try the “Praise me” button for a quick boost of motivation. 🌟
+4. Click **Spectrogram** to show the spectrogram of a detection below the table.
+
+5. Click **Audio** to play the clip.
+
+6. Double-click the `U` (Unknown, the default value) cell in the `validation` column. Enter `1` for a true positive or `0` for a false positive. Your edits are saved automatically to the table in the validation folder.
+
+    ![Screenshot of the ShinyApp validation platform, step 4 to 6.](./images/shinyapp_main.png)
+
+**Other hints:**
+
+- You can close the app at any time and pick up where you left off by selecting the same folder and table again. If you want to keep an unvalidated copy of the table, make one before you start.
+
+- The **Settings** panel lets you change what is shown: the duration of the window around each detection (it can't be longer than the clip), the frequency range, and the window length of the spectrogram.
+
+- And if you're getting tired, try the **Praise me** button for a quick boost of motivation. 🌟
+
+> Note: You can also put a validation folder together yourself. It needs a table (`.csv`) and the audio. The app looks for each recording by the file name in its `filepath` column.
 
 
-![](./images/shinyapp_main.png)
-
-
-
-### 3. Get threshold 
+### 4. Get threshold 
 
 Once a set of BirdNET detections has been validated (i.e., manually labeled as true or false positives), you can calculate a species-specific confidence threshold that meets a desired level of precision. The `birdnet_calc_threshold()` function helps identify the minimum confidence score required to achieve a target precision for a given species.
 
+The validated table is the `detections_clips.csv` file in your validation folder, which now has the `validation` column filled in. Read it back into R, making sure that no `U` is left in the `validation` column:
 
+```{r eval=FALSE}
+data_validated <- readr::read_csv("path/to/validation_folder/detections_clips.csv")
+```
+
+
+To demonstrate the next step without a real validation, we simulate one by treating each detection as a Bernoulli trial, where the probability of a true positive equals the confidence score:
 
 ```{r}
 # simulate validation as a Bernoulli trial
+set.seed(123)
 data_subsampled$validation <- rbinom(
   n = nrow(data_subsampled), 
   size = 1, 
@@ -246,7 +305,6 @@ data_subsampled$validation <- rbinom(
 )
 
 ```
-
 
 It only takes one line of code to calculate species-specific thresholds using the `birdnet_calc_threshold()` function. This function requires a data frame containing the columns `common_name`, `confidence`, and `validation` (where validation is `1` for true positives and `0` for false positives). It returns the minimum confidence score needed to achieve the specified precision or probability level. For more details on the difference between the precision and probability arguments, please see the function documentation (`?birdnet_calc_threshold()`).
 

@@ -146,3 +146,17 @@ test_that("Clamps thresholds outside observed range", {
 
   expect_true(result$threshold >= 0.9 && result$threshold <= 1)
 })
+
+test_that("a threshold that cannot be reached is NA, with a message", {
+  data <- data.frame(
+    common_name = "Robin",
+    confidence = seq(0.2, 1, length.out = 50),
+    validation = 0 # every detection is a false positive
+  )
+
+  expect_message(
+    result <- suppressWarnings(birdnet_calc_threshold(data, precision = 0.9)),
+    "Could not calculate a threshold"
+  )
+  expect_true(is.na(result$threshold))
+})

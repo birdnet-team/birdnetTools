@@ -137,7 +137,7 @@ test_that("birdnet_add_site throws an error when filepath column is missing or u
   # Expect an error containing our specific error message
   expect_error(
     birdnet_add_site(bad_data),
-    regexp = "Could not automatically detect a valid file path column"
+    regexp = "Can't find a column containing file names or paths."
   )
 })
 
@@ -193,7 +193,7 @@ test_that("birdnet_add_site throws an error when filepath column is missing or u
   # Expect an error containing our specific error message
   expect_error(
     birdnet_add_site(bad_data),
-    regexp = "Could not automatically detect a valid file path column"
+    regexp = "Can't find a column containing file names or paths."
   )
 })
 
@@ -372,5 +372,25 @@ test_that("birdnet_add_datetime errors clearly on bad input", {
   expect_error(birdnet_add_datetime(make_df("a"), formats = 1))
   expect_error(birdnet_add_datetime(make_df("a"), formats = character(0)))
   expect_error(birdnet_add_datetime(make_df("a"), tz = c("UTC", "UTC")))
+})
+
+
+# for add_sites() ---------------------------------------------------------
+
+test_that("default keeps the whole parent folder name", {
+  df <- data.frame(filepath = c("a/Pine05/x.wav", "a/Oak12/y.wav"))
+  expect_equal(birdnet_add_site(df, quiet = TRUE)$site, c("Pine05", "Oak12"))
+})
+
+test_that("formats keeps only part of the name", {
+  df <- data.frame(filepath = c("a/Pine05/x.wav", "a/Oak12/y.wav"))
+  out <- birdnet_add_site(df, formats = "[0-9]+", quiet = TRUE)
+  expect_equal(out$site, c("05", "12"))
+})
+
+test_that("unmatched rows get NA and quiet silences messages", {
+  df <- data.frame(filepath = c("a/Pine05/x.wav", "a/Oak12/y.wav"))
+  expect_message(birdnet_add_site(df, formats = "xyz"))
+  expect_no_message(birdnet_add_site(df, formats = "xyz", quiet = TRUE))
 })
 
