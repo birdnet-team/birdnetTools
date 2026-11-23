@@ -24,7 +24,7 @@ The `birdnetTools` is an R package designed to streamline the post-processing an
 
 The cheatsheet below can be downloaded from [here](https://github.com/birdnet-team/birdnetTools/blob/master/man/figures/workflow.png):
 
-![](./images/workflow.png)
+![Cheatsheet of birdnetTools package.](./images/workflow.png)
 
 
 ## Data Import
@@ -251,17 +251,17 @@ After running the code above, a Shiny interface will launch. The app needs just 
 
 1. Click **Select** under "Validation folder".
 
-    ![](./images/shinyapp_select_folder.png)
+    ![The Select button under "Validation folder" in the app sidebar.](./images/shinyapp_select_folder.png)
 
 2. Navigate to the validation folder.
 
 3. Select the folder and click **Select**. The app will read the table and display it in the top panel.
 
-    ![](./images/shinyapp_table.png)
+    ![The app showing the table of detections, with Spectrogram and Audio buttons on each row.](./images/shinyapp_table.png)
 
     If the folder contains more than one `.csv` table, choose the one to validate from the **Table** dropdown. The table is then displayed in the top panel.
 
-    ![](./images/shinyapp_hints.png)
+    ![The Table dropdown for choosing a .csv file in the validation folder.](./images/shinyapp_hints.png)
 
 4. Click **Spectrogram** to show the spectrogram of a detection below the table.
 
@@ -269,7 +269,7 @@ After running the code above, a Shiny interface will launch. The app needs just 
 
 6. Double-click the `U` (Unknown, the default value) cell in the `validation` column. Enter `1` for a true positive or `0` for a false positive. Your edits are saved automatically to the table in the validation folder.
 
-    ![](./images/shinyapp_main.png)
+    ![The detections table with the spectrogram of the selected detection below it.](./images/shinyapp_main.png)
 
 **Other hints:**
 
@@ -297,6 +297,7 @@ To demonstrate the next step without a real validation, we simulate one by treat
 
 ```{r}
 # simulate validation as a Bernoulli trial
+set.seed(123)
 data_subsampled$validation <- rbinom(
   n = nrow(data_subsampled), 
   size = 1, 
