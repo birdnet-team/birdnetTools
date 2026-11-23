@@ -251,17 +251,17 @@ After running the code above, a Shiny interface will launch. The app needs just 
 
 1. Click **Select** under "Validation folder".
 
-    ![The Select button under "Validation folder" in the app sidebar.](./images/shinyapp_select_folder.png)
+    ![Screenshot of the ShinyApp validation platform, step 1.](./images/shinyapp_select_folder.png)
 
 2. Navigate to the validation folder.
 
 3. Select the folder and click **Select**. The app will read the table and display it in the top panel.
 
-    ![The app showing the table of detections, with Spectrogram and Audio buttons on each row.](./images/shinyapp_table.png)
+    ![Screenshot of the ShinyApp validation platform, step 2 and 3.](./images/shinyapp_table.png)
 
     If the folder contains more than one `.csv` table, choose the one to validate from the **Table** dropdown. The table is then displayed in the top panel.
 
-    ![The Table dropdown for choosing a .csv file in the validation folder.](./images/shinyapp_hints.png)
+    ![Screenshot of the ShinyApp validation platform.](./images/shinyapp_hints.png)
 
 4. Click **Spectrogram** to show the spectrogram of a detection below the table.
 
@@ -269,7 +269,7 @@ After running the code above, a Shiny interface will launch. The app needs just 
 
 6. Double-click the `U` (Unknown, the default value) cell in the `validation` column. Enter `1` for a true positive or `0` for a false positive. Your edits are saved automatically to the table in the validation folder.
 
-    ![The detections table with the spectrogram of the selected detection below it.](./images/shinyapp_main.png)
+    ![Screenshot of the ShinyApp validation platform, step 4 to 6.](./images/shinyapp_main.png)
 
 **Other hints:**
 
