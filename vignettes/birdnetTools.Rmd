@@ -2,7 +2,7 @@
 title: "Get started with birdnetTools"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{birdnetTools}
+  %\VignetteIndexEntry{Get started with birdnetTools}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -253,17 +253,21 @@ After running the code above, a Shiny interface will launch. The app needs just 
 
     ![](./images/shinyapp_select_folder.png)
 
-2. Navigate to your validation folder, select it, and click **Select**. The app reads the table and displays it in the top panel.
+2. Navigate to the validation folder.
+
+3. Select the folder and click **Select**. The app will read the table and display it in the top panel.
 
     ![](./images/shinyapp_table.png)
 
-    If the folder contains more than one `.csv` table, choose the one to validate from the **Table** dropdown.
+    If the folder contains more than one `.csv` table, choose the one to validate from the **Table** dropdown. The table is then displayed in the top panel.
 
     ![](./images/shinyapp_hints.png)
 
-3. Click **Spectrogram** to show the spectrogram of a detection below the table, or **Audio** to play the clip.
+4. Click **Spectrogram** to show the spectrogram of a detection below the table.
 
-4. Double-click the `U` (Unknown, the default) cell in the `validation` column, and enter `1` for a true positive or `0` for a false positive. Your edits are saved automatically to the table in the validation folder, so there is no Save button.
+5. Click **Audio** to play the clip.
+
+6. Double-click the `U` (Unknown, the default value) cell in the `validation` column. Enter `1` for a true positive or `0` for a false positive. Your edits are saved automatically to the table in the validation folder.
 
     ![](./images/shinyapp_main.png)
 
@@ -275,7 +279,7 @@ After running the code above, a Shiny interface will launch. The app needs just 
 
 - And if you're getting tired, try the **Praise me** button for a quick boost of motivation. 🌟
 
-> Note: You can also put a validation folder together yourself, with a table (`.csv`) and the audio. If the table has `clip_file` and `clip_start` columns, as the table made by `birdnet_extract_clips()` does, the app plays the clips listed there. Otherwise, it looks for each recording by the file name in the `filepath` column, in the folder and its subfolders, and plays the detection at its start and end times. This is slower for long recordings.
+> Note: You can also put a validation folder together yourself. It needs a table (`.csv`) and the audio. The app looks for each recording by the file name in its `filepath` column.
 
 
 ### 4. Get threshold 
