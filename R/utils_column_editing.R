@@ -407,7 +407,7 @@ birdnet_detect_columns <- function(data) {
     scientific_name = col_matches("scientific"),
     common_name = col_matches(c("common", "label")),
     confidence = col_matches(c("confidence", "score")),
-    filepath = col_matches(c("file", "path"))
+    filepath = col_matches(c("file", "path", "input"))
   )
 }
 
